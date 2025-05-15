@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.Migrations", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.Web", "src\KSE.GameStore.Web\KSE.GameStore.Web.csproj", "{4223A2BD-7FCA-41F6-84B9-144394B37370}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.Tests", "tests\KSE.GameStore.Tests\KSE.GameStore.Tests\KSE.GameStore.Tests.csproj", "{F6362589-6322-4886-A896-496D66EC015C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.Tests", "tests\KSE.GameStore.Tests\KSE.GameStore.Tests.csproj", "{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,9 +38,9 @@ Global
 		{4223A2BD-7FCA-41F6-84B9-144394B37370}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4223A2BD-7FCA-41F6-84B9-144394B37370}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4223A2BD-7FCA-41F6-84B9-144394B37370}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6362589-6322-4886-A896-496D66EC015C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6362589-6322-4886-A896-496D66EC015C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6362589-6322-4886-A896-496D66EC015C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6362589-6322-4886-A896-496D66EC015C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

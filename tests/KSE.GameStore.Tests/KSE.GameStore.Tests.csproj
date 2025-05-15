@@ -21,9 +21,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\KSE.GameStore.ApplicationCore\KSE.GameStore.ApplicationCore.csproj" />
-      <ProjectReference Include="..\..\..\src\KSE.GameStore.DataAccess\KSE.GameStore.DataAccess.csproj" />
-      <ProjectReference Include="..\..\..\src\KSE.GameStore.Web\KSE.GameStore.Web.csproj" />
+      <ProjectReference Include="..\..\src\KSE.GameStore.ApplicationCore\KSE.GameStore.ApplicationCore.csproj" />
+      <ProjectReference Include="..\..\src\KSE.GameStore.DataAccess\KSE.GameStore.DataAccess.csproj" />
+      <ProjectReference Include="..\..\src\KSE.GameStore.Web\KSE.GameStore.Web.csproj" />
     </ItemGroup>
 
 </Project>
