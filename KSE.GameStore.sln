@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.DataAccess", "src\KSE.GameStore.DataAccess\KSE.GameStore.DataAccess.csproj", "{FE69276D-56C6-48E4-AC86-3AD25E2903A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.ApplicationCore", "src\KSE.GameStore.ApplicationCore\KSE.GameStore.ApplicationCore.csproj", "{5CEAC8FC-6A6C-40EC-A552-E9CD8B79BDFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.Migrations", "src\KSE.GameStore.Migrations\KSE.GameStore.Migrations.csproj", "{F2AD2F22-C82C-4589-9EDD-439D5BC6AB7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.Web", "src\KSE.GameStore.Web\KSE.GameStore.Web.csproj", "{4223A2BD-7FCA-41F6-84B9-144394B37370}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSE.GameStore.Tests", "tests\KSE.GameStore.Tests\KSE.GameStore.Tests.csproj", "{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE69276D-56C6-48E4-AC86-3AD25E2903A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE69276D-56C6-48E4-AC86-3AD25E2903A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE69276D-56C6-48E4-AC86-3AD25E2903A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE69276D-56C6-48E4-AC86-3AD25E2903A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CEAC8FC-6A6C-40EC-A552-E9CD8B79BDFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CEAC8FC-6A6C-40EC-A552-E9CD8B79BDFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CEAC8FC-6A6C-40EC-A552-E9CD8B79BDFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CEAC8FC-6A6C-40EC-A552-E9CD8B79BDFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2AD2F22-C82C-4589-9EDD-439D5BC6AB7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2AD2F22-C82C-4589-9EDD-439D5BC6AB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2AD2F22-C82C-4589-9EDD-439D5BC6AB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2AD2F22-C82C-4589-9EDD-439D5BC6AB7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4223A2BD-7FCA-41F6-84B9-144394B37370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4223A2BD-7FCA-41F6-84B9-144394B37370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4223A2BD-7FCA-41F6-84B9-144394B37370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4223A2BD-7FCA-41F6-84B9-144394B37370}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD9B8FAB-68D7-4FB0-B1BC-22FB1CD7BDB6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
