@@ -2,5 +2,8 @@
 
 public enum OrderStatus
 {
-    Created, Initiated, Payed, Cancelled
+    Created = 0, 
+    Initiated = 1, 
+    Payed = 2,
+    Cancelled = 3
 }
