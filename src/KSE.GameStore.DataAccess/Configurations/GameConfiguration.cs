@@ -58,8 +58,8 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
                 j => j.HasOne<Game>().WithMany().HasForeignKey("game_id"),
                 j =>
                 {
-                    j.HasKey("game_id", "genre_id");
-                    j.ToTable("game_genres");
+                    j.HasKey("game_id", "platform_id");
+                    j.ToTable("game_platforms");
                 }
             );
         
