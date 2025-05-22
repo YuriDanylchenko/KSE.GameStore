@@ -1,3 +1,6 @@
+using KSE.GameStore.DataAccess;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +13,11 @@ builder.Logging.AddDebug();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<GameStoreDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("GameStoreDb"),
+        x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
 
 var app = builder.Build();
 
