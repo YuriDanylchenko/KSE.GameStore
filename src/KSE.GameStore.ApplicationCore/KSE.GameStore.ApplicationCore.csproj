@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\KSE.GameStore.DataAccess\KSE.GameStore.DataAccess.csproj" />
-  </ItemGroup>
-
 </Project>
