@@ -19,7 +19,6 @@ public class ExceptionMiddlewareTests
             .ConfigureServices(services =>
             {
                 services.AddLogging();
-                services.AddScoped<ExceptionMiddleware>();
             })
             .Configure(app =>
             {
@@ -42,62 +41,101 @@ public class ExceptionMiddlewareTests
     }
 
     [Fact]
-    public async Task Handles_ServerException_Returns_StatusCodeAndMessage()
+    public async Task Handles_BadRequestException_Returns_400()
     {
-        // Arrange
-        var ex = new ServerException("Server error occurred", 401);
+        var ex = new BadRequestException("Bad request!");
         using var server = CreateServerThatThrows(ex);
         var client = server.CreateClient();
 
-        // Act
         var response = await client.GetAsync("/");
 
-        // Assert status code
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
-        // Assert response body content
         var error = await GetErrorResponse(response);
         Assert.NotNull(error);
-        Assert.Equal("Server error occurred", error.Message);
+        Assert.Equal("Bad request!", error.Message);
+        Assert.Equal(400, error.Status);
+    }
+
+    [Fact]
+    public async Task Handles_UnauthorizedException_Returns_401()
+    {
+        var ex = new UnauthorizedException("Unauthorized access!");
+        using var server = CreateServerThatThrows(ex);
+        var client = server.CreateClient();
+
+        var response = await client.GetAsync("/");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+
+        var error = await GetErrorResponse(response);
+        Assert.NotNull(error);
+        Assert.Equal("Unauthorized access!", error.Message);
         Assert.Equal(401, error.Status);
     }
 
     [Fact]
-    public async Task Handles_NullReferenceException_Returns_404()
+    public async Task Handles_ForbiddenException_Returns_403()
     {
-        // Arrange
-        var ex = new NullReferenceException("Null reference!");
+        var ex = new ForbiddenException("Forbidden access!");
         using var server = CreateServerThatThrows(ex);
         var client = server.CreateClient();
 
-        // Act
         var response = await client.GetAsync("/");
 
-        // Assert status code
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
 
-        // Assert response body content
         var error = await GetErrorResponse(response);
         Assert.NotNull(error);
-        Assert.Equal("Null reference!", error.Message);
+        Assert.Equal("Forbidden access!", error.Message);
+        Assert.Equal(403, error.Status);
+    }
+
+    [Fact]
+    public async Task Handles_NotFoundException_Returns_404()
+    {
+        var ex = new NotFoundException("Not found!");
+        using var server = CreateServerThatThrows(ex);
+        var client = server.CreateClient();
+
+        var response = await client.GetAsync("/");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+        var error = await GetErrorResponse(response);
+        Assert.NotNull(error);
+        Assert.Equal("Not found!", error.Message);
         Assert.Equal(404, error.Status);
+    }
+
+    [Fact]
+    public async Task Handles_InternalServerErrorException_Returns_500()
+    {
+        var ex = new InternalServerErrorException("Internal failure!");
+        using var server = CreateServerThatThrows(ex);
+        var client = server.CreateClient();
+
+        var response = await client.GetAsync("/");
+
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+
+        var error = await GetErrorResponse(response);
+        Assert.NotNull(error);
+        Assert.Equal("Internal failure!", error.Message);
+        Assert.Equal(500, error.Status);
     }
 
     [Fact]
     public async Task Handles_UnexpectedException_Returns_500()
     {
-        // Arrange
         var ex = new Exception("Unexpected error!");
         using var server = CreateServerThatThrows(ex);
         var client = server.CreateClient();
 
-        // Act
         var response = await client.GetAsync("/");
 
-        // Assert status code
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 
-        // Assert response body content
         var error = await GetErrorResponse(response);
         Assert.NotNull(error);
         Assert.Equal("Unexpected error!", error.Message);
