@@ -3,35 +3,34 @@ using KSE.GameStore.ApplicationCore.Responses;
 
 namespace KSE.GameStore.Web.Infrastructure;
 
-public class ExceptionMiddleware : IMiddleware
+public class ExceptionMiddleware
 {
+    private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(ILogger<ExceptionMiddleware> logger)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
+        _next = next;
         _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    public async Task Invoke(HttpContext context)
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (ServerException e)
         {
-            _logger.LogWarning("Server exception {StatusCode} occurred while processing {Method} {Path}: {Message}", e.StatusCode, context.Request.Method, context.Request.Path, e.Message);
+            _logger.LogWarning("Server exception {StatusCode} occurred while processing {Method} {Path}: {Message}",
+                e.StatusCode, context.Request.Method, context.Request.Path, e.Message);
             await WriteErrorResponse(context, e.StatusCode, e.Message);
         }
-        catch (NullReferenceException nullReferenceException)
+        catch (Exception ex)
         {
-            _logger.LogWarning("NullReferenceException {StatusCode} occurred while processing {Method} {Path}: {Message}", 404, context.Request.Method, context.Request.Path, nullReferenceException.Message);
-            await WriteErrorResponse(context, 404, nullReferenceException.Message);
-        }
-        catch (System.Exception ex)
-        {
-                _logger.LogError("Unexpected exception {StatusCode} occurred while processing {Method} {Path}: {Message}", 500, context.Request.Method, context.Request.Path, ex.Message);
-                await WriteErrorResponse(context, 500, ex.Message);
+            _logger.LogError("Unexpected exception (500) while processing {Method} {Path}: {Message}",
+                context.Request.Method, context.Request.Path, ex.Message);
+            await WriteErrorResponse(context, 500, ex.Message);
         }
     }
 
