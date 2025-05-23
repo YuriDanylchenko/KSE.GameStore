@@ -1,4 +1,5 @@
 ﻿namespace KSE.GameStore.Web.Infrastructure;
+
 public class LoggerMiddleware(ILogger<LoggerMiddleware> logger) : IMiddleware
 {
     private readonly ILogger<LoggerMiddleware> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
