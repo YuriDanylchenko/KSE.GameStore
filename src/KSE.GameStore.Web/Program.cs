@@ -17,8 +17,6 @@ builder.Services.AddDbContext<GameStoreDbContext>(options =>
         builder.Configuration.GetConnectionString("GameStoreDb"),
         x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
 
-builder.Services.AddScoped<LoggerMiddleware>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
