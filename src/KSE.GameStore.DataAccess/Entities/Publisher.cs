@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class Publisher
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class Publisher : BaseEntity<int>
 {
-    public int Id { get; set; }
     public required string Name { get; set; } = null!;
     public string? WebsiteUrl { get; set; }
     public string? Description { get; set; }

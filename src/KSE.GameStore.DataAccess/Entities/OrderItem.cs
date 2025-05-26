@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class OrderItem
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class OrderItem : BaseEntity<int>
 {
-    public int Id { get; set; }
     public int OrderId { get; set; }
     public int GameId { get; set; }
     public decimal Price { get; set; }

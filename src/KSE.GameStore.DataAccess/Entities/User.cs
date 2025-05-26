@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class User
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class User : BaseEntity<Guid>
 {
-    public Guid Id { get; set; }
     public string Name { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string Role { get; set; } = null!;

@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class Order
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class Order : BaseEntity<int>
 {
-    public int Id { get; set; }
     public Guid UserId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
