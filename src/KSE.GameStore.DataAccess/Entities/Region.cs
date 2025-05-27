@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class Region
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class Region : BaseEntity<int>
 {
-    public int Id { get; set; }
     public string Code { get; set; } = null!;
     public string Name { get; set; } = null!;
     

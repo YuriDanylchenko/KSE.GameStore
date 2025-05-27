@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class Payment
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class Payment : BaseEntity<int>
 {
-    public int Id { get; set; }
     public int OrderId { get; set; }
     public bool Confirmed { get; set; }
     public DateTime PayedAt { get; set; }

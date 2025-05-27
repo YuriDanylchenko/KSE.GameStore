@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class Platform
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class Platform : BaseEntity<int>
 {
-    public int Id { get; set; }
     public required string Name { get; set; } = null!;
     
     public ICollection<Game>? Games { get; set; }

@@ -1,4 +1,6 @@
+using KSE.GameStore.ApplicationCore.Interfaces;
 using KSE.GameStore.DataAccess;
+using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +18,8 @@ builder.Services.AddDbContext<GameStoreDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("GameStoreDb"),
         x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
+
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 var app = builder.Build();
 

@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class Genre
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class Genre : BaseEntity<int>
 {
-    public int Id { get; set; }
     public required string Name { get; set; } = null!;
     
     public ICollection<Game>? Games { get; set; }

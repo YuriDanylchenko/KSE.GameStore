@@ -1,8 +1,9 @@
-﻿namespace KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore;
 
-public class Game
+namespace KSE.GameStore.DataAccess.Entities;
+
+public class Game : BaseEntity<int>
 {
-    public int Id { get; set; }
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public int PublisherId { get; set; }

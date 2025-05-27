@@ -1,13 +1,14 @@
 ﻿using System.Linq.Expressions;
+using KSE.GameStore.ApplicationCore;
 using KSE.GameStore.ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace KSE.GameStore.DataAccess.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKey>
 {
-    private readonly GameStoreDbContext _context;
-    private readonly DbSet<T> _dbSet;
+    protected readonly GameStoreDbContext _context;
+    protected readonly DbSet<T> _dbSet;
     
     public Repository(GameStoreDbContext context)
     {
@@ -17,28 +18,22 @@ public class Repository<T> : IRepository<T> where T : class
     
     public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
     
-    public async Task<IEnumerable<T>> ListAsync(int? pageNumber = 1, int? pageSize = 10)
+    public async Task<IEnumerable<T>> ListAsync(int pageNumber = 1, int pageSize = 10)
     {
         IQueryable<T> query = _dbSet;
         
-        var safePageNumber = pageNumber ?? 1;
-        var safePageSize = pageSize ?? 10;
-        
-        var skip = (safePageNumber - 1) * safePageSize;
-        query = query.Skip(skip).Take(safePageSize);
+        var skip = (pageNumber - 1) * pageSize;
+        query = query.Skip(skip).Take(pageSize);
 
         return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate, int? pageNumber = 1, int? pageSize = 10)
+    public async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate, int pageNumber = 1, int pageSize = 10)
     {
         var query = _dbSet.Where(predicate);
-        
-        var safePageNumber = pageNumber ?? 1;
-        var safePageSize = pageSize ?? 10;
 
-        var skip = (safePageNumber - 1) * safePageSize;
-        query = query.Skip(skip).Take(safePageSize);
+        var skip = (pageNumber - 1) * pageSize;
+        query = query.Skip(skip).Take(pageSize);
 
         return await query.ToListAsync();
     }
