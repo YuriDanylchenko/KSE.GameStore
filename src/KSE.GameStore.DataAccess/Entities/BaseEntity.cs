@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace KSE.GameStore.ApplicationCore;
+namespace KSE.GameStore.DataAccess.Entities;
 
 public class BaseEntity<TKey>
 {

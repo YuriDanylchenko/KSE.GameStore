@@ -1,6 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore;
-
-namespace KSE.GameStore.DataAccess.Entities;
+﻿namespace KSE.GameStore.DataAccess.Entities;
 
 public class User : BaseEntity<Guid>
 {

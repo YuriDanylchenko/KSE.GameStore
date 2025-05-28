@@ -1,4 +1,5 @@
 using KSE.GameStore.ApplicationCore.Interfaces;
+using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Infrastructure;
@@ -20,6 +21,12 @@ builder.Services.AddDbContext<GameStoreDbContext>(options =>
         x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+
+builder.Services.AddScoped<IGenreService, GenreService>();
+
+builder.Services.AddScoped<Random>(_ => Random.Shared);
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -54,6 +61,7 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+app.MapControllers();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
