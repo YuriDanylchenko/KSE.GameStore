@@ -19,7 +19,7 @@ public class PlatformsController(PlatformsService service) : ControllerBase
     public async Task<ActionResult<Platform>> GetById(int id)
     {
         var platform = await service.GetByIdAsync(id);
-        if (platform == null)
+        if (platform is null)
             return NotFound();
         return Ok(platform);
     }

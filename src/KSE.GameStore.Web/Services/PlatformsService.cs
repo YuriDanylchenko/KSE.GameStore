@@ -3,6 +3,7 @@ using KSE.GameStore.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace KSE.GameStore.Web.Services;
+
 public class PlatformsService(GameStoreDbContext dbContext)
 {
     public async Task<List<Platform>> GetAllAsync() => await dbContext.Platforms.ToListAsync();

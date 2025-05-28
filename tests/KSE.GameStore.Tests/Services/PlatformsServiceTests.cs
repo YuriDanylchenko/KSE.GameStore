@@ -13,7 +13,7 @@ public class PlatformsServiceTests
             .Options);
 
     [Fact]
-    public async Task GetAllAsync_ReturnsAllPlatforms()
+    public async Task GetAll_ReturnsAllPlatforms()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
@@ -31,7 +31,7 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_ReturnsPlatform_WhenExists()
+    public async Task GetById_ReturnsPlatform_WhenExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
@@ -48,7 +48,7 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_ReturnsNull_WhenNotExists()
+    public async Task GetById_ReturnsNull_WhenNotExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
@@ -61,7 +61,7 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_AddsPlatform()
+    public async Task Create_AddsPlatform()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
@@ -75,7 +75,7 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_UpdatesPlatform_WhenExists()
+    public async Task Update_UpdatesPlatform_WhenExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
@@ -92,7 +92,7 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_ReturnsFalse_WhenNotExists()
+    public async Task Update_ReturnsFalse_WhenNotExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
@@ -104,7 +104,7 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_RemovesPlatform_WhenExists()
+    public async Task Delete_RemovesPlatform_WhenExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
@@ -121,7 +121,7 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_ReturnsFalse_WhenNotExists()
+    public async Task Delete_ReturnsFalse_WhenNotExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);

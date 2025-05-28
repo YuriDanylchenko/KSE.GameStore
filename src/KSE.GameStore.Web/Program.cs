@@ -12,19 +12,25 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<GameStoreDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("GameStoreDb"),
-        x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
+if (!builder.Environment.IsEnvironment("IntegrationTest"))
+{
+    builder.Services.AddDbContext<GameStoreDbContext>(options =>
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("GameStoreDb"),
+            x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
+}
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<PlatformsService>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.MapControllers();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggerMiddleware>();
@@ -38,3 +44,5 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.Run();
+
+public partial class Program;
