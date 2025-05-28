@@ -1,5 +1,6 @@
 ﻿using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Entities;
+using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +22,7 @@ public class PlatformsServiceTests
         context.Platforms.Add(new Platform { Name = "Xbox" });
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
         var result = await service.GetAllAsync();
 
@@ -39,7 +40,7 @@ public class PlatformsServiceTests
         context.Platforms.Add(platform);
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
         var result = await service.GetByIdAsync(platform.Id);
 
@@ -53,7 +54,7 @@ public class PlatformsServiceTests
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
 
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
         var result = await service.GetByIdAsync(99);
 
@@ -65,10 +66,9 @@ public class PlatformsServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
-        var platform = new Platform { Name = "Switch" };
-        var result = await service.CreateAsync(platform);
+        var result = await service.CreateAsync("Switch");
 
         Assert.Single(context.Platforms);
         Assert.Equal("Switch", result.Name);
@@ -83,9 +83,9 @@ public class PlatformsServiceTests
         context.Platforms.Add(platform);
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
-        var updated = await service.UpdateAsync(platform.Id, new Platform { Name = "New" });
+        var updated = await service.UpdateAsync(platform.Id, "New");
 
         Assert.True(updated);
         Assert.Equal("New", context.Platforms.Find(platform.Id)!.Name);
@@ -96,9 +96,9 @@ public class PlatformsServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
-        var updated = await service.UpdateAsync(1, new Platform { Name = "New" });
+        var updated = await service.UpdateAsync(1, "New" );
 
         Assert.False(updated);
     }
@@ -112,7 +112,7 @@ public class PlatformsServiceTests
         context.Platforms.Add(platform);
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
         var deleted = await service.DeleteAsync(platform.Id);
 
@@ -125,7 +125,7 @@ public class PlatformsServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
-        var service = new PlatformsService(context);
+        var service = new PlatformsService(new Repository<Platform, int>(context));
 
         var deleted = await service.DeleteAsync(1);
 

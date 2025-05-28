@@ -1,6 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore;
-
-namespace KSE.GameStore.DataAccess.Entities;
+﻿namespace KSE.GameStore.DataAccess.Entities;
 
 public class Game : BaseEntity<int>
 {
@@ -9,7 +7,7 @@ public class Game : BaseEntity<int>
     public int PublisherId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    
+
     public required Publisher Publisher { get; set; }
     public required ICollection<Genre> Genres { get; set; }
     public required ICollection<Platform> Platforms { get; set; }

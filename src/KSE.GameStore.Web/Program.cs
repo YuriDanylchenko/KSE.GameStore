@@ -25,7 +25,7 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
 }
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-builder.Services.AddScoped<PlatformsService>();
+builder.Services.AddScoped<IPlatformsService, PlatformsService>();
 builder.Services.AddControllers();
 
 var app = builder.Build();

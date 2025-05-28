@@ -14,20 +14,20 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
 
         builder.Property(g => g.Id)
             .HasColumnName("id");
-        
+
         builder.Property(g => g.Title)
             .HasColumnName("title")
             .IsRequired();
-        
+
         builder.Property(g => g.Description)
             .HasColumnName("description");
-        
+
         builder.Property(g => g.PublisherId)
             .HasColumnName("publisher_id");
-        
+
         builder.Property(g => g.CreatedAt)
             .HasColumnName("created_at");
-        
+
         builder.Property(g => g.UpdatedAt)
             .HasColumnName("updated_at");
 
@@ -48,7 +48,7 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
                     j.ToTable("game_genres");
                 }
             );
-        
+
         // Table "game_platforms" configuration
         builder.HasMany(g => g.Platforms)
             .WithMany(p => p.Games)
@@ -62,7 +62,7 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
                     j.ToTable("game_platforms");
                 }
             );
-        
+
         // Table "game_region_permissions" configurations
         builder.HasMany(g => g.RegionPermissions)
             .WithMany(r => r.Games)

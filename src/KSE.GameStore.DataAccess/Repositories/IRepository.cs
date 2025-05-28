@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
+using KSE.GameStore.DataAccess.Entities;
 
-namespace KSE.GameStore.ApplicationCore.Interfaces;
+namespace KSE.GameStore.DataAccess.Repositories;
 
 public interface IRepository<T, TKey> where T : BaseEntity<TKey>
 {

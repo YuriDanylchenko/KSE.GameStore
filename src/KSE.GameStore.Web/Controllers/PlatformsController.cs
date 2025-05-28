@@ -1,12 +1,13 @@
-﻿using KSE.GameStore.DataAccess.Entities;
-using KSE.GameStore.Web.Services;
+﻿using KSE.GameStore.ApplicationCore.Interfaces;
+using KSE.GameStore.ApplicationCore.Requests.Platforms;
+using KSE.GameStore.DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlatformsController(PlatformsService service) : ControllerBase
+public class PlatformsController(IPlatformsService service) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Platform>>> GetAll()
@@ -25,16 +26,16 @@ public class PlatformsController(PlatformsService service) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Platform>> Create(Platform platform)
+    public async Task<ActionResult<Platform>> Create(CreatePlatformRequest createPlatformRequest)
     {
-        var created = await service.CreateAsync(platform);
+        var created = await service.CreateAsync(createPlatformRequest.Name);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, Platform platform)
+    public async Task<IActionResult> Update(int id, UpdatePlatformRequest updatePlatformRequest)
     {
-        var updated = await service.UpdateAsync(id, platform);
+        var updated = await service.UpdateAsync(id, updatePlatformRequest.Name);
         if (!updated)
             return NotFound();
         return NoContent();

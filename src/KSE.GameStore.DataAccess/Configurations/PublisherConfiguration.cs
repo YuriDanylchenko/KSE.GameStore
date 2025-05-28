@@ -14,14 +14,14 @@ public class PublisherConfiguration : IEntityTypeConfiguration<Publisher>
 
         builder.Property(p => p.Id)
             .HasColumnName("id");
-        
+
         builder.Property(p => p.Name)
             .HasColumnName("name")
             .IsRequired();
-        
+
         builder.Property(p => p.WebsiteUrl)
             .HasColumnName("website_url");
-        
+
         builder.Property(p => p.Description)
             .HasColumnName("description");
     }

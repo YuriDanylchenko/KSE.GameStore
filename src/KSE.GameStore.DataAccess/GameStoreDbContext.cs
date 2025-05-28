@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace KSE.GameStore.DataAccess;
 
@@ -19,7 +19,7 @@ public class GameStoreDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Platform> Platforms { get; set; }
     public DbSet<Publisher> Publishers { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
