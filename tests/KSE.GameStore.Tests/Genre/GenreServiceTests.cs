@@ -13,7 +13,7 @@ public class GenreServiceTests
     public GenreServiceTests()
     {
         _mockRepo = new Mock<IRepository<DataAccess.Entities.Genre, int>>();
-        _service = new GenreService(_mockRepo.Object, new Random(0));
+        _service = new GenreService(_mockRepo.Object);
     }
 
     [Fact]

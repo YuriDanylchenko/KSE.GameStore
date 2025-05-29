@@ -7,12 +7,10 @@ namespace KSE.GameStore.ApplicationCore.Services;
 public class GenreService : IGenreService
 {
     private readonly IRepository<Genre, int> _genreRepository;
-    private readonly Random _random;
 
-    public GenreService(IRepository<Genre, int> genreRepository, Random random)
+    public GenreService(IRepository<Genre, int> genreRepository)
     {
         _genreRepository = genreRepository;
-        _random = random;
     }
 
 

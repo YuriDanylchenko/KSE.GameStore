@@ -24,8 +24,6 @@ builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 builder.Services.AddScoped<IGenreService, GenreService>();
 
-builder.Services.AddScoped<Random>(_ => Random.Shared);
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
