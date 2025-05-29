@@ -11,7 +11,7 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
     private readonly IRepository<Platform, int> _repository = repository;
     private readonly ILogger<PlatformsService> _logger = logger;
 
-    public async Task<List<Platform>> GetAllAsync() => [.. (await _repository.ListAsync())];
+    public async Task<List<Platform>> GetAllAsync() => [.. await _repository.ListAsync()];
 
     public async Task<Platform?> GetByIdAsync(int id)
     {
