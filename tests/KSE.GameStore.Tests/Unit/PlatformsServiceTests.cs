@@ -1,10 +1,13 @@
-﻿using KSE.GameStore.DataAccess;
+﻿using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 
-namespace KSE.GameStore.Tests.Services;
+namespace KSE.GameStore.Tests.Unit;
 
 public class PlatformsServiceTests
 {
@@ -12,6 +15,10 @@ public class PlatformsServiceTests
         new DbContextOptionsBuilder<GameStoreDbContext>()
             .UseInMemoryDatabase(databaseName: dbName)
             .Options);
+
+    private static PlatformsService CreatePlatformsService(GameStoreDbContext context) => new(
+        new Repository<Platform, int>(context),
+        new Mock<ILogger<PlatformsService>>().Object);
 
     [Fact]
     public async Task GetAll_ReturnsAllPlatforms()
@@ -22,8 +29,7 @@ public class PlatformsServiceTests
         context.Platforms.Add(new Platform { Name = "Xbox" });
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(new Repository<Platform, int>(context));
-
+        var service = CreatePlatformsService(context);
         var result = await service.GetAllAsync();
 
         Assert.Equal(2, result.Count);
@@ -40,7 +46,7 @@ public class PlatformsServiceTests
         context.Platforms.Add(platform);
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(new Repository<Platform, int>(context));
+        var service = CreatePlatformsService(context);
 
         var result = await service.GetByIdAsync(platform.Id);
 
@@ -49,16 +55,15 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task GetById_ReturnsNull_WhenNotExists()
+    public async Task GetById_ThrowsNotFoundException_WhenNotExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
 
-        var service = new PlatformsService(new Repository<Platform, int>(context));
+        var service = CreatePlatformsService(context);
 
-        var result = await service.GetByIdAsync(99);
-
-        Assert.Null(result);
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => service.GetByIdAsync(99));
+        Assert.Equal("Platform with id 99 not found.", ex.Message);
     }
 
     [Fact]
@@ -66,12 +71,12 @@ public class PlatformsServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
-        var service = new PlatformsService(new Repository<Platform, int>(context));
+        var service = CreatePlatformsService(context);
 
         var result = await service.CreateAsync("Switch");
 
         Assert.Single(context.Platforms);
-        Assert.Equal("Switch", result.Name);
+        Assert.Equal("Switch", context.Platforms.First().Name);
     }
 
     [Fact]
@@ -83,7 +88,7 @@ public class PlatformsServiceTests
         context.Platforms.Add(platform);
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(new Repository<Platform, int>(context));
+        var service = CreatePlatformsService(context);
 
         var updated = await service.UpdateAsync(platform.Id, "New");
 
@@ -92,15 +97,14 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task Update_ReturnsFalse_WhenNotExists()
+    public async Task Update_ThrowsNotFoundException_WhenNotExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
-        var service = new PlatformsService(new Repository<Platform, int>(context));
+        var service = CreatePlatformsService(context);
 
-        var updated = await service.UpdateAsync(1, "New" );
-
-        Assert.False(updated);
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => service.UpdateAsync(1, "New"));
+        Assert.Equal("Platform with id 1 not found.", ex.Message);
     }
 
     [Fact]
@@ -112,7 +116,7 @@ public class PlatformsServiceTests
         context.Platforms.Add(platform);
         await context.SaveChangesAsync();
 
-        var service = new PlatformsService(new Repository<Platform, int>(context));
+        var service = CreatePlatformsService(context);
 
         var deleted = await service.DeleteAsync(platform.Id);
 
@@ -121,14 +125,13 @@ public class PlatformsServiceTests
     }
 
     [Fact]
-    public async Task Delete_ReturnsFalse_WhenNotExists()
+    public async Task Delete_ThrowsNotFoundException_WhenNotExists()
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = CreateDbContext(dbName);
-        var service = new PlatformsService(new Repository<Platform, int>(context));
+        var service = CreatePlatformsService(context);
 
-        var deleted = await service.DeleteAsync(1);
-
-        Assert.False(deleted);
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => service.DeleteAsync(1));
+        Assert.Equal("Platform with id 1 not found.", ex.Message);
     }
 }

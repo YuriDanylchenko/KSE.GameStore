@@ -47,17 +47,15 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
         var newPlatform = new Platform { Name = "PlayStation" };
 
         var createResponse = await client.PostAsJsonAsync("/api/platforms", newPlatform);
-        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
-        var created = await createResponse.Content.ReadFromJsonAsync<Platform>();
-        Assert.NotNull(created);
-        Assert.Equal("PlayStation", created!.Name);
+        var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
+        Assert.True(createdId > 0);
 
-        var getResponse = await client.GetAsync($"/api/platforms/{created.Id}");
+        var getResponse = await client.GetAsync($"/api/platforms/{createdId}");
         getResponse.EnsureSuccessStatusCode();
         var fetched = await getResponse.Content.ReadFromJsonAsync<Platform>();
         Assert.NotNull(fetched);
-        Assert.Equal(created.Id, fetched!.Id);
         Assert.Equal("PlayStation", fetched.Name);
     }
 
@@ -67,13 +65,14 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
         var client = _factory.CreateClient();
         var platform = new Platform { Name = "Wii" };
         var createResponse = await client.PostAsJsonAsync("/api/platforms", platform);
-        var created = await createResponse.Content.ReadFromJsonAsync<Platform>();
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
 
         var updated = new Platform { Name = "Wii U" };
-        var updateResponse = await client.PutAsJsonAsync($"/api/platforms/{created!.Id}", updated);
-        Assert.Equal(HttpStatusCode.NoContent, updateResponse.StatusCode);
+        var updateResponse = await client.PutAsJsonAsync($"/api/platforms/{createdId}", updated);
+        Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
 
-        var getResponse = await client.GetAsync($"/api/platforms/{created!.Id}");
+        var getResponse = await client.GetAsync($"/api/platforms/{createdId}");
         var fetched = await getResponse.Content.ReadFromJsonAsync<Platform>();
         Assert.Equal("Wii U", fetched!.Name);
     }
@@ -84,12 +83,13 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
         var client = _factory.CreateClient();
         var platform = new Platform { Name = "Stadia" };
         var createResponse = await client.PostAsJsonAsync("/api/platforms", platform);
-        var created = await createResponse.Content.ReadFromJsonAsync<Platform>();
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
 
-        var deleteResponse = await client.DeleteAsync($"/api/platforms/{created!.Id}");
-        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        var deleteResponse = await client.DeleteAsync($"/api/platforms/{createdId}");
+        Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
 
-        var getResponse = await client.GetAsync($"/api/platforms/{created.Id}");
+        var getResponse = await client.GetAsync($"/api/platforms/{createdId}");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 

@@ -28,8 +28,8 @@ public class PlatformsController(IPlatformsService service) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Platform>> Create(CreatePlatformRequest createPlatformRequest)
     {
-        var created = await service.CreateAsync(createPlatformRequest.Name);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        var id = await service.CreateAsync(createPlatformRequest.Name);
+        return Ok(id);
     }
 
     [HttpPut("{id:int}")]
@@ -38,7 +38,7 @@ public class PlatformsController(IPlatformsService service) : ControllerBase
         var updated = await service.UpdateAsync(id, updatePlatformRequest.Name);
         if (!updated)
             return NotFound();
-        return NoContent();
+        return Ok();
     }
 
     [HttpDelete("{id:int}")]
@@ -47,6 +47,6 @@ public class PlatformsController(IPlatformsService service) : ControllerBase
         var deleted = await service.DeleteAsync(id);
         if (!deleted)
             return NotFound();
-        return NoContent();
+        return Ok();
     }
 }
