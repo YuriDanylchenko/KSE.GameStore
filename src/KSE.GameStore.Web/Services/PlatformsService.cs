@@ -1,4 +1,5 @@
-﻿using KSE.GameStore.ApplicationCore.Interfaces;
+﻿using KSE.GameStore.ApplicationCore.Domain;
+using KSE.GameStore.ApplicationCore.Interfaces;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
@@ -11,17 +12,21 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
     private readonly IRepository<Platform, int> _repository = repository;
     private readonly ILogger<PlatformsService> _logger = logger;
 
-    public async Task<List<Platform>> GetAllAsync() => [.. await _repository.ListAsync()];
+    public async Task<List<PlatformDto>> GetAllAsync()
+    {
+        var platforms = await _repository.ListAsync();
+        return [.. platforms.Select(p => new PlatformDto(p.Id, p.Name))];
+    }
 
-    public async Task<Platform?> GetByIdAsync(int id)
+    public async Task<PlatformDto> GetByIdAsync(int id)
     {
         var platform = await _repository.GetByIdAsync(id);
-        if (platform == null)
+        if (platform is null)
         {
             _logger.LogNotFound($"Platform/{id}");
             throw new NotFoundException($"Platform with id {id} not found.");
         }
-        return platform;
+        return new PlatformDto(platform.Id, platform.Name);
     }
 
     public async Task<int> CreateAsync(string name)
@@ -35,7 +40,7 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
     public async Task<bool> UpdateAsync(int id, string name)
     {
         var existing = await _repository.GetByIdAsync(id);
-        if (existing == null)
+        if (existing is null)
         {
             _logger.LogNotFound($"Platform/{id}");
             throw new NotFoundException($"Platform with id {id} not found.");

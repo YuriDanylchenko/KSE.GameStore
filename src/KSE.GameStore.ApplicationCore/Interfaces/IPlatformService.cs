@@ -1,4 +1,5 @@
-﻿using KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.ApplicationCore.Domain;
+
 namespace KSE.GameStore.ApplicationCore.Interfaces;
 
 /// <summary>
@@ -10,13 +11,13 @@ public interface IPlatformsService
     /// Retrieves all platforms from the data store.
     /// </summary>
     /// <returns></returns>
-    Task<List<Platform>> GetAllAsync();
+    Task<List<PlatformDto>> GetAllAsync();
     /// <summary>
     /// Retrieves a platform by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the platform.</param>
     /// <returns>A task that represents the asynchronous operation, containing the platform if found or null if not.</returns>
-    Task<Platform?> GetByIdAsync(int id);
+    Task<PlatformDto> GetByIdAsync(int id);
     /// <summary>
     /// Creates a new platform with the specified name.
     /// </summary>
