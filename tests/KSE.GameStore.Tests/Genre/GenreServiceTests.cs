@@ -1,4 +1,5 @@
-﻿using KSE.GameStore.ApplicationCore.Services;
+﻿using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using Moq;
@@ -31,27 +32,26 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task GetGenreByIdAsync_ReturnsNull_WhenIdInvalid()
+    public async Task GetGenreByIdAsync_ThrowsBadRequest_WhenIdInvalid()
     {
-        var result = await _service.GetGenreByIdAsync(0);
-        Assert.Null(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.GetGenreByIdAsync(0));
     }
 
     [Fact]
-    public async Task CreateGenreAsync_ReturnsNull_WhenNameIsEmpty()
+    public async Task CreateGenreAsync_ThrowsBadRequest_WhenNameIsEmpty()
     {
-        var result = await _service.CreateGenreAsync("");
-        Assert.Null(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateGenreAsync(""));
     }
 
     [Fact]
-    public async Task CreateGenreAsync_ReturnsNull_WhenGenreExists()
+    public async Task CreateGenreAsync_ThrowsBadRequest_WhenGenreExists()
     {
         _mockRepo.Setup(r => r.ListAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<DataAccess.Entities.Genre, bool>>>(), 1, 10))
             .ReturnsAsync(new List<DataAccess.Entities.Genre> { new() { Name = "Adventure" } });
 
-        var result = await _service.CreateGenreAsync("Adventure");
-        Assert.Null(result);
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateGenreAsync("Adventure"));
     }
 
     [Fact]
@@ -69,15 +69,27 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task UpdateGenreAsync_ReturnsNull_WhenGenreNotFound()
+    public async Task UpdateGenreAsync_ThrowsBadRequest_WhenIdInvalid()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGenreAsync(0, "RPG"));
+    }
+    
+    [Fact]
+    public async Task UpdateGenreAsync_ThrowsBadRequest_WhenNameInvalid()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGenreAsync(10, ""));
+    }
+
+    [Fact]
+    public async Task UpdateGenreAsync_ThrowsNotFound_WhenGenreNotFound()
     {
         _mockRepo.Setup(r => r.GetByIdAsync(42)).ReturnsAsync((DataAccess.Entities.Genre)null!);
 
-        var result = await _service.UpdateGenreAsync(42, "RPG");
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGenreAsync(42, "RPG"));
     }
-
+    
     [Fact]
     public async Task UpdateGenreAsync_UpdatesName_WhenGenreExists()
     {
@@ -90,13 +102,17 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task DeleteGenreAsync_ReturnsFalse_WhenGenreNotFound()
+    public async Task DeleteGenreAsync_ThrowsBadRequest_WhenIdInvalid()
+    {
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.DeleteGenreAsync(0));
+    }
+
+    [Fact]
+    public async Task DeleteGenreAsync_ThrowsNotFound_WhenGenreNotFound()
     {
         _mockRepo.Setup(r => r.GetByIdAsync(77)).ReturnsAsync((DataAccess.Entities.Genre)null!);
 
-        var result = await _service.DeleteGenreAsync(77);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(() => _service.DeleteGenreAsync(77));
     }
 
     [Fact]
@@ -104,6 +120,8 @@ public class GenreServiceTests
     {
         var genre = new DataAccess.Entities.Genre { Id = 99, Name = "Test" };
         _mockRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync(genre);
+        _mockRepo.Setup(r => r.Delete(genre));
+        _mockRepo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
         var result = await _service.DeleteGenreAsync(99);
 
