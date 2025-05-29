@@ -19,9 +19,6 @@ public class GenreController : ControllerBase
     public async Task<IActionResult> GetGenreById([FromRoute] int id)
     {
         var genre = await _genreService.GetGenreByIdAsync(id);
-        if (genre == null)
-            return NotFound();
-        
         return Ok(genre);
     }
 
@@ -29,9 +26,6 @@ public class GenreController : ControllerBase
     public async Task<IActionResult> CreateGenre([FromBody] CreateGenreRequest genreRequest)
     {
         var createdGenre = await _genreService.CreateGenreAsync(genreRequest.Name);
-        if (createdGenre == null)
-            return BadRequest("Genre could not be created");
-        
         return Ok(createdGenre);
     }
     
@@ -39,9 +33,6 @@ public class GenreController : ControllerBase
     public async Task<IActionResult> UpdateGenre([FromBody] UpdateGenreRequest genreRequest)
     {
         var updatedGenre = await _genreService.UpdateGenreAsync(genreRequest.Id, genreRequest.Name);
-        if (updatedGenre == null)
-            return NotFound();
-        
         return Ok(updatedGenre);
     }
     
@@ -49,9 +40,6 @@ public class GenreController : ControllerBase
     public async Task<IActionResult> DeleteGenre([FromRoute] int id)
     {
         var isDeleted = await _genreService.DeleteGenreAsync(id);
-        if (!isDeleted)
-            return NotFound();
-        
         return Ok(isDeleted);
     }
 }
