@@ -1,4 +1,5 @@
 ﻿using KSE.GameStore.ApplicationCore.Interfaces;
+using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 
@@ -17,7 +18,7 @@ public class GenreService : IGenreService
     public async Task<Genre?> GetGenreByIdAsync(int id)
     {
         if (id <= 0)
-            return null;
+            throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
         
         return await _genreRepository.GetByIdAsync(id);
     }
@@ -25,13 +26,13 @@ public class GenreService : IGenreService
     public async Task<Genre?> CreateGenreAsync(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return null;
+            throw new BadRequestException("Genre name cannot be null, empty, or whitespace.");
         
         var existing = await _genreRepository
             .ListAsync(g => g.Name.ToLower() == name.ToLower());
         
         if (existing.Any())
-            return null;
+            throw new BadRequestException($"A genre with the name '{name}' already exists.");
         
         var genre = new Genre
         {
@@ -47,13 +48,16 @@ public class GenreService : IGenreService
 
     public async Task<Genre?> UpdateGenreAsync(int id, string name)
     {
-        if (id <= 0 || string.IsNullOrWhiteSpace(name))
-            return null;
+        if (id <= 0)
+            throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
+
+        if (string.IsNullOrWhiteSpace(name))
+            throw new BadRequestException("Genre name cannot be null, empty, or whitespace.");
         
         var genre = await GetGenreByIdAsync(id);
         
         if (genre == null)
-            return null;
+            throw new NotFoundException($"Genre with ID {id} was not found.");
         
         genre.Name = name;
         
@@ -66,12 +70,12 @@ public class GenreService : IGenreService
     public async Task<bool> DeleteGenreAsync(int id)
     {
         if (id <= 0)
-            return false;
+            throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
         
         var genre = await GetGenreByIdAsync(id);
         
         if (genre == null)
-            return false;
+            throw new NotFoundException($"Genre with ID {id} was not found.");
         
         _genreRepository.Delete(genre);
         await _genreRepository.SaveChangesAsync();
