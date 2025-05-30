@@ -6,11 +6,11 @@ namespace KSE.GameStore.ApplicationCore.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GenreController : ControllerBase
+public class GenresController : ControllerBase
 {
     private readonly IGenreService _genreService;
 
-    public GenreController(IGenreService genreService)
+    public GenresController(IGenreService genreService)
     {
         _genreService = genreService;
     }
