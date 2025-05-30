@@ -1,12 +1,13 @@
 namespace KSE.GameStore.ApplicationCore.Models;
 
-public record GameDTO(
-    int Id,
-    string Title,
-    string? Description,
-    string Publisher,
-    IReadOnlyList<GenreDTO> Genres,
-    IReadOnlyList<PlatformDTO> Platforms,
-    GamePriceDTO Price,
-    IReadOnlyList<RegionDTO> RegionPermissions
-);
+public class GameDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string Publisher { get; set; } = string.Empty;
+    public IReadOnlyList<GenreDTO> Genres { get; set; } = new List<GenreDTO>();
+    public IReadOnlyList<PlatformDTO> Platforms { get; set; } = new List<PlatformDTO>();
+    public GamePriceDTO Price { get; set; } = null!;
+    public IReadOnlyList<RegionDTO> RegionPermissions { get; set; } = new List<RegionDTO>();
+}
