@@ -27,6 +27,11 @@ builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 builder.Services.AddScoped<IGameService, GameService>();
 
+builder.Services
+    .AddRouting(options => {
+        options.LowercaseUrls = true;
+    });
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
