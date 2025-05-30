@@ -60,6 +60,13 @@ public class GameService : IGameService
     
     public async Task<List<GameDTO>> GetAllGamesAsync(int? pageNumber, int? pageSize)
     {
+        // check for valid pagination parameters
+        if (pageNumber.HasValue && pageNumber <= 0)
+            throw new BadRequestException($"Page number must be a positive integer. Provided: {pageNumber}");
+        
+        if (pageSize.HasValue && pageSize <= 0)
+            throw new BadRequestException($"Page size must be a positive integer. Provided: {pageSize}");
+        
         var gameEntities = await _gameRepository.ListAsync(
             pageNumber ?? 1,
             pageSize   ?? 10,
