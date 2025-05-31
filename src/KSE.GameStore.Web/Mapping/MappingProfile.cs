@@ -47,13 +47,21 @@ public class MappingProfile : Profile
         // CreateGameRequest → Game
         CreateMap<CreateGameRequest, Game>()
             // scalars: Title, Description, PublisherId
+            .ForMember(d => d.Id, opt => opt.Ignore())
             .ForMember(d => d.Genres, o => o.Ignore())
             .ForMember(d => d.Platforms, o => o.Ignore())
             .ForMember(d => d.RegionPermissions, o => o.Ignore())
-            .ForMember(d => d.Prices, o => o.Ignore());
-
-        // CreateGamePriceRequest → GamePrice (if you ever map it directly)
-        CreateMap<CreateGamePriceRequest, GamePrice>();
+            .ForMember(d => d.Prices, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(d => d.UpdatedAt, o => o.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(d => d.Publisher, o => o.Ignore());
+        
+        CreateMap<CreateGamePriceRequest, GamePrice>()
+            .ForMember(d => d.StartDate, o => o.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(d => d.EndDate, o => o.MapFrom(_ => (DateTime?)null))
+            .ForMember(d => d.GameId, o => o.Ignore())
+            .ForMember(d => d.Game, o => o.Ignore())
+            .ForMember(d => d.Id, o => o.Ignore());
 
         // UpdateGameRequest → Game
         CreateMap<UpdateGameRequest, Game>()
@@ -61,9 +69,17 @@ public class MappingProfile : Profile
             .ForMember(d => d.Genres, o => o.Ignore())
             .ForMember(d => d.Platforms, o => o.Ignore())
             .ForMember(d => d.RegionPermissions, o => o.Ignore())
-            .ForMember(d => d.Prices, o => o.Ignore());
-
+            .ForMember(d => d.Prices, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(d => d.CreatedAt, o => o.Ignore()) 
+            .ForMember(d => d.Publisher, o => o.Ignore());
+        
         // UpdateGamePriceRequest → GamePrice
-        CreateMap<UpdateGamePriceRequest, GamePrice>();
+        CreateMap<UpdateGamePriceRequest, GamePrice>()
+            .ForMember(d => d.StartDate, o => o.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(d => d.EndDate, o => o.Ignore())
+            .ForMember(d => d.GameId, o => o.Ignore())
+            .ForMember(d => d.Game, o => o.Ignore())
+            .ForMember(d => d.Id, o => o.Ignore());
     }
 }

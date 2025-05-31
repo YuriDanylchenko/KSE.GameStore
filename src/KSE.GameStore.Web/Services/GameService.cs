@@ -15,6 +15,7 @@ public class GameService : IGameService
     private readonly IRepository<Genre, int> _genreRepository;
     private readonly IRepository<Platform, int> _platformRepository;
     private readonly IRepository<Region, int> _regionRepository;
+    private readonly IRepository<Publisher, int> _publisherRepository;
     private readonly ILogger<GameService> _logger;
     private readonly IMapper _mapper;
 
@@ -22,6 +23,7 @@ public class GameService : IGameService
         IRepository<Genre, int> genreRepository,
         IRepository<Platform, int> platformRepository,
         IRepository<Region, int> regionRepository,
+        IRepository<Publisher, int> publisherRepository,
         ILogger<GameService> logger,
         IMapper mapper)
 
@@ -30,6 +32,7 @@ public class GameService : IGameService
         _genreRepository = genreRepository;
         _platformRepository = platformRepository;
         _regionRepository = regionRepository;
+        _publisherRepository = publisherRepository;
         _logger = logger;
         _mapper = mapper;
     }
@@ -89,8 +92,15 @@ public class GameService : IGameService
             throw new BadRequestException($"Game with title '{createGameRequest.Title}' already exists.");
 
         var gameEntity = _mapper.Map<Game>(createGameRequest);
-        gameEntity.CreatedAt = DateTime.UtcNow;
-        gameEntity.UpdatedAt = DateTime.UtcNow;
+
+        var publisherEntity = await _publisherRepository.GetByIdAsync(createGameRequest.PublisherId);
+        if (publisherEntity == null)
+        {
+            _logger.LogNotFound($"publishers/{createGameRequest.PublisherId}");
+            throw new NotFoundException($"Publisher with ID {createGameRequest.PublisherId} not found.");
+        }
+
+        gameEntity.Publisher = publisherEntity;
 
         var genreEntities = await _genreRepository.ListAsync(g => createGameRequest.GenreIds.Contains(g.Id));
         gameEntity.Genres = genreEntities.ToList();
@@ -106,24 +116,18 @@ public class GameService : IGameService
         }
         else gameEntity.RegionPermissions = new List<Region>();
 
-        var priceEntity = new GamePrice
-        {
-            Value = createGameRequest.Price.Value,
-            Stock = createGameRequest.Price.Stock,
-            StartDate = DateTime.UtcNow,
-            EndDate = null,
-            Game = gameEntity
-        };
+        var priceEntity = _mapper.Map<GamePrice>(createGameRequest.Price);
+        priceEntity.Game = gameEntity;
         gameEntity.Prices = new List<GamePrice> { priceEntity };
 
         await _gameRepository.AddAsync(gameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var dto = await _gameRepository
+        var dto = _gameRepository
             .Query()
             .Where(g => g.Id == gameEntity.Id)
             .ProjectTo<GameDTO>(_mapper.ConfigurationProvider)
-            .SingleAsync();
+            .Single();
 
         return dto;
     }
@@ -153,7 +157,6 @@ public class GameService : IGameService
             throw new BadRequestException($"Game with title '{updateGameRequest.Title}' already exists.");
 
         _mapper.Map(updateGameRequest, gameEntity);
-        gameEntity.UpdatedAt = DateTime.UtcNow;
 
         gameEntity.Genres.Clear();
         var genreEntities = await _genreRepository.ListAsync(g => updateGameRequest.GenreIds.Contains(g.Id));
@@ -175,24 +178,18 @@ public class GameService : IGameService
         if (currentPriceEntity != null)
             currentPriceEntity.EndDate = DateTime.UtcNow;
 
-        var newPriceEntity = new GamePrice
-        {
-            Value = updateGameRequest.Price.Value,
-            Stock = updateGameRequest.Price.Stock,
-            StartDate = DateTime.UtcNow,
-            EndDate = null,
-            Game = gameEntity
-        };
+        var newPriceEntity = _mapper.Map<GamePrice>(updateGameRequest.Price);
+        newPriceEntity.Game = gameEntity;
         gameEntity.Prices.Add(newPriceEntity);
 
         _gameRepository.Update(gameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var dto = await _gameRepository
+        var dto = _gameRepository
             .Query()
             .Where(g => g.Id == gameEntity.Id)
             .ProjectTo<GameDTO>(_mapper.ConfigurationProvider)
-            .SingleAsync();
+            .Single();
 
         return dto;
     }
