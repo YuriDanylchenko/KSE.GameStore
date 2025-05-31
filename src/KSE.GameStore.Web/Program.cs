@@ -1,4 +1,5 @@
 using KSE.GameStore.ApplicationCore.Interfaces;
+using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Infrastructure;
@@ -26,6 +27,10 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IPlatformsService, PlatformsService>();
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<IGenreService, GenreService>();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();

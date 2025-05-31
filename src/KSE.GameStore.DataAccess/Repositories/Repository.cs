@@ -1,4 +1,4 @@
-﻿using KSE.GameStore.DataAccess.Entities;
+using KSE.GameStore.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -14,9 +14,9 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKe
         _context = context;
         _dbSet = _context.Set<T>();
     }
-
-    public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
-
+    
+    public async Task<T?> GetByIdAsync(TKey id) => await _dbSet.FindAsync(id);
+    
     public async Task<IEnumerable<T>> ListAsync(int pageNumber = 1, int pageSize = 10)
     {
         IQueryable<T> query = _dbSet;
