@@ -32,7 +32,7 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
     public async Task GetAll_ReturnsEmptyList_Initially()
     {
         var client = _factory.CreateClient();
-        var response = await client.GetAsync("/api/platforms");
+        var response = await client.GetAsync("/platforms");
         response.EnsureSuccessStatusCode();
 
         var platforms = await response.Content.ReadFromJsonAsync<List<Platform>>();
@@ -46,13 +46,13 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
         var client = _factory.CreateClient();
         var newPlatform = new Platform { Name = "PlayStation" };
 
-        var createResponse = await client.PostAsJsonAsync("/api/platforms", newPlatform);
+        var createResponse = await client.PostAsJsonAsync("/platforms", newPlatform);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
         var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
         Assert.True(createdId > 0);
 
-        var getResponse = await client.GetAsync($"/api/platforms/{createdId}");
+        var getResponse = await client.GetAsync($"/platforms/{createdId}");
         getResponse.EnsureSuccessStatusCode();
         var fetched = await getResponse.Content.ReadFromJsonAsync<Platform>();
         Assert.NotNull(fetched);
@@ -64,15 +64,15 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
     {
         var client = _factory.CreateClient();
         var platform = new Platform { Name = "Wii" };
-        var createResponse = await client.PostAsJsonAsync("/api/platforms", platform);
+        var createResponse = await client.PostAsJsonAsync("/platforms", platform);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
         var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
 
         var updated = new Platform { Name = "Wii U" };
-        var updateResponse = await client.PutAsJsonAsync($"/api/platforms/{createdId}", updated);
+        var updateResponse = await client.PutAsJsonAsync($"/platforms/{createdId}", updated);
         Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
 
-        var getResponse = await client.GetAsync($"/api/platforms/{createdId}");
+        var getResponse = await client.GetAsync($"/platforms/{createdId}");
         var fetched = await getResponse.Content.ReadFromJsonAsync<Platform>();
         Assert.Equal("Wii U", fetched!.Name);
     }
@@ -82,14 +82,14 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
     {
         var client = _factory.CreateClient();
         var platform = new Platform { Name = "Stadia" };
-        var createResponse = await client.PostAsJsonAsync("/api/platforms", platform);
+        var createResponse = await client.PostAsJsonAsync("/platforms", platform);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
         var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
 
-        var deleteResponse = await client.DeleteAsync($"/api/platforms/{createdId}");
+        var deleteResponse = await client.DeleteAsync($"/platforms/{createdId}");
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
 
-        var getResponse = await client.GetAsync($"/api/platforms/{createdId}");
+        var getResponse = await client.GetAsync($"/platforms/{createdId}");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 
@@ -98,7 +98,7 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
     {
         var client = _factory.CreateClient();
         var updated = new Platform { Name = "NonExistent" };
-        var response = await client.PutAsJsonAsync("/api/platforms/9999", updated);
+        var response = await client.PutAsJsonAsync("/platforms/9999", updated);
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
@@ -106,7 +106,7 @@ public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> 
     public async Task Delete_NotFound_Returns404()
     {
         var client = _factory.CreateClient();
-        var response = await client.DeleteAsync("/api/platforms/9999");
+        var response = await client.DeleteAsync("/platforms/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

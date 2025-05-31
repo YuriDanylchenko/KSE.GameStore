@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Text.Json;
 
-namespace KSE.GameStore.Tests;
+namespace KSE.GameStore.Tests.Integration;
 
 public class ExceptionMiddlewareTests
 {

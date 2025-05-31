@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace KSE.GameStore.Tests.Unit;
+namespace KSE.GameStore.Tests.UnitTests;
 
 public class PlatformsServiceTests
 {
