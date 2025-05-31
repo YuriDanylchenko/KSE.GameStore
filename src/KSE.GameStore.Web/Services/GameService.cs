@@ -212,4 +212,28 @@ public class GameService : IGameService
         _gameRepository.Delete(gameEntity);
         await _gameRepository.SaveChangesAsync();
     }
+
+    public async Task<List<GameDTO>> GetGamesByPlatformAsync(int platformId)
+    {
+        if (platformId <= 0)
+            throw new BadRequestException($"Platform ID must be a positive integer. Provided: {platformId}");
+
+        var gameEntities = await _gameRepository.ListAsync(
+            g => g.Platforms.Any(p => p.Id == platformId),
+            include: q => q
+                .Include(g => g.Publisher)
+                .Include(g => g.Genres)
+                .Include(g => g.Platforms)
+                .Include(g => g.Prices)
+                .Include(g => g.RegionPermissions)
+        );
+
+        if (gameEntities == null || !gameEntities.Any())
+        {
+            _logger.LogNotFound($"games/platform/{platformId}");
+            throw new NotFoundException($"No games found for platform ID {platformId}.");
+        }
+
+        return _mapper.Map<List<GameDTO>>(gameEntities);
+    }
 }
