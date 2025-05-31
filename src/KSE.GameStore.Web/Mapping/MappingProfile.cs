@@ -25,7 +25,7 @@ public class MappingProfile : Profile
             // scalars: Id, Title, Description
             // Publisher → PublisherDTO
             .ForMember(d => d.Publisher,
-                o => o.MapFrom(s => s.Publisher))
+                o => o.MapFrom(s => s.Publisher.Name))
             // full GenreDTO list
             .ForMember(d => d.Genres,
                 o => o.MapFrom(s => s.Genres))
