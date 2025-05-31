@@ -10,7 +10,7 @@ public class GenreServiceTests
 {
     private readonly Mock<IRepository<Genre, int>> _mockRepo;
     private readonly GenreService _service;
-    
+
     public GenreServiceTests()
     {
         _mockRepo = new Mock<IRepository<Genre, int>>();
@@ -79,7 +79,7 @@ public class GenreServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGenreAsync(0, "RPG"));
     }
-    
+
     [Fact]
     public async Task UpdateGenreAsync_ThrowsBadRequest_WhenNameInvalid()
     {
@@ -96,7 +96,7 @@ public class GenreServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGenreAsync(42, "RPG"));
     }
-    
+
     [Fact]
     public async Task UpdateGenreAsync_UpdatesName_WhenGenreExists()
     {

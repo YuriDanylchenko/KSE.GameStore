@@ -9,24 +9,30 @@ using System.Net.Http.Json;
 
 namespace KSE.GameStore.Tests.Integration;
 
-public class PlatformsControllerIntegrationTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly WebApplicationFactory<Program> _factory = factory.WithWebHostBuilder(builder =>
-    {
-        builder.UseEnvironment("IntegrationTest");
-        builder.ConfigureServices(services =>
-        {
-            var dbContext = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<GameStoreDbContext>));
-            if (dbContext != null)
-                services.Remove(dbContext);
+    private readonly WebApplicationFactory<Program> _factory;
 
-            services.AddDbContext<GameStoreDbContext>(options =>
+    public PlatformsControllerTests(WebApplicationFactory<Program> factory)
+    {
+        var dbName = $"IntegrationTestDb-{Guid.NewGuid()}";
+        _factory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.UseEnvironment("IntegrationTest");
+            builder.ConfigureServices(services =>
             {
-                options.UseInMemoryDatabase($"IntegrationTestDb");
+                var dbContext = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(DbContextOptions<GameStoreDbContext>));
+                if (dbContext != null)
+                    services.Remove(dbContext);
+
+                services.AddDbContext<GameStoreDbContext>(options =>
+                {
+                    options.UseInMemoryDatabase(dbName);
+                });
             });
         });
-    });
+    }
 
     [Fact]
     public async Task GetAll_ReturnsEmptyList_Initially()

@@ -28,14 +28,14 @@ public class GenresController : ControllerBase
         var createdGenre = await _genreService.CreateGenreAsync(genreRequest.Name);
         return Ok(createdGenre);
     }
-    
+
     [HttpPut]
     public async Task<IActionResult> UpdateGenre([FromBody] UpdateGenreRequest genreRequest)
     {
         var updatedGenre = await _genreService.UpdateGenreAsync(genreRequest.Id, genreRequest.Name);
         return Ok(updatedGenre);
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGenre([FromRoute] int id)
     {

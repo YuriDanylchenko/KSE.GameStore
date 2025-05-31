@@ -19,7 +19,7 @@ public class GenreService : IGenreService
     {
         if (id <= 0)
             throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
-        
+
         return await _genreRepository.GetByIdAsync(id);
     }
 
@@ -27,13 +27,13 @@ public class GenreService : IGenreService
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new BadRequestException("Genre name cannot be null, empty, or whitespace.");
-        
+
         var existing = await _genreRepository
             .ListAsync(g => g.Name.ToLower() == name.ToLower());
-        
+
         if (existing.Any())
             throw new BadRequestException($"A genre with the name '{name}' already exists.");
-        
+
         var genre = new Genre
         {
             Name = name,
@@ -53,14 +53,14 @@ public class GenreService : IGenreService
 
         if (string.IsNullOrWhiteSpace(name))
             throw new BadRequestException("Genre name cannot be null, empty, or whitespace.");
-        
+
         var genre = await GetGenreByIdAsync(id);
-        
+
         if (genre == null)
             throw new NotFoundException($"Genre with ID {id} was not found.");
-        
+
         genre.Name = name;
-        
+
         _genreRepository.Update(genre);
         await _genreRepository.SaveChangesAsync();
 
@@ -71,12 +71,12 @@ public class GenreService : IGenreService
     {
         if (id <= 0)
             throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
-        
+
         var genre = await GetGenreByIdAsync(id);
-        
+
         if (genre == null)
             throw new NotFoundException($"Genre with ID {id} was not found.");
-        
+
         _genreRepository.Delete(genre);
         await _genreRepository.SaveChangesAsync();
 

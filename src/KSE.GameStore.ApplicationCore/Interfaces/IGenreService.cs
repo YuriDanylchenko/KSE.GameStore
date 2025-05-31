@@ -1,6 +1,6 @@
 ﻿namespace KSE.GameStore.ApplicationCore.Interfaces;
-using Models;
 using DataAccess.Entities;
+using Models;
 
 /// <summary>
 /// Provides methods for managing game genres.
@@ -15,7 +15,7 @@ public interface IGenreService
     /// <exception cref="BadRequestException">Thrown when the id is invalid.</exception>
     /// <exception cref="NotFoundException">Thrown when the genre does not exist.</exception>
     Task<Genre?> GetGenreByIdAsync(int id);
-    
+
     /// <summary>
     /// Creates a new genre with the specified name.
     /// </summary>
@@ -23,7 +23,7 @@ public interface IGenreService
     /// <returns>The created <see cref="Genre"/> object.</returns>
     /// <exception cref="BadRequestException">Thrown when the name is invalid or already exists.</exception>
     Task<Genre?> CreateGenreAsync(string name);
-    
+
     /// <summary>
     /// Updates the name of an existing genre.
     /// </summary>
@@ -33,7 +33,7 @@ public interface IGenreService
     /// <exception cref="BadRequestException">Thrown when the ID or name is invalid.</exception>
     /// <exception cref="NotFoundException">Thrown when the genre does not exist.</exception>
     Task<Genre?> UpdateGenreAsync(int id, string name);
-    
+
     /// <summary>
     /// Deletes a genre by its unique identifier.
     /// </summary>
