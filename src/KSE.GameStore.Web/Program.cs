@@ -16,10 +16,13 @@ builder.Logging.AddDebug();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<GameStoreDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("GameStoreDb"),
-        x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
+if (!builder.Environment.IsEnvironment("IntegrationTest"))
+{
+    builder.Services.AddDbContext<GameStoreDbContext>(options =>
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("GameStoreDb"),
+            x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
+}
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
