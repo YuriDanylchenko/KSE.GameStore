@@ -63,7 +63,6 @@ public class GameService : IGameService
 
     public async Task<List<GameDTO>> GetAllGamesAsync(int? pageNumber, int? pageSize)
     {
-        // check for valid pagination parameters
         if (pageNumber.HasValue && pageNumber <= 0)
             throw new BadRequestException($"Page number must be a positive integer. Provided: {pageNumber}");
 
@@ -108,6 +107,10 @@ public class GameService : IGameService
         var platformEntities = await _platformRepository.ListAsync(p => createGameRequest.PlatformIds.Contains(p.Id));
         gameEntity.Platforms = platformEntities.ToList();
 
+        var priceEntity = _mapper.Map<GamePrice>(createGameRequest.Price);
+        priceEntity.Game = gameEntity;
+        gameEntity.Prices = new List<GamePrice> { priceEntity };
+
         if (createGameRequest.RegionPermissionIds != null)
         {
             var regionEntities =
@@ -116,18 +119,14 @@ public class GameService : IGameService
         }
         else gameEntity.RegionPermissions = new List<Region>();
 
-        var priceEntity = _mapper.Map<GamePrice>(createGameRequest.Price);
-        priceEntity.Game = gameEntity;
-        gameEntity.Prices = new List<GamePrice> { priceEntity };
-
         await _gameRepository.AddAsync(gameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var dto = _gameRepository
+        var dto = await _gameRepository
             .Query()
             .Where(g => g.Id == gameEntity.Id)
             .ProjectTo<GameDTO>(_mapper.ConfigurationProvider)
-            .Single();
+            .SingleAsync();
 
         return dto;
     }
@@ -158,6 +157,15 @@ public class GameService : IGameService
 
         _mapper.Map(updateGameRequest, gameEntity);
 
+        var publisherEntity = await _publisherRepository.GetByIdAsync(updateGameRequest.PublisherId);
+        if (publisherEntity == null)
+        {
+            _logger.LogNotFound($"publishers/{updateGameRequest.PublisherId}");
+            throw new NotFoundException($"Publisher with ID {updateGameRequest.PublisherId} not found.");
+        }
+
+        gameEntity.Publisher = publisherEntity;
+
         gameEntity.Genres.Clear();
         var genreEntities = await _genreRepository.ListAsync(g => updateGameRequest.GenreIds.Contains(g.Id));
         gameEntity.Genres = genreEntities.ToList();
@@ -165,14 +173,6 @@ public class GameService : IGameService
         gameEntity.Platforms.Clear();
         var platformEntities = await _platformRepository.ListAsync(p => updateGameRequest.PlatformIds.Contains(p.Id));
         gameEntity.Platforms = platformEntities.ToList();
-
-        gameEntity.RegionPermissions?.Clear();
-        if (updateGameRequest.RegionPermissionIds != null)
-        {
-            var regionEntities =
-                await _regionRepository.ListAsync(r => updateGameRequest.RegionPermissionIds.Contains(r.Id));
-            gameEntity.RegionPermissions = regionEntities.ToList();
-        }
 
         var currentPriceEntity = gameEntity.Prices.FirstOrDefault(p => p.EndDate == null);
         if (currentPriceEntity != null)
@@ -182,14 +182,22 @@ public class GameService : IGameService
         newPriceEntity.Game = gameEntity;
         gameEntity.Prices.Add(newPriceEntity);
 
+        gameEntity.RegionPermissions?.Clear();
+        if (updateGameRequest.RegionPermissionIds != null)
+        {
+            var regionEntities =
+                await _regionRepository.ListAsync(r => updateGameRequest.RegionPermissionIds.Contains(r.Id));
+            gameEntity.RegionPermissions = regionEntities.ToList();
+        }
+
         _gameRepository.Update(gameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var dto = _gameRepository
+        var dto = await _gameRepository
             .Query()
             .Where(g => g.Id == gameEntity.Id)
             .ProjectTo<GameDTO>(_mapper.ConfigurationProvider)
-            .Single();
+            .SingleAsync();
 
         return dto;
     }

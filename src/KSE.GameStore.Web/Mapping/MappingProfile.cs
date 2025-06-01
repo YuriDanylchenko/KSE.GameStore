@@ -55,7 +55,7 @@ public class MappingProfile : Profile
             .ForMember(d => d.CreatedAt, o => o.MapFrom(_ => DateTime.UtcNow))
             .ForMember(d => d.UpdatedAt, o => o.MapFrom(_ => DateTime.UtcNow))
             .ForMember(d => d.Publisher, o => o.Ignore());
-        
+
         CreateMap<CreateGamePriceRequest, GamePrice>()
             .ForMember(d => d.StartDate, o => o.MapFrom(_ => DateTime.UtcNow))
             .ForMember(d => d.EndDate, o => o.MapFrom(_ => (DateTime?)null))
@@ -71,9 +71,9 @@ public class MappingProfile : Profile
             .ForMember(d => d.RegionPermissions, o => o.Ignore())
             .ForMember(d => d.Prices, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(d => d.CreatedAt, o => o.Ignore()) 
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.Publisher, o => o.Ignore());
-        
+
         // UpdateGamePriceRequest → GamePrice
         CreateMap<UpdateGamePriceRequest, GamePrice>()
             .ForMember(d => d.StartDate, o => o.MapFrom(_ => DateTime.UtcNow))
