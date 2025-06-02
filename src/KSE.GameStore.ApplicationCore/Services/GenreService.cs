@@ -17,10 +17,12 @@ public class GenreService : IGenreService
 
     public async Task<Genre?> GetGenreByIdAsync(int id)
     {
-        if (id <= 0)
-            throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
+        var genre = await _genreRepository.GetByIdAsync(id);
         
-        return await _genreRepository.GetByIdAsync(id);
+        if (genre == null)
+            throw new NotFoundException($"Genre with ID {id} was not found.");
+        
+        return genre;
     }
 
     public async Task<Genre?> CreateGenreAsync(string name)
@@ -48,9 +50,6 @@ public class GenreService : IGenreService
 
     public async Task<Genre?> UpdateGenreAsync(int id, string name)
     {
-        if (id <= 0)
-            throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
-
         if (string.IsNullOrWhiteSpace(name))
             throw new BadRequestException("Genre name cannot be null, empty, or whitespace.");
         
@@ -69,9 +68,6 @@ public class GenreService : IGenreService
 
     public async Task<bool> DeleteGenreAsync(int id)
     {
-        if (id <= 0)
-            throw new BadRequestException($"Genre ID must be a positive integer. Provided: {id}");
-        
         var genre = await GetGenreByIdAsync(id);
         
         if (genre == null)
