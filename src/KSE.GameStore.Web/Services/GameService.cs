@@ -1,24 +1,25 @@
-using KSE.GameStore.Web.Infrastructure;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using KSE.GameStore.ApplicationCore.Interfaces;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.ApplicationCore.Requests.Games;
 using KSE.GameStore.DataAccess.Entities;
+using KSE.GameStore.DataAccess.Repositories;
+using KSE.GameStore.Web.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 
 namespace KSE.GameStore.Web.Services;
 
 public class GameService : IGameService
 {
-    private readonly IRepository<Game, int> _gameRepository;
+    private readonly IGameRepository _gameRepository;
     private readonly IRepository<Genre, int> _genreRepository;
     private readonly IRepository<Platform, int> _platformRepository;
     private readonly IRepository<Region, int> _regionRepository;
     private readonly ILogger<GameService> _logger;
     private readonly IMapper _mapper;
 
-    public GameService(IRepository<Game, int> gameRepository,
+    public GameService(IGameRepository gameRepository,
         IRepository<Genre, int> genreRepository,
         IRepository<Platform, int> platformRepository,
         IRepository<Region, int> regionRepository,
@@ -215,25 +216,9 @@ public class GameService : IGameService
 
     public async Task<List<GameDTO>> GetGamesByPlatformAsync(int platformId)
     {
-        if (platformId <= 0)
-            throw new BadRequestException($"Platform ID must be a positive integer. Provided: {platformId}");
+        _ = await _platformRepository.GetByIdAsync(platformId) 
+            ?? throw new NotFoundException($"Platform with ID {platformId} not found.");
 
-        var gameEntities = await _gameRepository.ListAsync(
-            g => g.Platforms.Any(p => p.Id == platformId),
-            include: q => q
-                .Include(g => g.Publisher)
-                .Include(g => g.Genres)
-                .Include(g => g.Platforms)
-                .Include(g => g.Prices)
-                .Include(g => g.RegionPermissions)
-        );
-
-        if (gameEntities == null || !gameEntities.Any())
-        {
-            _logger.LogNotFound($"games/platform/{platformId}");
-            throw new NotFoundException($"No games found for platform ID {platformId}.");
-        }
-
-        return _mapper.Map<List<GameDTO>>(gameEntities);
+        return await _gameRepository.GetGamesByPlatformAsync(platformId);
     }
 }

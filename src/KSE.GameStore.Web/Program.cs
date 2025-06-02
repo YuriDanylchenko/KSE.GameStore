@@ -21,6 +21,7 @@ builder.Services.AddDbContext<GameStoreDbContext>(options =>
         builder.Configuration.GetConnectionString("GameStoreDb"),
         x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
 
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
