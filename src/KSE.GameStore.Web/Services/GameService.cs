@@ -209,4 +209,18 @@ public class GameService : IGameService
         _gameRepository.Delete(gameEntity);
         await _gameRepository.SaveChangesAsync();
     }
+
+    public async Task<List<GameDTO>> GetGamesByGenreAsync(int genreId)
+    {
+        var genreEntity = await _genreRepository.GetByIdAsync(genreId);
+        if (genreEntity == null)
+        {
+            _logger.LogNotFound($"games/genre/{genreId}");
+            throw new NotFoundException($"Genre with ID {genreId} not found.");
+        }
+
+        var games = genreEntity.Games ?? new List<Game>();
+
+        return _mapper.Map<List<GameDTO>>(games.ToList());
+    }
 }

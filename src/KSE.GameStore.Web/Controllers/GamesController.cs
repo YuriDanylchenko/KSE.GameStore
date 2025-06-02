@@ -49,4 +49,11 @@ public class GamesController : ControllerBase
         await _gameService.DeleteGameAsync(id);
         return NoContent();
     }
+    
+    [HttpGet("/genre/{genreId:int}")]
+    public async Task<IActionResult> GetGamesByGenre(int genreId)
+    {
+        var game = await _gameService.GetGamesByGenreAsync(genreId);
+        return Ok(game);
+    }
 }

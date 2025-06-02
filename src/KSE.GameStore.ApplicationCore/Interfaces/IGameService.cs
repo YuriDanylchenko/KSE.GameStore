@@ -82,4 +82,11 @@ public interface IGameService
     /// Thrown when no game exists with the specified <paramref name="id"/>.
     /// </exception>
     Task DeleteGameAsync(int id);
+    
+    /// <summary>
+    /// Retrieves a list of games for a specific genre.
+    /// </summary>
+    /// <param name="genreId">The unique identifier of the genre.</param>
+    /// <returns>A list of <see cref="GameDTO"/> for the specified genre.</returns>
+    Task<List<GameDTO>> GetGamesByGenreAsync(int genreId);
 }
