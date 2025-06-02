@@ -37,7 +37,6 @@ public interface IGameService
     /// </exception>
     Task<GameDTO> GetGameByIdAsync(int id);
 
-
     /// <summary>
     /// Creates a new game using the provided data.
     /// </summary>

@@ -87,7 +87,7 @@ public class GameService : IGameService
     {
         // bad request for invalid data (fluent validation)
 
-        if (await _gameRepository.ExistsAsync(g => g.Title == createGameRequest.Title))
+        if (await _gameRepository.ExistsAsync(g => g.Title.ToLower() == createGameRequest.Title.ToLower()))
             throw new BadRequestException($"Game with title '{createGameRequest.Title}' already exists.");
 
         var gameEntity = _mapper.Map<Game>(createGameRequest);
@@ -152,7 +152,7 @@ public class GameService : IGameService
         }
 
         if (updateGameRequest.Title != gameEntity.Title &&
-            (await _gameRepository.ExistsAsync(g => g.Title == updateGameRequest.Title)))
+            await _gameRepository.ExistsAsync(g => g.Title.ToLower() == updateGameRequest.Title.ToLower()))
             throw new BadRequestException($"Game with title '{updateGameRequest.Title}' already exists.");
 
         _mapper.Map(updateGameRequest, gameEntity);
