@@ -39,9 +39,6 @@ public class GameService : IGameService
 
     public async Task<GameDTO> GetGameByIdAsync(int id)
     {
-        if (id <= 0)
-            throw new BadRequestException($"Game ID must be a positive integer. Provided: {id}");
-
         var gameEntity = await _gameRepository.GetByIdAsync(
             id,
             include: q => q
@@ -134,8 +131,6 @@ public class GameService : IGameService
     public async Task<GameDTO> UpdateGameAsync(UpdateGameRequest updateGameRequest)
     {
         // bad request for invalid data (fluent validation)
-        if (updateGameRequest.Id <= 0)
-            throw new BadRequestException($"Game ID must be a positive integer. Provided: {updateGameRequest.Id}");
 
         var gameEntity = await _gameRepository.GetByIdAsync(
             updateGameRequest.Id,
@@ -204,9 +199,6 @@ public class GameService : IGameService
 
     public async Task DeleteGameAsync(int id)
     {
-        if (id <= 0)
-            throw new BadRequestException($"Game ID must be a positive integer. Provided: {id}");
-
         var gameEntity = await _gameRepository.GetByIdAsync(id);
         if (gameEntity == null)
         {
