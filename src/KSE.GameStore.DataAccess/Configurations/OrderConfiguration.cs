@@ -15,20 +15,20 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.Id)
             .HasColumnName("id")
             .IsRequired();
-        
+
         builder.Property(o => o.UserId)
             .HasColumnName("user_id")
             .IsRequired();
-        
+
         builder.Property(o => o.Status)
             .HasColumnName("status")
             .HasConversion<int>()
             .IsRequired();
-        
+
         builder.Property(o => o.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
-        
+
         builder.Property(o => o.UpdatedAt)
             .HasColumnName("updated_at")
             .IsRequired();

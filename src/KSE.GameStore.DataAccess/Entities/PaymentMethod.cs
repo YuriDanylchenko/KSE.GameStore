@@ -2,7 +2,7 @@
 
 public enum PaymentMethod
 {
-    CreditCards = 0, 
-    IBoxTerminals = 1, 
+    CreditCards = 0,
+    IBoxTerminals = 1,
     IBAN = 2
 }

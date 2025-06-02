@@ -7,5 +7,5 @@ public class ServerException : System.Exception
         StatusCode = statusCode;
     }
 
-    public int StatusCode { get; }  
+    public int StatusCode { get; }
 }
