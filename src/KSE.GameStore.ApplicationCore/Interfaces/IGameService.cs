@@ -82,4 +82,11 @@ public interface IGameService
     /// Thrown when no game exists with the specified <paramref name="id"/>.
     /// </exception>
     Task DeleteGameAsync(int id);
+
+    /// <summary>
+    /// Retrieves a list of games for a specific platform.
+    /// </summary>
+    /// <param name="platformId">The unique identifier of the platform.</param>
+    /// <returns>A list of <see cref="GameDTO"/> for the specified platform.</returns>
+    Task<List<GameDTO>> GetGamesByPlatformAsync(int platformId);
 }
