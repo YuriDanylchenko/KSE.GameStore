@@ -1,17 +1,18 @@
-using KSE.GameStore.Web.Infrastructure;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using KSE.GameStore.ApplicationCore.Interfaces;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.ApplicationCore.Requests.Games;
 using KSE.GameStore.DataAccess.Entities;
+using KSE.GameStore.DataAccess.Repositories;
+using KSE.GameStore.Web.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 
 namespace KSE.GameStore.Web.Services;
 
 public class GameService : IGameService
 {
-    private readonly IRepository<Game, int> _gameRepository;
+    private readonly IGameRepository _gameRepository;
     private readonly IRepository<Genre, int> _genreRepository;
     private readonly IRepository<Platform, int> _platformRepository;
     private readonly IRepository<Region, int> _regionRepository;
@@ -19,7 +20,7 @@ public class GameService : IGameService
     private readonly ILogger<GameService> _logger;
     private readonly IMapper _mapper;
 
-    public GameService(IRepository<Game, int> gameRepository,
+    public GameService(IGameRepository gameRepository,
         IRepository<Genre, int> genreRepository,
         IRepository<Platform, int> platformRepository,
         IRepository<Region, int> regionRepository,
@@ -222,5 +223,12 @@ public class GameService : IGameService
         var games = genreEntity.Games ?? new List<Game>();
 
         return _mapper.Map<List<GameDTO>>(games.ToList());
+    }
+    public async Task<List<GameDTO>> GetGamesByPlatformAsync(int platformId)
+    {
+        _ = await _platformRepository.GetByIdAsync(platformId) 
+            ?? throw new NotFoundException($"Platform with ID {platformId} not found.");
+
+        return await _gameRepository.GetGamesByPlatformAsync(platformId);
     }
 }

@@ -24,6 +24,7 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
             x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
 }
 
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
