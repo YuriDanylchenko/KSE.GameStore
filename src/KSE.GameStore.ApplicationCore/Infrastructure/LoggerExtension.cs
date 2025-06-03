@@ -1,4 +1,6 @@
-﻿namespace KSE.GameStore.Web.Infrastructure;
+﻿using Microsoft.Extensions.Logging;
+
+namespace KSE.GameStore.ApplicationCore.Infrastructure;
 
 public static class LoggerExtension
 {

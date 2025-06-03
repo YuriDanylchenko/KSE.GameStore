@@ -1,7 +1,8 @@
 using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.ApplicationCore.Responses;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
-namespace KSE.GameStore.Web.Infrastructure;
+namespace KSE.GameStore.ApplicationCore.Infrastructure;
 
 public class ExceptionMiddleware
 {
@@ -39,10 +40,10 @@ public class ExceptionMiddleware
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
 
-        await context.Response.WriteAsJsonAsync(new ErrorResponse
-        {
-            Message = message,
-            Status = statusCode
-        });
+        await context.Response.WriteAsJsonAsync(new Error
+        (
+            statusCode,
+            message
+        ));
     }
 }

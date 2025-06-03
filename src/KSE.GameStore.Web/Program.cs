@@ -1,9 +1,7 @@
-using KSE.GameStore.ApplicationCore.Interfaces;
+using KSE.GameStore.ApplicationCore.Infrastructure;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Repositories;
-using KSE.GameStore.Web.Infrastructure;
-using KSE.GameStore.Web.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

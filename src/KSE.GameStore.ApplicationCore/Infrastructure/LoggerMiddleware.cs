@@ -1,4 +1,7 @@
-﻿namespace KSE.GameStore.Web.Infrastructure;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+namespace KSE.GameStore.ApplicationCore.Infrastructure;
 
 public class LoggerMiddleware(RequestDelegate next, ILogger<LoggerMiddleware> logger)
 {
