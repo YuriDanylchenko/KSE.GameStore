@@ -1,6 +1,5 @@
+using KSE.GameStore.ApplicationCore.Infrastructure;
 using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.ApplicationCore.Responses;
-using KSE.GameStore.Web.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Text.Json;
 
-namespace KSE.GameStore.Tests.Integration;
+namespace KSE.GameStore.Tests.IntegrationTests;
 
 public class ExceptionMiddlewareTests
 {
@@ -31,10 +30,10 @@ public class ExceptionMiddlewareTests
             }));
     }
 
-    private async Task<ErrorResponse> GetErrorResponse(HttpResponseMessage response)
+    private async Task<Error> GetErrorResponse(HttpResponseMessage response)
     {
         var jsonString = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<ErrorResponse>(jsonString, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<Error>(jsonString, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;

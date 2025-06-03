@@ -1,8 +1,8 @@
-﻿using KSE.GameStore.ApplicationCore.Interfaces;
-using KSE.GameStore.ApplicationCore.Requests.Genre;
+﻿using KSE.GameStore.ApplicationCore.Services;
+using KSE.GameStore.Web.Requests.Genre;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KSE.GameStore.ApplicationCore.Controllers;
+namespace KSE.GameStore.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]

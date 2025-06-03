@@ -1,6 +1,7 @@
-﻿namespace KSE.GameStore.ApplicationCore.Interfaces;
-using DataAccess.Entities;
-using Models;
+﻿using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.DataAccess.Entities;
+
+namespace KSE.GameStore.ApplicationCore.Services;
 
 /// <summary>
 /// Provides methods for managing game genres.

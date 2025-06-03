@@ -1,8 +1,8 @@
 ﻿using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
-using KSE.GameStore.Web.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;

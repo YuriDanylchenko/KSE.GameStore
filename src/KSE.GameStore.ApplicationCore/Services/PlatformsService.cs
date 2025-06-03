@@ -1,11 +1,9 @@
-﻿using KSE.GameStore.ApplicationCore.Domain;
-using KSE.GameStore.ApplicationCore.Interfaces;
-using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
-using KSE.GameStore.Web.Infrastructure;
+using Microsoft.Extensions.Logging;
 
-namespace KSE.GameStore.Web.Services;
+namespace KSE.GameStore.ApplicationCore.Services;
 
 public class PlatformsService(IRepository<Platform, int> repository, ILogger<PlatformsService> logger) : IPlatformsService
 {
@@ -21,12 +19,9 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
     public async Task<PlatformDto> GetByIdAsync(int id)
     {
         var platform = await _repository.GetByIdAsync(id);
-        if (platform is null)
-        {
-            _logger.LogNotFound($"Platform/{id}");
-            throw new NotFoundException($"Platform with id {id} not found.");
-        }
-        return new PlatformDto(platform.Id, platform.Name);
+        return platform is null
+            ? throw new NotFoundException($"Platform with id {id} not found.")
+            : new PlatformDto(platform.Id, platform.Name);
     }
 
     public async Task<int> CreateAsync(string name)
@@ -39,12 +34,8 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
 
     public async Task<bool> UpdateAsync(int id, string name)
     {
-        var existing = await _repository.GetByIdAsync(id);
-        if (existing is null)
-        {
-            _logger.LogNotFound($"Platform/{id}");
+        var existing = await _repository.GetByIdAsync(id) ??
             throw new NotFoundException($"Platform with id {id} not found.");
-        }
         existing.Name = name;
         _repository.Update(existing);
         await _repository.SaveChangesAsync();
@@ -53,12 +44,8 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var existing = await _repository.GetByIdAsync(id);
-        if (existing == null)
-        {
-            _logger.LogNotFound($"Platform/{id}");
+        var existing = await _repository.GetByIdAsync(id) ??
             throw new NotFoundException($"Platform with id {id} not found.");
-        }
         _repository.Delete(existing);
         await _repository.SaveChangesAsync();
         return true;

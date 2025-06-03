@@ -1,6 +1,6 @@
-﻿using KSE.GameStore.ApplicationCore.Domain;
+﻿using KSE.GameStore.ApplicationCore.Models;
 
-namespace KSE.GameStore.ApplicationCore.Interfaces;
+namespace KSE.GameStore.ApplicationCore.Services;
 
 /// <summary>
 /// Defines methods for managing platform entities, including retrieval, creation, updating, and deletion operations.

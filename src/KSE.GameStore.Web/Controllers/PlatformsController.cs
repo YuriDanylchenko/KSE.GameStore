@@ -1,6 +1,6 @@
-﻿using KSE.GameStore.ApplicationCore.Domain;
-using KSE.GameStore.ApplicationCore.Interfaces;
-using KSE.GameStore.ApplicationCore.Requests.Platforms;
+﻿using KSE.GameStore.ApplicationCore.Services;
+using KSE.GameStore.Web.Requests.Platforms;
+using KSE.GameStore.Web.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;
@@ -10,18 +10,18 @@ namespace KSE.GameStore.Web.Controllers;
 public class PlatformsController(IPlatformsService service) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PlatformDto>>> GetAllPlatforms()
+    public async Task<ActionResult<IEnumerable<PlatformResponse>>> GetAllPlatforms()
     {
         var platforms = await service.GetAllAsync();
-        var dtos = platforms.Select(p => new PlatformDto(p.Id, p.Name));
+        var dtos = platforms.Select(p => new PlatformResponse(p.Id, p.Name));
         return Ok(dtos);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<PlatformDto>> GetByIdPlatforms(int id)
+    public async Task<ActionResult<PlatformResponse>> GetByIdPlatforms(int id)
     {
         var platform = await service.GetByIdAsync(id);
-        return Ok(new PlatformDto(platform.Id, platform.Name));
+        return Ok(new PlatformResponse(platform.Id, platform.Name));
     }
 
     [HttpPost]
