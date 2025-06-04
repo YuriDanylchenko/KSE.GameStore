@@ -34,8 +34,11 @@ public class GenreServiceTests
     [Fact]
     public async Task GetGenreByIdAsync_ThrowsBadRequest_WhenIdInvalid()
     {
+        // Act
+        _mockRepo.Setup(r => r.GetByIdAsync(77)).ReturnsAsync((Genre)null!);
+
         // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _service.GetGenreByIdAsync(0));
+        await Assert.ThrowsAsync<NotFoundException>(() => _service.GetGenreByIdAsync(0));
     }
 
     [Fact]
@@ -77,7 +80,7 @@ public class GenreServiceTests
     public async Task UpdateGenreAsync_ThrowsBadRequest_WhenIdInvalid()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGenreAsync(0, "RPG"));
+        await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGenreAsync(0, "RPG"));
     }
 
     [Fact]
@@ -115,7 +118,7 @@ public class GenreServiceTests
     public async Task DeleteGenreAsync_ThrowsBadRequest_WhenIdInvalid()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _service.DeleteGenreAsync(0));
+        await Assert.ThrowsAsync<NotFoundException>(() => _service.DeleteGenreAsync(0));
     }
 
     [Fact]
