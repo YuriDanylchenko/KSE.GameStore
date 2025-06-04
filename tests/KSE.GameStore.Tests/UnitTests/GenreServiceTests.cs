@@ -10,7 +10,7 @@ public class GenreServiceTests
 {
     private readonly Mock<IRepository<Genre, int>> _mockRepo;
     private readonly GenreService _service;
-    
+
     public GenreServiceTests()
     {
         _mockRepo = new Mock<IRepository<Genre, int>>();
@@ -32,13 +32,13 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task GetGenreByIdAsync_ThrowsNotFound_WhenGenreNotFound()
+    public async Task GetGenreByIdAsync_ThrowsBadRequest_WhenIdInvalid()
     {
         // Act
         _mockRepo.Setup(r => r.GetByIdAsync(77)).ReturnsAsync((Genre)null!);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _service.GetGenreByIdAsync(77));
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.GetGenreByIdAsync(0));
     }
 
     [Fact]
@@ -75,7 +75,14 @@ public class GenreServiceTests
         Assert.NotNull(result);
         Assert.Equal("NewGenre", result.Name);
     }
-    
+
+    [Fact]
+    public async Task UpdateGenreAsync_ThrowsBadRequest_WhenIdInvalid()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGenreAsync(0, "RPG"));
+    }
+
     [Fact]
     public async Task UpdateGenreAsync_ThrowsBadRequest_WhenNameInvalid()
     {
@@ -92,7 +99,7 @@ public class GenreServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGenreAsync(42, "RPG"));
     }
-    
+
     [Fact]
     public async Task UpdateGenreAsync_UpdatesName_WhenGenreExists()
     {
@@ -105,6 +112,13 @@ public class GenreServiceTests
 
         // Assert
         Assert.Equal("New", genre.Name);
+    }
+
+    [Fact]
+    public async Task DeleteGenreAsync_ThrowsBadRequest_WhenIdInvalid()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<BadRequestException>(() => _service.DeleteGenreAsync(0));
     }
 
     [Fact]

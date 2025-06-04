@@ -14,19 +14,19 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 
         builder.Property(p => p.Id)
             .HasColumnName("id");
-        
+
         builder.Property(p => p.OrderId)
             .HasColumnName("order_id");
-        
+
         builder.Property(p => p.PaymentMethod)
             .HasColumnName("payment_method")
             .HasConversion<int>()
             .IsRequired();
-        
+
         builder.Property(p => p.Confirmed)
             .HasColumnName("confirmed")
             .IsRequired();
-        
+
         builder.Property(p => p.PayedAt)
             .HasColumnName("payed_at")
             .IsRequired();

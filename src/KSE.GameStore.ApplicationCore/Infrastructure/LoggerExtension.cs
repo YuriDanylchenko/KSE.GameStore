@@ -1,4 +1,6 @@
-﻿namespace KSE.GameStore.Web.Infrastructure;
+﻿using Microsoft.Extensions.Logging;
+
+namespace KSE.GameStore.ApplicationCore.Infrastructure;
 
 public static class LoggerExtension
 {
@@ -8,7 +10,7 @@ public static class LoggerExtension
     }
 
     public static void LogNotFound(this ILogger logger, string path, string additionalInfo)
-    { 
+    {
         logger.LogWarning("404 Not Found: Path '{Path}' was not found. Info: {Info}", path, additionalInfo);
     }
 

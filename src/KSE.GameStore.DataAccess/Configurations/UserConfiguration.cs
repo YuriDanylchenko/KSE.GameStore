@@ -20,12 +20,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("name")
             .HasMaxLength(256)
             .IsRequired();
-        
+
         builder.Property(u => u.Email)
             .HasColumnName("email")
             .HasMaxLength(256)
             .IsRequired();
-        
+
         builder.Property(u => u.Role)
             .HasColumnName("role")
             .HasMaxLength(256)
