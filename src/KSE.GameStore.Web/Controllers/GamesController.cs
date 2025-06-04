@@ -1,5 +1,5 @@
-using KSE.GameStore.ApplicationCore.Interfaces;
-using KSE.GameStore.ApplicationCore.Requests.Games;
+using KSE.GameStore.ApplicationCore.Services;
+using KSE.GameStore.ApplicationCore.Mapping.Games;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;

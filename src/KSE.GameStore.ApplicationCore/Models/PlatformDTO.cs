@@ -1,6 +1,3 @@
-namespace KSE.GameStore.ApplicationCore.Models;
+﻿namespace KSE.GameStore.ApplicationCore.Models;
 
-public record PlatformDTO(
-    int Id,
-    string Name
-);
+public record PlatformDTO(int Id, string Name);

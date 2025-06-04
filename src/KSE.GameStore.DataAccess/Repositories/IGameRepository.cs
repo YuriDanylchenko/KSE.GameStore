@@ -1,9 +1,7 @@
-﻿using KSE.GameStore.ApplicationCore.Interfaces;
-using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.DataAccess.Entities;
+﻿using KSE.GameStore.DataAccess.Entities;
 
 namespace KSE.GameStore.DataAccess.Repositories;
-public interface IGameRepository : IRepository<Game, int>
+public interface IGameRepository : IRepositoryOld<Game, int>
 {
-    Task<List<GameDTO>> GetGamesByPlatformAsync(int platformId); 
+    Task<List<Game>> GetGamesByPlatformAsync(int platformId); 
 }

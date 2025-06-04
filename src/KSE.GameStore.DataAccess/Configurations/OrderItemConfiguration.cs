@@ -14,16 +14,16 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 
         builder.Property(oi => oi.Id)
             .HasColumnName("id");
-        
+
         builder.Property(oi => oi.OrderId)
             .HasColumnName("order_id");
-        
+
         builder.Property(oi => oi.GameId)
             .HasColumnName("game_id");
-        
+
         builder.Property(oi => oi.Price)
             .HasColumnName("price");
-        
+
         builder.Property(oi => oi.Quantity)
             .HasColumnName("quantity");
 

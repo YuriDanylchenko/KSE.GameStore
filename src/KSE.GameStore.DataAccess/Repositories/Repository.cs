@@ -1,15 +1,14 @@
-﻿using System.Linq.Expressions;
-using KSE.GameStore.ApplicationCore;
-using KSE.GameStore.ApplicationCore.Interfaces;
+using KSE.GameStore.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace KSE.GameStore.DataAccess.Repositories;
 
-public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKey>
+public class Repository<T, TKey> : IRepositoryOld<T, TKey> where T : BaseEntity<TKey>
 {
     protected readonly GameStoreDbContext _context;
     protected readonly DbSet<T> _dbSet;
-    
+
     public Repository(GameStoreDbContext context)
     {
         _context = context;

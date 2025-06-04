@@ -14,11 +14,11 @@ public class RegionConfiguration : IEntityTypeConfiguration<Region>
 
         builder.Property(r => r.Id)
             .HasColumnName("id");
-        
+
         builder.Property(r => r.Code)
             .HasColumnName("code")
             .IsRequired();
-        
+
         builder.Property(r => r.Name)
             .HasColumnName("name")
             .IsRequired();

@@ -14,19 +14,19 @@ public class GamePriceConfiguration : IEntityTypeConfiguration<GamePrice>
 
         builder.Property(gp => gp.Id)
             .HasColumnName("id");
-        
+
         builder.Property(gp => gp.GameId)
             .HasColumnName("game_id");
-        
+
         builder.Property(gp => gp.Value)
             .HasColumnName("price_value");
-        
+
         builder.Property(gp => gp.Stock)
             .HasColumnName("stock");
-        
+
         builder.Property(gp => gp.StartDate)
             .HasColumnName("start_date");
-        
+
         builder.Property(gp => gp.EndDate)
             .HasColumnName("end_date");
 
