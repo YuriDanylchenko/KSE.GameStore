@@ -26,11 +26,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(256)
             .IsRequired();
 
-        builder.Property(u => u.Role)
-            .HasColumnName("role")
-            .HasMaxLength(256)
-            .IsRequired();
-
         builder.Property(u => u.RegionId)
             .HasColumnName("region_id")
             .IsRequired();
@@ -38,5 +33,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(u => u.Region)
             .WithMany(r => r.Users)
             .HasForeignKey(u => u.RegionId);
+
+        builder.HasMany(u => u.UserRoles)
+            .WithOne(ur => ur.User)
+            .HasForeignKey(ur => ur.UserId);
     }
 }
