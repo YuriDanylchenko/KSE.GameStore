@@ -1,6 +1,7 @@
 namespace KSE.GameStore.ApplicationCore.Models;
 
-public record GenreDTO(
-    int Id,
-    string Name
-);
+public class GenreDTO
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+}
