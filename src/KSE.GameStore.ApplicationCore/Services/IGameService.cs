@@ -1,11 +1,10 @@
 using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.ApplicationCore.Mapping.Games;
 using KSE.GameStore.DataAccess.Entities;
 
 namespace KSE.GameStore.ApplicationCore.Services;
 
 /// <summary>
-/// Provides methods for managing games.
+/// Provides methods for managing games and their related entities.
 /// </summary>
 public interface IGameService
 {
@@ -13,61 +12,75 @@ public interface IGameService
     /// Retrieves a paginated list of all games.
     /// </summary>
     /// <param name="pageNumber">
-    /// The 1-based page number to retrieve. If <see langword="null"/>, defaults to <c>1</c>.
+    /// The 1-based page number to retrieve. If null, defaults to 1.
     /// </param>
     /// <param name="pageSize">
-    /// The number of items per page. If <see langword="null"/>, defaults to <c>10</c>.
+    /// The number of items per page. If null, defaults to 10.
     /// </param>
     /// <returns>
     /// A list of <see cref="GameDTO"/> representing the requested page of games.
     /// </returns>
+    /// <exception cref="BadRequestException">
+    /// Thrown when either parameter is less than or equal to zero.
+    /// </exception>
     Task<List<GameDTO>> GetAllGamesAsync(int? pageNumber, int? pageSize);
 
     /// <summary>
-    /// Retrieves a game by its unique identifier.
+    /// Retrieves a game by its unique identifier with all related entities.
     /// </summary>
     /// <param name="id">The unique identifier of the game.</param>
     /// <returns>
-    /// The <see cref="GameDTO"/> with the specified ID.
+    /// The complete <see cref="GameDTO"/> with the specified ID including publisher,
+    /// genres, platforms, current price, and region permissions.
     /// </returns>
     /// <exception cref="BadRequestException">
-    /// Thrown when <paramref name="id"/> is less than or equal to zero.
+    /// Thrown when id is less than or equal to zero.
     /// </exception>
     /// <exception cref="NotFoundException">
-    /// Thrown when no game exists with the specified <paramref name="id"/>.
+    /// Thrown when no game exists with the specified id.
     /// </exception>
     Task<GameDTO> GetGameByIdAsync(int id);
 
     /// <summary>
-    /// Creates a new game using the provided data.
+    /// Creates a new game with all specified relationships.
     /// </summary>
-    /// <param name="createGameRequest">
-    /// A <see cref="CreateGameRequest"/> containing the details of the game to create.
+    /// <param name="gameDto">
+    /// The <see cref="GameDTO"/> containing the game details and related entity IDs.
     /// </param>
     /// <returns>
-    /// The newly created <see cref="GameDTO"/>, including its assigned ID.
+    /// The newly created <see cref="GameDTO"/> with all relationships populated.
     /// </returns>
     /// <exception cref="BadRequestException">
-    /// Thrown when the request data is invalid or a game with the same title already exists.
-    /// </exception>
-    Task<GameDTO> CreateGameAsync(CreateGameRequest createGameRequest);
-
-    /// <summary>
-    /// Updates an existing game with the provided data.
-    /// </summary>
-    /// <param name="updateGameRequest">
-    /// An <see cref="UpdateGameRequest"/> containing the ID of the game to update and the new values.
-    /// </param>
-    /// <returns>
-    /// The updated <see cref="GameDTO"/> reflecting the applied changes.
-    /// </returns>
-    /// <exception cref="BadRequestException">
-    /// Thrown when the request data is invalid or the updated title conflicts with another game.
+    /// Thrown when:
+    /// - A game with the same title already exists
+    /// - Required fields are missing or invalid
     /// </exception>
     /// <exception cref="NotFoundException">
-    /// Thrown when no game exists with the ID specified in <paramref name="updateGameRequest"/>.
+    /// Thrown when referenced entities (publisher, genres, etc.) are not found.
     /// </exception>
-    Task<GameDTO> UpdateGameAsync(UpdateGameRequest updateGameRequest);
+    Task<GameDTO> CreateGameAsync(GameDTO gameDto);
+
+    /// <summary>
+    /// Updates an existing game and its relationships.
+    /// Creates a new price entry while archiving the previous price.
+    /// </summary>
+    /// <param name="gameDto">
+    /// The <see cref="GameDTO"/> containing updated game details and relationship IDs.
+    /// </param>
+    /// <returns>
+    /// The updated <see cref="GameDTO"/> with all relationships populated.
+    /// </returns>
+    /// <exception cref="BadRequestException">
+    /// Thrown when:
+    /// - The new title conflicts with another game
+    /// - Required fields are missing or invalid
+    /// </exception>
+    /// <exception cref="NotFoundException">
+    /// Thrown when:
+    /// - The game to update doesn't exist
+    /// - Referenced entities (publisher, genres, etc.) are not found
+    /// </exception>
+    Task<GameDTO> UpdateGameAsync(GameDTO gameDto);
 
     /// <summary>
     /// Deletes a game by its unique identifier.
@@ -77,24 +90,34 @@ public interface IGameService
     /// A task representing the asynchronous delete operation.
     /// </returns>
     /// <exception cref="BadRequestException">
-    /// Thrown when the <paramref name="id"/> is less than or equal to zero.
+    /// Thrown when id is less than or equal to zero.
     /// </exception>
     /// <exception cref="NotFoundException">
-    /// Thrown when no game exists with the specified <paramref name="id"/>.
+    /// Thrown when no game exists with the specified id.
     /// </exception>
     Task DeleteGameAsync(int id);
     
     /// <summary>
-    /// Retrieves a list of games for a specific genre.
+    /// Retrieves all games belonging to a specific genre.
     /// </summary>
     /// <param name="genreId">The unique identifier of the genre.</param>
-    /// <returns>A list of <see cref="GameDTO"/> for the specified genre.</returns>
+    /// <returns>
+    /// A list of <see cref="GameDTO"/> objects for games in the specified genre.
+    /// </returns>
+    /// <exception cref="NotFoundException">
+    /// Thrown when the specified genre doesn't exist.
+    /// </exception>
     Task<List<GameDTO>> GetGamesByGenreAsync(int genreId);
 
     /// <summary>
-    /// Retrieves a list of games for a specific platform.
+    /// Retrieves all games available on a specific platform.
     /// </summary>
     /// <param name="platformId">The unique identifier of the platform.</param>
-    /// <returns>A list of <see cref="GameDTO"/> for the specified platform.</returns>
-    Task<List<Game>> GetGamesByPlatformAsync(int platformId);
+    /// <returns>
+    /// A list of <see cref="GameDTO"/> objects for games on the specified platform.
+    /// </returns>
+    /// <exception cref="NotFoundException">
+    /// Thrown when the specified platform doesn't exist.
+    /// </exception>
+    Task<List<GameDTO>> GetGamesByPlatformAsync(int platformId);
 }
