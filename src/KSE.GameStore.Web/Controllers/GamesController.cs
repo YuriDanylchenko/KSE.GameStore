@@ -1,5 +1,7 @@
+using AutoMapper;
+using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.ApplicationCore.Services;
-using KSE.GameStore.ApplicationCore.Mapping.Games;
+using KSE.GameStore.Web.Requests.Games;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;
@@ -9,38 +11,42 @@ namespace KSE.GameStore.Web.Controllers;
 public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;
+    private readonly IMapper _mapper;
 
-    public GamesController(IGameService gameService)
+    public GamesController(IGameService gameService, IMapper mapper)
     {
         _gameService = gameService;
+        _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllGenres(int? pageNumber, int? pageSize)
     {
-        var games = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
-        return Ok(games);
+        var gameDto = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
+        return Ok(gameDto);
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetGameById(int id)
     {
-        var game = await _gameService.GetGameByIdAsync(id);
-        return Ok(game);
+        var gameDto = await _gameService.GetGameByIdAsync(id);
+        return Ok(gameDto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateGame(CreateGameRequest createGameRequest)
+    public async Task<IActionResult> CreateGame([FromBody] CreateGameRequest createGameRequest)
     {
-        var createdGame = await _gameService.CreateGameAsync(createGameRequest);
-        return Ok(createdGame);
+        var gameDto = _mapper.Map<CreateGameRequest, GameDTO>(createGameRequest);
+        var createdGameDto = await _gameService.CreateGameAsync(gameDto);
+        return Ok(createdGameDto);
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateGame(UpdateGameRequest updateGameRequest)
+    public async Task<IActionResult> UpdateGame([FromBody] UpdateGameRequest updateGameRequest)
     {
-        var updatedGame = await _gameService.UpdateGameAsync(updateGameRequest);
-        return Ok(updatedGame);
+        var gameDto = _mapper.Map<UpdateGameRequest, GameDTO>(updateGameRequest);
+        var updatedGameDto = await _gameService.UpdateGameAsync(gameDto);
+        return Ok(updatedGameDto);
     }
 
     [HttpDelete("{id:int}")]
@@ -53,8 +59,8 @@ public class GamesController : ControllerBase
     [HttpGet("/genre/{genreId:int}")]
     public async Task<IActionResult> GetGamesByGenre(int genreId)
     {
-        var game = await _gameService.GetGamesByGenreAsync(genreId);
-        return Ok(game);
+        var gameDtos = await _gameService.GetGamesByGenreAsync(genreId);
+        return Ok(gameDtos);
     }
 
     [HttpGet("platform/{platformId:int}")]
@@ -63,7 +69,7 @@ public class GamesController : ControllerBase
         if (platformId <= 0)
             return BadRequest($"Platform ID must be a positive integer. Provided: {platformId}");
 
-        var games = await _gameService.GetGamesByPlatformAsync(platformId);
-        return Ok(games);
+        var gameDtos = await _gameService.GetGamesByPlatformAsync(platformId);
+        return Ok(gameDtos);
     }
 }
