@@ -2,6 +2,7 @@ using KSE.GameStore.ApplicationCore.Infrastructure;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Repositories;
+using KSE.GameStore.Web.Mapping;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,11 +24,21 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
             x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
 }
 
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IPlatformsService, PlatformsService>();
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IGenreService, GenreService>();
+
+builder.Services.AddControllers();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+builder.Services.AddScoped<IGameService, GameService>();
+
+builder.Services
+    .AddRouting(options => { options.LowercaseUrls = true; });
 
 builder.Services.AddControllers();
 
@@ -46,6 +57,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.Run();
 
 public partial class Program;

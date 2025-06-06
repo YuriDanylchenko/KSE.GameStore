@@ -10,18 +10,18 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
     private readonly IRepository<Platform, int> _repository = repository;
     private readonly ILogger<PlatformsService> _logger = logger;
 
-    public async Task<List<PlatformDto>> GetAllAsync()
+    public async Task<List<PlatformDTO>> GetAllAsync()
     {
         var platforms = await _repository.ListAsync();
-        return [.. platforms.Select(p => new PlatformDto(p.Id, p.Name))];
+        return [.. platforms.Select(p => new PlatformDTO(p.Id, p.Name))];
     }
 
-    public async Task<PlatformDto> GetByIdAsync(int id)
+    public async Task<PlatformDTO> GetByIdAsync(int id)
     {
         var platform = await _repository.GetByIdAsync(id);
         return platform is null
             ? throw new NotFoundException($"Platform with id {id} not found.")
-            : new PlatformDto(platform.Id, platform.Name);
+            : new PlatformDTO(platform.Id, platform.Name);
     }
 
     public async Task<int> CreateAsync(string name)

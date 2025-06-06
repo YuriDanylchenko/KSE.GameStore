@@ -11,13 +11,13 @@ public interface IPlatformsService
     /// Retrieves all platforms from the data store.
     /// </summary>
     /// <returns></returns>
-    Task<List<PlatformDto>> GetAllAsync();
+    Task<List<PlatformDTO>> GetAllAsync();
     /// <summary>
     /// Retrieves a platform by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the platform.</param>
     /// <returns>A task that represents the asynchronous operation, containing the platform if found or null if not.</returns>
-    Task<PlatformDto> GetByIdAsync(int id);
+    Task<PlatformDTO> GetByIdAsync(int id);
     /// <summary>
     /// Creates a new platform with the specified name.
     /// </summary>
