@@ -1,11 +1,9 @@
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.ApplicationCore.Infrastructure;
-using KSE.GameStore.DataAccess;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.Extensions.Logging;
 
 namespace KSE.GameStore.ApplicationCore.Services;
@@ -73,12 +71,6 @@ public class GameService : IGameService
     {
         // bad request for invalid data (fluent validation)
 
-        // print dto with region permissions
-        Console.WriteLine($"Updating Game: {gameDto.Title}, ID: {gameDto.Id}");
-        Console.WriteLine($"Publisher ID: {gameDto.Publisher.Id}");
-        Console.WriteLine($"Region Permissions Count: {gameDto.RegionPermissions?.Count ?? 0}");
-
-        
         if (await _gameRepository.ExistsAsync(g => g.Title.ToLower() == gameDto.Title.ToLower()))
             throw new BadRequestException($"Game with title '{gameDto.Title}' already exists.");
 
@@ -130,13 +122,13 @@ public class GameService : IGameService
         var priceEntity = _mapper.Map<GamePrice>(gameDto.Price);
         gameEntity.Prices.Add(priceEntity);
         priceEntity.Game = gameEntity;
-        
+
         if (gameDto.RegionPermissions != null)
         {
             var regionIds = gameDto.RegionPermissions.Select(r => r.Id).ToList();
             var regionEntities = (await _regionRepository.ListAllAsync(r => regionIds.Contains(r.Id))).ToList();
 
-            if (regionEntities.Count != regionIds.Count)
+            if (regionIds.Any() && regionEntities.Count != regionIds.Count)
             {
                 var missingRegionIds = regionIds.Except(regionEntities.Select(r => r.Id)).ToList();
                 throw new NotFoundException($"Regions not found: {string.Join(", ", missingRegionIds)}");
@@ -149,18 +141,14 @@ public class GameService : IGameService
                 region.Games.Add(gameEntity);
             }
         }
-        // add check for empty list
+        else gameEntity.RegionPermissions = null;
 
         await _gameRepository.AddAsync(gameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var dto = await _gameRepository
-            .Query()
-            .Where(g => g.Id == gameEntity.Id)
-            .ProjectTo<GameDTO>(_mapper.ConfigurationProvider)
-            .SingleAsync();
-
-        return dto;
+        var createdGameEntity = await _gameRepository.GetGameByIdAsync(gameEntity.Id);
+        var en = _mapper.Map<GameDTO>(createdGameEntity);
+        return en;
     }
 
     public async Task<GameDTO> UpdateGameAsync(GameDTO gameDto)
@@ -179,7 +167,7 @@ public class GameService : IGameService
             throw new BadRequestException($"Game with title '{gameDto.Title}' already exists.");
 
         _mapper.Map(gameDto, exisingGameEntity);
-        
+
         var newPublisherEntity = await _publisherRepository.GetByIdAsync(gameDto.Publisher.Id);
         if (newPublisherEntity == null)
         {
@@ -226,13 +214,12 @@ public class GameService : IGameService
             var newRegionIds = gameDto.RegionPermissions.Select(r => r.Id).ToList();
             var newRegions = (await _regionRepository.ListAllAsync(r => newRegionIds.Contains(r.Id))).ToList();
 
-            Console.WriteLine($"New Region ID Count: {newRegionIds.Count}");
-            Console.WriteLine($"New Regions Count: {newRegions.Count}");
-            if (newRegions.Count != newRegionIds.Count)
+            if (newRegionIds.Any() && newRegions.Count != newRegionIds.Count)
             {
                 var missingRegionIds = newRegionIds.Except(newRegions.Select(r => r.Id)).ToList();
                 throw new NotFoundException($"Regions not found: {string.Join(", ", missingRegionIds)}");
             }
+
             exisingGameEntity.RegionPermissions = newRegions;
         }
         else exisingGameEntity.RegionPermissions = null;
@@ -242,13 +229,8 @@ public class GameService : IGameService
         _gameRepository.Update(exisingGameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var dto = await _gameRepository
-            .Query()
-            .Where(g => g.Id == exisingGameEntity.Id)
-            .ProjectTo<GameDTO>(_mapper.ConfigurationProvider)
-            .SingleAsync();
-
-        return dto;
+        var updatedGameEntity = await _gameRepository.GetGameByIdAsync(exisingGameEntity.Id);
+        return _mapper.Map<GameDTO>(updatedGameEntity);
     }
 
     public async Task DeleteGameAsync(int id)
