@@ -12,18 +12,21 @@ public interface IPlatformsService
     /// </summary>
     /// <returns></returns>
     Task<List<PlatformDTO>> GetAllAsync();
+
     /// <summary>
     /// Retrieves a platform by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the platform.</param>
     /// <returns>A task that represents the asynchronous operation, containing the platform if found or null if not.</returns>
     Task<PlatformDTO> GetByIdAsync(int id);
+
     /// <summary>
     /// Creates a new platform with the specified name.
     /// </summary>
     /// <param name="name">The name of the platform to create.</param>
     /// <returns>A task that represents the asynchronous operation, containing the unique identifier of the created platform.</returns>
     Task<int> CreateAsync(string name);
+
     /// <summary>
     /// Updates an existing platform's name by its unique identifier.
     /// </summary>
@@ -31,6 +34,7 @@ public interface IPlatformsService
     /// <param name="name">The new name for the platform.</param>
     /// <returns>A task that represents the asynchronous operation, containing a bool indicating if the update was successful.</returns>
     Task<bool> UpdateAsync(int id, string name);
+
     /// <summary>
     /// Deletes a platform by its unique identifier.
     /// </summary>

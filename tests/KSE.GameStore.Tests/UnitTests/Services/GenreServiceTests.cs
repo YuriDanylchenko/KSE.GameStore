@@ -4,7 +4,7 @@ using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using Moq;
 
-namespace KSE.GameStore.Tests.UnitTests;
+namespace KSE.GameStore.Tests.UnitTests.Services;
 
 public class GenreServiceTests
 {

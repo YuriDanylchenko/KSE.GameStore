@@ -20,7 +20,7 @@ public class GenreService : IGenreService
 
         if (genre == null)
             throw new NotFoundException($"Genre with ID {id} was not found.");
-        
+
         return genre;
     }
 

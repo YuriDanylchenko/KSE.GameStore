@@ -8,25 +8,19 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Text.Json;
 
-namespace KSE.GameStore.Tests.IntegrationTests;
+namespace KSE.GameStore.Tests.IntegrationTests.Middlewares;
 
 public class ExceptionMiddlewareTests
 {
     private TestServer CreateServerThatThrows(Exception ex)
     {
         return new TestServer(new WebHostBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddLogging();
-            })
+            .ConfigureServices(services => { services.AddLogging(); })
             .Configure(app =>
             {
                 app.UseMiddleware<ExceptionMiddleware>();
 
-                app.Use((HttpContext _, Func<Task> _) =>
-                {
-                    throw ex;
-                });
+                app.Use((HttpContext _, Func<Task> _) => { throw ex; });
             }));
     }
 

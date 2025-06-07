@@ -1,3 +1,7 @@
 ﻿namespace KSE.GameStore.ApplicationCore.Models;
 
-public record PlatformDTO(int Id, string Name);
+public class PlatformDTO
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+}
