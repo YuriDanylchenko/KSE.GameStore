@@ -17,6 +17,29 @@ public class GameRepository(GameStoreDbContext context) : Repository<Game, int>(
             .SingleOrDefaultAsync(g => g.Id == id);
     }
     
+    public async Task<List<Game>> GetGamesByGenreAsync(int genreId)
+    {
+        var query = from game in _dbSet
+            from genre in game.Genres
+            where genre.Id == genreId
+            select new Game
+            {
+                Id = game.Id,
+                Title = game.Title,
+                Description = game.Description,
+                PublisherId = game.PublisherId,
+                CreatedAt = game.CreatedAt,
+                UpdatedAt = game.UpdatedAt,
+                Publisher = game.Publisher,
+                Genres = game.Genres,
+                Platforms = game.Platforms,
+                Prices = game.Prices,
+                RegionPermissions = game.RegionPermissions
+            };
+
+        return await query.ToListAsync();
+    }
+    
     public async Task<List<Game>> GetGamesByPlatformAsync(int platformId)
     {
         var query = from game in _dbSet
