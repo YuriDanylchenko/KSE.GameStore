@@ -21,8 +21,8 @@ public class WebMappingProfile : Profile
                 src.PlatformIds.Select(id => new PlatformDTO { Id = id })))
             .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src =>
                 src.RegionPermissionIds != null
-                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id })
-                    : new List<RegionDTO>()))
+                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id }).ToList()
+                    : null))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
         // CreateGamePriceRequest → GamePriceDTO
@@ -38,8 +38,8 @@ public class WebMappingProfile : Profile
                 src.PlatformIds.Select(id => new PlatformDTO { Id = id })))
             .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src =>
                 src.RegionPermissionIds != null
-                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id })
-                    : new List<RegionDTO>()))
+                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id }).ToList()
+                    : null))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
         // UpdateGamePriceRequest → GamePriceDTO

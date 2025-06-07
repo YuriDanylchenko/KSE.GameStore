@@ -26,6 +26,12 @@ public interface IRepository<T, TKey> where T : BaseEntity<TKey>
     /// <returns>A task that represents the asynchronous operation. The task contains a collection of entities that match the predicate.</returns>
     Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate, int pageNumber = 1, int pageSize = 10);
     /// <summary>
+    /// Lists all entities that match a given predicate.
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <returns>A task that represents the asynchronous operation. The task contains a collection of entities that match the predicate.</returns>
+    Task<IEnumerable<T>> ListAllAsync(Expression<Func<T, bool>> predicate);
+    /// <summary>
     /// Adds a new entity to the repository.
     /// </summary>
     /// <param name="entity">The entity to add.</param>

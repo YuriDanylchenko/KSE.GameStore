@@ -13,4 +13,7 @@ public class Game : BaseEntity<int>
     public required ICollection<Platform> Platforms { get; set; } = new List<Platform>();
     public required ICollection<GamePrice> Prices { get; set; } = new List<GamePrice>();
     public ICollection<Region>? RegionPermissions { get; set; }
+    // null means no region restrictions, so available everywhere
+    // empty list means not available in any region
+    // list with items means available only in those regions
 }

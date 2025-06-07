@@ -1,6 +1,5 @@
 namespace KSE.GameStore.ApplicationCore.Models;
 
-// return object (DONT CHANGE THIS FILE)
 public class GameDTO
 {
     public int Id { get; set; }
@@ -10,5 +9,5 @@ public class GameDTO
     public IReadOnlyList<GenreDTO> Genres { get; set; } = new List<GenreDTO>();
     public IReadOnlyList<PlatformDTO> Platforms { get; set; } = new List<PlatformDTO>();
     public GamePriceDTO Price { get; set; } = null!;
-    public IReadOnlyList<RegionDTO>? RegionPermissions { get; set; } = new List<RegionDTO>();
+    public IReadOnlyList<RegionDTO>? RegionPermissions { get; set; }
 }
