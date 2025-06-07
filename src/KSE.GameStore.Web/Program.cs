@@ -1,5 +1,6 @@
 using KSE.GameStore.ApplicationCore.Infrastructure;
 using KSE.GameStore.ApplicationCore.Services;
+using KSE.GameStore.ApplicationCore.Mapping;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Mapping;
@@ -33,7 +34,9 @@ builder.Services.AddScoped<IGenreService, GenreService>();
 
 builder.Services.AddControllers();
 
-builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+builder.Services.AddAutoMapper(
+    typeof(ApplicationCoreMappingProfile),
+    typeof(WebMappingProfile));
 
 builder.Services.AddScoped<IGameService, GameService>();
 
