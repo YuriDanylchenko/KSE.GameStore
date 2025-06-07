@@ -15,7 +15,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Price,
                 opt => opt.MapFrom(src =>
                     src.Prices.FirstOrDefault(p => p.EndDate == null)));
-        
+
         // sub-DTOs
         CreateMap<Publisher, PublisherDTO>();
         CreateMap<Genre, GenreDTO>();

@@ -10,7 +10,7 @@ public class WebMappingProfile : Profile
     public WebMappingProfile()
     {
         // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
-        
+
         // CreateGameRequest → GameDTO
         CreateMap<CreateGameRequest, GameDTO>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())

@@ -7,6 +7,6 @@ public class GamePrice : BaseEntity<int>
     public int? Stock { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    
+
     public required Game Game { get; set; }
 }

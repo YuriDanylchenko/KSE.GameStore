@@ -11,7 +11,11 @@ public class WebMappingProfileTests
 
     public WebMappingProfileTests()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<WebMappingProfile>());
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullCollections = true;
+            cfg.AddProfile<WebMappingProfile>();
+        });
         _mapper = config.CreateMapper();
     }
 
@@ -63,7 +67,7 @@ public class WebMappingProfileTests
 
 
         [Fact]
-        public void Maps_NullRegionPermissionsToEmptyList()
+        public void Maps_NullRegionPermissionsToNull()
         {
             // Arrange
             var request = new CreateGameRequest(
@@ -80,11 +84,32 @@ public class WebMappingProfileTests
             var dto = _mapper.Map<GameDTO>(request);
 
             // Assert
+            Assert.Null(dto.RegionPermissions);
+        }
+
+        [Fact]
+        public void Maps_EmptyRegionPermissionsToEmptyList()
+        {
+            // Arrange
+            var request = new CreateGameRequest(
+                Title: "Test Game",
+                Description: "Test Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1, 2 },
+                PlatformIds: new List<int> { 3 },
+                new CreateGamePriceRequest(59.99m, 10),
+                RegionPermissionIds: new List<int>()
+            );
+
+            // Act
+            var dto = _mapper.Map<GameDTO>(request);
+
+            // Assert
             Assert.NotNull(dto.RegionPermissions);
             Assert.Empty(dto.RegionPermissions);
         }
     }
-    
+
     public class CreateGamePriceRequestMapping : WebMappingProfileTests
     {
         [Fact]
@@ -146,7 +171,7 @@ public class WebMappingProfileTests
         }
 
         [Fact]
-        public void Maps_NullRegionPermissionsToEmptyList()
+        public void Maps_NullRegionPermissionsToNull()
         {
             // Arrange
             var request = new UpdateGameRequest(
@@ -164,11 +189,33 @@ public class WebMappingProfileTests
             var dto = _mapper.Map<GameDTO>(request);
 
             // Assert
+            Assert.Null(dto.RegionPermissions);
+        }
+
+        [Fact]
+        public void Maps_EmptyRegionPermissionsToEmptyList()
+        {
+            // Arrange
+            var request = new UpdateGameRequest(
+                Id: 1,
+                Title: "Test Game",
+                Description: "Test Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1, 2 },
+                PlatformIds: new List<int> { 3 },
+                new UpdateGamePriceRequest(59.99m, 10),
+                RegionPermissionIds: new List<int>()
+            );
+
+            // Act
+            var dto = _mapper.Map<GameDTO>(request);
+
+            // Assert
             Assert.NotNull(dto.RegionPermissions);
             Assert.Empty(dto.RegionPermissions);
         }
     }
-    
+
     public class UpdateGamePriceRequestMapping : WebMappingProfileTests
     {
         [Fact]

@@ -116,7 +116,7 @@ public class ApplicationCoreMappingProfileTests
             // Assert
             Assert.Null(dto.Price);
         }
-        
+
         [Fact]
         public void Maps_Publisher_To_PublisherDTO()
         {
@@ -240,7 +240,10 @@ public class ApplicationCoreMappingProfileTests
             var genre = new Genre { Id = 1, Name = "RPG" };
             var platform = new Platform { Id = 1, Name = "PC" };
             var region = new Region { Id = 1, Name = "NA" };
-            var price = new GamePrice { Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null! };
+            var price = new GamePrice
+            {
+                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+            };
             var originalDate = DateTime.UtcNow.AddDays(-10);
 
             var existingGame = new Game
@@ -271,7 +274,7 @@ public class ApplicationCoreMappingProfileTests
             // Assert
             Assert.Equal(originalDate, existingGame.CreatedAt);
             Assert.Equal(1, existingGame.PublisherId);
-            Assert.Equal(2, existingGame.Publisher.Id); 
+            Assert.Equal(2, existingGame.Publisher.Id);
             Assert.Equal("Original Publisher", existingGame.Publisher.Name);
         }
 
@@ -283,7 +286,10 @@ public class ApplicationCoreMappingProfileTests
             var genre = new Genre { Id = 1, Name = "RPG" };
             var platform = new Platform { Id = 1, Name = "PC" };
             var region = new Region { Id = 1, Name = "NA" };
-            var price = new GamePrice { Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null! };
+            var price = new GamePrice
+            {
+                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+            };
             var originalDate = DateTime.UtcNow.AddDays(-10);
 
             var existingGame = new Game
@@ -300,7 +306,7 @@ public class ApplicationCoreMappingProfileTests
                 Prices = new List<GamePrice> { price },
                 RegionPermissions = new List<Region> { region }
             };
-            
+
             var dto = new GameDTO { Id = 1, Title = "Updated Title" };
 
             // Act
@@ -311,7 +317,7 @@ public class ApplicationCoreMappingProfileTests
             Assert.NotEqual(originalDate, existingGame.UpdatedAt);
             Assert.True((DateTime.UtcNow - existingGame.UpdatedAt).TotalSeconds < 1);
         }
-        
+
         [Fact]
         public void Maps_GamePriceDTO_To_GamePrice()
         {

@@ -15,18 +15,12 @@ public class ExceptionMiddlewareTests
     private TestServer CreateServerThatThrows(Exception ex)
     {
         return new TestServer(new WebHostBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddLogging();
-            })
+            .ConfigureServices(services => { services.AddLogging(); })
             .Configure(app =>
             {
                 app.UseMiddleware<ExceptionMiddleware>();
 
-                app.Use((HttpContext _, Func<Task> _) =>
-                {
-                    throw ex;
-                });
+                app.Use((HttpContext _, Func<Task> _) => { throw ex; });
             }));
     }
 

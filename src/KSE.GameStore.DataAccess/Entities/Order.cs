@@ -10,5 +10,4 @@ public class Order : BaseEntity<int>
     public OrderStatus Status { get; set; }
     public required User User { get; set; }
     public required ICollection<OrderItem> OrderItems { get; set; }
-
 }

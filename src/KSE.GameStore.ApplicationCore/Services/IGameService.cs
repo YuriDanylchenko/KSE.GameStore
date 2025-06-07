@@ -96,7 +96,7 @@ public interface IGameService
     /// Thrown when no game exists with the specified id.
     /// </exception>
     Task DeleteGameAsync(int id);
-    
+
     /// <summary>
     /// Retrieves all games belonging to a specific genre.
     /// </summary>

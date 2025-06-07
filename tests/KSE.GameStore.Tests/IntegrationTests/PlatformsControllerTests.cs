@@ -26,10 +26,7 @@ public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Prog
                 if (dbContext != null)
                     services.Remove(dbContext);
 
-                services.AddDbContext<GameStoreDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase(dbName);
-                });
+                services.AddDbContext<GameStoreDbContext>(options => { options.UseInMemoryDatabase(dbName); });
             });
         });
     }
