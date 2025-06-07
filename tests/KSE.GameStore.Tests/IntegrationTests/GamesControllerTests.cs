@@ -32,22 +32,19 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
                     services.Remove(dbContext);
 
                 // Add in-memory database
-                services.AddDbContext<GameStoreDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase(dbName);
-                });
-                
+                services.AddDbContext<GameStoreDbContext>(options => { options.UseInMemoryDatabase(dbName); });
+
                 services.AddAutoMapper(typeof(ApplicationCoreMappingProfile), typeof(WebMappingProfile));
             });
         });
     }
-    
+
     private async Task<List<int>> CreateTestEntities(HttpClient client)
     {
         // Get the DbContext from the factory
         using var scope = _factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<GameStoreDbContext>();
-    
+
         // Create and save a publisher
         var publisher = new Publisher { Name = "Test Publisher" };
         var genre = new Genre { Name = "Test Genre" };
@@ -56,8 +53,8 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
         dbContext.Genres.Add(genre);
         dbContext.Platforms.Add(platform);
         await dbContext.SaveChangesAsync();
-    
-        return new List<int> { publisher.Id, genre.Id, platform.Id }; 
+
+        return new List<int> { publisher.Id, genre.Id, platform.Id };
     }
 
     // ============ GET Tests ============
@@ -66,13 +63,13 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     {
         var client = _factory.CreateClient();
         var response = await client.GetAsync("/games");
-        
+
         response.EnsureSuccessStatusCode();
         var games = await response.Content.ReadFromJsonAsync<List<GameDTO>>();
         Assert.NotNull(games);
         Assert.Empty(games);
     }
-    
+
     [Fact]
     public async Task GetById_ReturnsNotFound_ForInvalidId()
     {
@@ -80,19 +77,19 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.GetAsync("/games/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
-    
+
     // ============ POST Tests ============
     [Fact]
     public async Task Create_And_GetById()
     {
         var client = _factory.CreateClient();
-        
+
         // First create a publisher (required relationship)
         var testIds = await CreateTestEntities(client);
-        var publisherId = testIds[0]; 
+        var publisherId = testIds[0];
         var genreId = testIds[1];
         var platformId = testIds[2];
-    
+
         // Create game
         var newGame = new CreateGameRequest(
             Title: "Test Game",
@@ -102,14 +99,14 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
             PlatformIds: new List<int> { platformId },
             new CreateGamePriceRequest(59.99m, 10),
             RegionPermissionIds: null);
-    
+
         var createResponse = await client.PostAsJsonAsync("/games", newGame);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
-    
+
         var createdGame = await createResponse.Content.ReadFromJsonAsync<GameDTO>();
         Assert.NotNull(createdGame);
         Assert.Equal("Test Game", createdGame.Title);
-    
+
         // Verify we can fetch it
         var getResponse = await client.GetAsync($"/games/{createdGame.Id}");
         getResponse.EnsureSuccessStatusCode();
@@ -122,6 +119,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
         Assert.Equal("Test Platform", fetched.Platforms[0].Name);
         Assert.Equal(59.99m, fetched.Price.Value);
         Assert.Equal(10, fetched.Price.Stock);
+        Assert.Empty(fetched.RegionPermissions!);
     }
 
     // ============ PUT Tests ============
@@ -129,13 +127,13 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Update_ModifiesExistingGame()
     {
         var client = _factory.CreateClient();
-        
+
         // Setup - Create a game first
         var testIds = await CreateTestEntities(client);
         var publisherId = testIds[0];
         var genreId = testIds[1];
         var platformId = testIds[2];
-        
+
         var createRequest = new CreateGameRequest(
             Title: "Test Game",
             Description: "Test Description",
@@ -144,7 +142,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
             PlatformIds: new List<int> { platformId },
             new CreateGamePriceRequest(59.99m, 10),
             RegionPermissionIds: null);
-        
+
         var createResponse = await client.PostAsJsonAsync("/games", createRequest);
         var createdId = (await createResponse.Content.ReadFromJsonAsync<GameDTO>())!.Id;
 
@@ -158,7 +156,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
             PlatformIds: new List<int> { platformId },
             new UpdateGamePriceRequest(69.99m, 11),
             RegionPermissionIds: null);
-        
+
         var updateResponse = await client.PutAsJsonAsync("/games", updateRequest);
         Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
 
@@ -172,6 +170,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
         Assert.Equal("Test Platform", updated.Platforms[0].Name);
         Assert.Equal(69.99m, updated.Price.Value);
         Assert.Equal(11, updated.Price.Stock);
+        Assert.Empty(updated.RegionPermissions!);
     }
 
     // ============ DELETE Tests ============
@@ -179,7 +178,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Delete_RemovesGame()
     {
         var client = _factory.CreateClient();
-        
+
         // Setup - Create a game
         var testIds = await CreateTestEntities(client);
         var publisherId = testIds[0];
@@ -195,7 +194,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
             new CreateGamePriceRequest(59.99m, 10),
             RegionPermissionIds: null);
 
-        
+
         var createResponse = await client.PostAsJsonAsync("/games", createRequest);
         var createdId = (await createResponse.Content.ReadFromJsonAsync<GameDTO>())!.Id;
 
@@ -207,18 +206,18 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
         var getResponse = await client.GetAsync($"/games/{createdId}");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
-    
+
     // ============ Error Cases ============
     [Fact]
     public async Task Update_ReturnsNotFound_ForInvalidId()
     {
         var client = _factory.CreateClient();
-        
+
         var testIds = await CreateTestEntities(client);
         var publisherId = testIds[0];
         var genreId = testIds[1];
         var platformId = testIds[2];
-        
+
         var updateRequest = new UpdateGameRequest(
             Id: 9999,
             Title: "Test Game",
@@ -228,11 +227,11 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
             PlatformIds: new List<int> { platformId },
             new UpdateGamePriceRequest(59.99m, 10),
             RegionPermissionIds: null);
-        
+
         var response = await client.PutAsJsonAsync("/games", updateRequest);
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
-    
+
     [Fact]
     public async Task Delete_ReturnsNotFound_ForInvalidId()
     {
@@ -240,13 +239,13 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.DeleteAsync("/games/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
-    
+
     // ============ Pagination Tests ============
     [Fact]
     public async Task GetAll_SupportsPagination()
     {
         var client = _factory.CreateClient();
-        
+
         // Create test data
         for (int i = 1; i <= 5; i++)
         {
@@ -254,7 +253,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
             var publisherId = testIds[0];
             var genreId = testIds[1];
             var platformId = testIds[2];
-    
+
             var game = new CreateGameRequest(
                 Title: $"Game {i}",
                 Description: $"Description for Game {i}",
@@ -263,19 +262,180 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
                 PlatformIds: new List<int> { platformId },
                 new CreateGamePriceRequest(59.99m, 10),
                 RegionPermissionIds: null);
-            
+
             await client.PostAsJsonAsync("/games", game);
         }
-    
+
         // Test pagination
         var page1 = await client.GetFromJsonAsync<List<GameDTO>>("/games?pageNumber=1&pageSize=2");
         Assert.Equal(2, page1!.Count);
         Assert.Equal("Game 1", page1[0].Title);
-    
+
         var page2 = await client.GetFromJsonAsync<List<GameDTO>>("/games?pageNumber=2&pageSize=2");
         Assert.Equal(2, page2!.Count);
         Assert.Equal("Game 3", page2[0].Title);
     }
-    
-    // TODO: Add tests for GetGamesByPlatformAsync, GetGamesByGenreAsync.
+
+    [Fact]
+    public async Task GetGamesByGenre_ReturnsNotFound_ForInvalidGenre()
+    {
+        var client = _factory.CreateClient();
+        var response = await client.GetAsync("/genre/9999");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetGamesByGenre_ReturnsGames_ForValidGenre()
+    {
+        var client = _factory.CreateClient();
+
+        // Setup – create publisher, genre, platform
+        var ids = await CreateTestEntities(client);
+        var publisherId = ids[0];
+        var genreId = ids[1];
+        var platformId = ids[2];
+
+        // Create first game
+        var create1 = new CreateGameRequest(
+            Title: "GenreGame1",
+            Description: "Desc1",
+            PublisherId: publisherId,
+            GenreIds: new List<int> { genreId },
+            PlatformIds: new List<int> { platformId },
+            new CreateGamePriceRequest(10m, 1),
+            RegionPermissionIds: null
+        );
+        await client.PostAsJsonAsync("/games", create1);
+
+        // Create second game
+        var create2 = new CreateGameRequest(
+            Title: "GenreGame2",
+            Description: "Desc2",
+            PublisherId: publisherId,
+            GenreIds: new List<int> { genreId },
+            PlatformIds: new List<int> { platformId },
+            new CreateGamePriceRequest(20m, 2),
+            RegionPermissionIds: null
+        );
+        await client.PostAsJsonAsync("/games", create2);
+
+        // Act
+        var response = await client.GetAsync($"/genre/{genreId}");
+        response.EnsureSuccessStatusCode();
+        var games = await response.Content.ReadFromJsonAsync<List<GameDTO>>();
+
+        // Assert
+        Assert.NotNull(games);
+        Assert.Equal(2, games.Count);
+
+        // First game
+        var dtoA = games[0];
+        Assert.Equal("GenreGame1", dtoA.Title);
+        Assert.Equal("Desc1", dtoA.Description);
+        Assert.Equal("Test Publisher", dtoA.Publisher.Name);
+        Assert.Single(dtoA.Genres);
+        Assert.Equal("Test Genre", dtoA.Genres[0].Name);
+        Assert.Single(dtoA.Platforms);
+        Assert.Equal("Test Platform", dtoA.Platforms[0].Name);
+        Assert.NotNull(dtoA.Price);
+        Assert.Equal(10m, dtoA.Price.Value);
+        Assert.Equal(1, dtoA.Price.Stock);
+        Assert.Empty(dtoA.RegionPermissions!);
+
+        // Second game
+        var dtoB = games[1];
+        Assert.Equal("GenreGame2", dtoB.Title);
+        Assert.Equal("Desc2", dtoB.Description);
+        Assert.Equal("Test Publisher", dtoB.Publisher.Name);
+        Assert.Single(dtoB.Genres);
+        Assert.Equal("Test Genre", dtoB.Genres[0].Name);
+        Assert.Single(dtoB.Platforms);
+        Assert.Equal("Test Platform", dtoB.Platforms[0].Name);
+        Assert.NotNull(dtoB.Price);
+        Assert.Equal(20m, dtoB.Price.Value);
+        Assert.Equal(2, dtoB.Price.Stock);
+        Assert.Empty(dtoB.RegionPermissions!);
+    }
+
+    // ============ GET By Platform Tests ============
+    [Fact]
+    public async Task GetGamesByPlatform_ReturnsNotFound_ForInvalidPlatform()
+    {
+        var client = _factory.CreateClient();
+        var response = await client.GetAsync("/platform/9999");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetGamesByPlatform_ReturnsGames_ForValidPlatform()
+    {
+        var client = _factory.CreateClient();
+
+        // Setup – create publisher, genre, platform
+        var ids = await CreateTestEntities(client);
+        var publisherId = ids[0];
+        var genreId = ids[1];
+        var platformId = ids[2];
+
+        // Create first game
+        var create1 = new CreateGameRequest(
+            Title: "PlatformGame1",
+            Description: "Desc1",
+            PublisherId: publisherId,
+            GenreIds: new List<int> { genreId },
+            PlatformIds: new List<int> { platformId },
+            new CreateGamePriceRequest(30m, 3),
+            RegionPermissionIds: null
+        );
+        await client.PostAsJsonAsync("/games", create1);
+
+        // Create second game
+        var create2 = new CreateGameRequest(
+            Title: "PlatformGame2",
+            Description: "Desc2",
+            PublisherId: publisherId,
+            GenreIds: new List<int> { genreId },
+            PlatformIds: new List<int> { platformId },
+            new CreateGamePriceRequest(40m, 4),
+            RegionPermissionIds: null
+        );
+        await client.PostAsJsonAsync("/games", create2);
+
+        // Act
+        var response = await client.GetAsync($"/games/platform/{platformId}");
+        response.EnsureSuccessStatusCode();
+        var games = await response.Content.ReadFromJsonAsync<List<GameDTO>>();
+
+        // Assert
+        Assert.NotNull(games);
+        Assert.Equal(2, games.Count);
+
+        // First game
+        var dtoA = games[0];
+        Assert.Equal("PlatformGame1", dtoA.Title);
+        Assert.Equal("Desc1", dtoA.Description);
+        Assert.Equal("Test Publisher", dtoA.Publisher.Name);
+        Assert.Single(dtoA.Genres);
+        Assert.Equal("Test Genre", dtoA.Genres[0].Name);
+        Assert.Single(dtoA.Platforms);
+        Assert.Equal("Test Platform", dtoA.Platforms[0].Name);
+        Assert.NotNull(dtoA.Price);
+        Assert.Equal(30m, dtoA.Price.Value);
+        Assert.Equal(3, dtoA.Price.Stock);
+        Assert.Empty(dtoA.RegionPermissions!);
+
+        // Second game
+        var dtoB = games[1];
+        Assert.Equal("PlatformGame2", dtoB.Title);
+        Assert.Equal("Desc2", dtoB.Description);
+        Assert.Equal("Test Publisher", dtoB.Publisher.Name);
+        Assert.Single(dtoB.Genres);
+        Assert.Equal("Test Genre", dtoB.Genres[0].Name);
+        Assert.Single(dtoB.Platforms);
+        Assert.Equal("Test Platform", dtoB.Platforms[0].Name);
+        Assert.NotNull(dtoB.Price);
+        Assert.Equal(40m, dtoB.Price.Value);
+        Assert.Equal(4, dtoB.Price.Stock);
+        Assert.Empty(dtoB.RegionPermissions!);
+    }
 }

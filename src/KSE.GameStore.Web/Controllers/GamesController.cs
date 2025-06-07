@@ -66,9 +66,6 @@ public class GamesController : ControllerBase
     [HttpGet("platform/{platformId:int}")]
     public async Task<IActionResult> GetGamesByPlatform(int platformId)
     {
-        if (platformId <= 0)
-            return BadRequest($"Platform ID must be a positive integer. Provided: {platformId}");
-
         var gameDtos = await _gameService.GetGamesByPlatformAsync(platformId);
         return Ok(gameDtos);
     }
