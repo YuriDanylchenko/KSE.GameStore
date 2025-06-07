@@ -237,7 +237,7 @@ public class GameServiceTests
         }
     }
 
-    public class CreateGame : GenreServiceTests
+    public class CreateGame : GameServiceTests
     {
         [Fact]
         public async Task CreateGameAsync_ThrowsBadRequest_WhenTitleExists()
