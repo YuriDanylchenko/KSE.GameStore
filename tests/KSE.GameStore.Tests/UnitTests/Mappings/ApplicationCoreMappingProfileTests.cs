@@ -3,7 +3,7 @@ using KSE.GameStore.ApplicationCore.Mapping;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.DataAccess.Entities;
 
-namespace KSE.GameStore.Tests.UnitTests;
+namespace KSE.GameStore.Tests.UnitTests.Mappings;
 
 public class ApplicationCoreMappingProfileTests
 {
@@ -11,7 +11,11 @@ public class ApplicationCoreMappingProfileTests
 
     public ApplicationCoreMappingProfileTests()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<ApplicationCoreMappingProfile>());
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullCollections = true;
+            cfg.AddProfile<ApplicationCoreMappingProfile>();
+        });
         _mapper = config.CreateMapper();
     }
 

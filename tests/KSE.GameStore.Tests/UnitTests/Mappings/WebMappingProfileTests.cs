@@ -3,7 +3,7 @@ using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.Web.Mapping;
 using KSE.GameStore.Web.Requests.Games;
 
-namespace KSE.GameStore.Tests.UnitTests;
+namespace KSE.GameStore.Tests.UnitTests.Mappings;
 
 public class WebMappingProfileTests
 {

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace KSE.GameStore.Tests.IntegrationTests;
+namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
 
 public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {

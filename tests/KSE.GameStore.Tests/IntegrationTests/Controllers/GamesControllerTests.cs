@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace KSE.GameStore.Tests.IntegrationTests;
+namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
 
 public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {

@@ -11,5 +11,4 @@ public interface IGameRepository : IRepository<Game, int>
     Task<Game?> GetGameByIdAsync(int id);
     Task<List<Game>> ListGamesAsync(int pageNumber = 1, int pageSize = 10);
     Task<bool> ExistsAsync(Expression<Func<Game, bool>> predicate);
-    IQueryable<Game> Query();
 }
