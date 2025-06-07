@@ -110,5 +110,4 @@ public class GameRepository(GameStoreDbContext context) : Repository<Game, int>(
     }
 
     public Task<bool> ExistsAsync(Expression<Func<Game, bool>> predicate) => _dbSet.AnyAsync(predicate);
-    public IQueryable<Game> Query() => _dbSet.AsNoTracking();
 }

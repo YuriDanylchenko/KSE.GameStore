@@ -34,7 +34,7 @@ builder.Services.AddScoped<IGenreService, GenreService>();
 
 builder.Services.AddControllers();
 
-builder.Services.AddAutoMapper(
+builder.Services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; },
     typeof(ApplicationCoreMappingProfile),
     typeof(WebMappingProfile));
 
