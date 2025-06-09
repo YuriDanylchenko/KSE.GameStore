@@ -52,7 +52,7 @@ public class PublisherService : IPublisherService
     public async Task<PublisherDTO> CreatePublisherAsync(PublisherDTO publisherDto)
     {
         var existing = await _publisherRepository
-            .ListAsync(g => g.Name.ToLower() == publisherDto.Name.ToLower());
+            .ListAllAsync(g => g.Name.ToLower() == publisherDto.Name.ToLower());
 
         if (existing.Any())
             throw new BadRequestException($"A publisher with the name '{publisherDto.Name}' already exists.");
@@ -82,7 +82,7 @@ public class PublisherService : IPublisherService
         
         // Check whether new name already exists
         var existing = await _publisherRepository
-            .ListAsync(g => g.Name.ToLower() == publisherDto.Name.ToLower());
+            .ListAllAsync(g => g.Name.ToLower() == publisherDto.Name.ToLower());
 
         if (existing.Any())
             throw new BadRequestException($"A publisher with the name '{publisherDto.Name}' already exists.");
