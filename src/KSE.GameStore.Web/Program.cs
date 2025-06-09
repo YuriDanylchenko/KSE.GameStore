@@ -8,11 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ---------------------------------------------
+// Logging
+// ---------------------------------------------
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+// ---------------------------------------------
+// Core services
+// ---------------------------------------------
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -25,26 +30,27 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
             x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
 }
 
+// Repositories
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+
+// Domain services
 builder.Services.AddScoped<IPlatformsService, PlatformsService>();
-builder.Services.AddControllers();
-
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IPublisherService, PublisherService>();
 
-builder.Services.AddControllers();
-
+// AutoMapper
 builder.Services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; },
     typeof(ApplicationCoreMappingProfile),
     typeof(WebMappingProfile));
 
-builder.Services.AddScoped<IGameService, GameService>();
-
-builder.Services
-    .AddRouting(options => { options.LowercaseUrls = true; });
-
+// MVC controllers
 builder.Services.AddControllers();
 
+// ---------------------------------------------
+// Build pipeline
+// ---------------------------------------------
 var app = builder.Build();
 
 app.MapControllers();

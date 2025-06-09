@@ -14,6 +14,7 @@ public interface IRepository<T, TKey> where T : BaseEntity<TKey>
 
     /// <summary>
     /// Lists entities with optional pagination.
+    /// </summary>
     /// <param name="pageNumber">The page number to retrieve.</param>
     /// <param name="pageSize">The number of entities per page.</param>
     /// <returns>A task that represents the asynchronous operation. The task contains a collection of entities.</returns>
