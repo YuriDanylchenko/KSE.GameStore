@@ -16,11 +16,14 @@ public static class LoggerExtension
 
     public static void LogServerError(this ILogger logger, string path, Exception exception)
     {
-        logger.LogError(exception, "500 Internal Server Error: Path '{Path}' encountered an error. Message: {}", path, exception);
+        logger.LogError(exception, "500 Internal Server Error: Path '{Path}' encountered an error. Message: {}", path,
+            exception);
     }
 
     public static void LogServerError(this ILogger logger, string path, Exception exception, string additionalInfo)
     {
-        logger.LogError(exception, "500 Internal Server Error: Path '{Path}' encountered an error. Message: {}. Info: {Info}", path, exception, additionalInfo);
+        logger.LogError(exception,
+            "500 Internal Server Error: Path '{Path}' encountered an error. Message: {}. Info: {Info}", path, exception,
+            additionalInfo);
     }
 }

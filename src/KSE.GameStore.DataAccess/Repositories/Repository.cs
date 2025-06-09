@@ -27,7 +27,8 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKe
         return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate, int pageNumber = 1, int pageSize = 10)
+    public async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate, int pageNumber = 1,
+        int pageSize = 10)
     {
         var query = _dbSet.Where(predicate);
 
@@ -35,6 +36,11 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKe
         query = query.Skip(skip).Take(pageSize);
 
         return await query.ToListAsync();
+    }
+
+    public async Task<IEnumerable<T>> ListAllAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.Where(predicate).ToListAsync();
     }
 
     public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
