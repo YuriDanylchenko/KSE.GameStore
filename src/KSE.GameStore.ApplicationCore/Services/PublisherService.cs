@@ -67,7 +67,7 @@ public class PublisherService : IPublisherService
         await _publisherRepository.AddAsync(publisher);
         await _publisherRepository.SaveChangesAsync();
 
-        return publisherDto;
+        return _mapper.Map<PublisherDTO>(publisher);;
     }
 
     public async Task<PublisherDTO> UpdatePublisherAsync(PublisherDTO publisherDto)
@@ -80,32 +80,22 @@ public class PublisherService : IPublisherService
             throw new NotFoundException($"Publisher with ID {publisherDto.Id} not found.");
         }
         
-        var nameTaken = (await _publisherRepository
-                .ListAsync(p => p.Id != publisherDto.Id &&
-                                p.Name.Equals(publisherDto.Name, StringComparison.OrdinalIgnoreCase)))
-                .Any();
+        // Check whether new name already exists
+        var existing = await _publisherRepository
+            .ListAsync(g => g.Name.ToLower() == publisherDto.Name.ToLower());
+
+        if (existing.Any())
+            throw new BadRequestException($"A publisher with the name '{publisherDto.Name}' already exists.");
         
-        if (nameTaken)
-            throw new BadRequestException($"Publisher '{publisherDto.Name}' already exists.");
-        
+        // Update all fields
         publisherEntity.Name = publisherDto.Name;
+        publisherEntity.Description = publisherDto.Description;
+        publisherEntity.WebsiteUrl = publisherDto.WebsiteUrl;
 
-        // If description is null, it means that user don't want to change it
-        if (publisherDto.Description != null)
-        {
-            publisherEntity.Description = publisherDto.Description;
-        }
-
-        // If website url is null, it means that user don't want to change it
-        if (publisherDto.WebsiteUrl != null)
-        {
-            publisherEntity.WebsiteUrl = publisherDto.WebsiteUrl;
-        }
-        
         _publisherRepository.Update(publisherEntity);
         await _publisherRepository.SaveChangesAsync();
 
-        return _mapper.Map<PublisherDTO>(_publisherRepository.GetByIdAsync(publisherDto.Id));
+        return _mapper.Map<PublisherDTO>(await _publisherRepository.GetByIdAsync(publisherDto.Id));
     }
 
     public async Task DeletePublisherAsync(int id)
