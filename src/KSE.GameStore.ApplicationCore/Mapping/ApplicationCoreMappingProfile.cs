@@ -18,8 +18,17 @@ public class ApplicationCoreMappingProfile : Profile
 
         // Game → GameDTO
         CreateMap<User, UserDTO>()
-            .ForMember(dest => dest.Region, opt => opt.MapFrom(src => src.Region))
-            .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(ur => ur.Role)));
+            .ConstructUsing((src, context) => new UserDTO(
+                src.Id,
+                src.Email,
+                src.HashedPassword,
+                src.PasswordSalt,
+                src.Region != null ? context.Mapper.Map<RegionDTO>(src.Region) : null,
+                src.UserRoles != null
+                    ? [.. src.UserRoles.Select(ur => context.Mapper.Map<RoleDTO>(ur.Role))]
+                    : []
+            ))
+            .ForMember(dest => dest.Roles, opt => opt.Ignore());
 
         // sub-DTOs
         CreateMap<Publisher, PublisherDTO>();

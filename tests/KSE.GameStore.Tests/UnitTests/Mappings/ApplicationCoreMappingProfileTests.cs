@@ -37,8 +37,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2),
-                EndDate = null, Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = null,
+                Game = null!
             };
 
 
@@ -92,8 +96,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2),
-                EndDate = DateTime.UtcNow.AddDays(-1), Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = DateTime.UtcNow.AddDays(-1),
+                Game = null!
             };
 
 
@@ -217,7 +225,7 @@ public class ApplicationCoreMappingProfileTests
                 Platforms = new List<PlatformDTO> { new PlatformDTO { Id = 1, Name = "PC" } },
                 Price = new GamePriceDTO { Value = 59.99m, Stock = 10 },
                 RegionPermissions = new List<RegionDTO>
-                    { new RegionDTO { Id = 1, Code = "NA", Name = "North America" } }
+                    { new RegionDTO (1, "NA","North America" ) }
             };
 
             // Act
@@ -246,7 +254,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = null,
+                Game = null!
             };
             var originalDate = DateTime.UtcNow.AddDays(-10);
 
@@ -292,7 +305,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = null,
+                Game = null!
             };
             var originalDate = DateTime.UtcNow.AddDays(-10);
 

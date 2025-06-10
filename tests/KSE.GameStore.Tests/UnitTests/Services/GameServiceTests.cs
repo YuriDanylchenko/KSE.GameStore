@@ -346,7 +346,7 @@ public class GameServiceTests
                 Genres = new List<GenreDTO> { new() { Id = 1 } },
                 Platforms = new List<PlatformDTO> { new() { Id = 1 } },
                 Price = new GamePriceDTO { Value = price.Value, Stock = price.Stock },
-                RegionPermissions = new List<RegionDTO> { new() { Id = 99 } }
+                RegionPermissions = new List<RegionDTO> { new(99, null, null) }
             };
 
             _mockGameRepo
@@ -816,7 +816,7 @@ public class GameServiceTests
                 Genres = new List<GenreDTO> { new() { Id = 1, Name = "Action" } },
                 Platforms = new List<PlatformDTO> { new() { Id = 1, Name = "PC" } },
                 Price = new GamePriceDTO { Value = 20.0m, Stock = 5 },
-                RegionPermissions = new List<RegionDTO> { new() { Id = 1, Code = "US", Name = "United States" } }
+                RegionPermissions = new List<RegionDTO> { new(1, "US", "United States") }
             };
 
             _mockGameRepo
