@@ -17,7 +17,7 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKe
 
     public async Task<T?> GetByIdAsync(TKey id) => await _dbSet.FindAsync(id);
 
-    public async Task<IEnumerable<T>> ListAsync(int pageNumber = 1, int pageSize = 10)
+    public async Task<List<T>> ListAsync(int pageNumber = 1, int pageSize = 10)
     {
         IQueryable<T> query = _dbSet;
 
@@ -27,7 +27,7 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKe
         return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate, int pageNumber = 1,
+    public async Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate, int pageNumber = 1,
         int pageSize = 10)
     {
         var query = _dbSet.Where(predicate);
@@ -38,7 +38,7 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : BaseEntity<TKe
         return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> ListAllAsync(Expression<Func<T, bool>> predicate)
+    public async Task<List<T>> ListAllAsync(Expression<Func<T, bool>> predicate)
     {
         return await _dbSet.Where(predicate).ToListAsync();
     }

@@ -20,10 +20,10 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllGenres(int? pageNumber, int? pageSize)
+    public async Task<IActionResult> GetAllGames(int? pageNumber, int? pageSize)
     {
-        var gameDto = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
-        return Ok(gameDto);
+        var gameDtos = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
+        return Ok(gameDtos);
     }
 
     [HttpGet("{id:int}")]
