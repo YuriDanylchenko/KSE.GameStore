@@ -1,9 +1,11 @@
 ﻿namespace KSE.GameStore.DataAccess.Entities;
 
-public class User : BaseEntity<Guid>
+public class User : BaseEntity<int>
 {
     public string Name { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public string HashedPassword { get; set; } = null!;
+    public string PasswordSalt { get; set; } = null!;
     public int RegionId { get; set; }
 
     public required Region Region { get; set; }

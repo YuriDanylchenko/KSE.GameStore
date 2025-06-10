@@ -2,6 +2,7 @@ using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Games;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;
@@ -20,6 +21,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> GetAllGenres(int? pageNumber, int? pageSize)
     {
         var gameDto = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
@@ -27,6 +29,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> GetGameById(int id)
     {
         var gameDto = await _gameService.GetGameByIdAsync(id);
@@ -34,6 +37,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateGame([FromBody] CreateGameRequest createGameRequest)
     {
         var gameDto = _mapper.Map<CreateGameRequest, GameDTO>(createGameRequest);
@@ -42,6 +46,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateGame([FromBody] UpdateGameRequest updateGameRequest)
     {
         var gameDto = _mapper.Map<UpdateGameRequest, GameDTO>(updateGameRequest);
@@ -50,6 +55,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteGame(int id)
     {
         await _gameService.DeleteGameAsync(id);
@@ -57,6 +63,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("/genre/{genreId:int}")]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> GetGamesByGenre(int genreId)
     {
         var gameDtos = await _gameService.GetGamesByGenreAsync(genreId);

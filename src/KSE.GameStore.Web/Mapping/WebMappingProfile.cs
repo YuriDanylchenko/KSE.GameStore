@@ -1,7 +1,6 @@
+using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.Web.Requests.Games;
-using AutoMapper;
-using KSE.GameStore.Web.Responses;
 
 namespace KSE.GameStore.Web.Mapping;
 
@@ -21,7 +20,7 @@ public class WebMappingProfile : Profile
                 src.PlatformIds.Select(id => new PlatformDTO { Id = id })))
             .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src =>
                 src.RegionPermissionIds != null
-                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id }).ToList()
+                    ? src.RegionPermissionIds.Select(id => new RegionDTO(id, null, null)).ToList()
                     : null))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
@@ -38,7 +37,7 @@ public class WebMappingProfile : Profile
                 src.PlatformIds.Select(id => new PlatformDTO { Id = id })))
             .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src =>
                 src.RegionPermissionIds != null
-                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id }).ToList()
+                    ? src.RegionPermissionIds.Select(id => new RegionDTO(id, null, null)).ToList()
                     : null))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
