@@ -1,3 +1,5 @@
+using KSE.GameStore.ApplicationCore.Models.Publisher;
+
 namespace KSE.GameStore.ApplicationCore.Models;
 
 public class GameDTO

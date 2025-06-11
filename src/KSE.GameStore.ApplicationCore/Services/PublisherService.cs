@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KSE.GameStore.ApplicationCore.Infrastructure;
 using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Publisher;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using Microsoft.Extensions.Logging;
@@ -13,8 +14,8 @@ public class PublisherService : IPublisherService
     private readonly ILogger<PublisherService> _logger;
     private readonly IMapper _mapper;    
 
-    public PublisherService(IRepository<Publisher, 
-        int> publisherRepository, 
+    public PublisherService(
+        IRepository<Publisher, int> publisherRepository, 
         ILogger<PublisherService> logger, 
         IMapper mapper)
     {
@@ -49,7 +50,7 @@ public class PublisherService : IPublisherService
         return _mapper.Map<PublisherDTO>(publisherEntity);
     }
 
-    public async Task<PublisherDTO> CreatePublisherAsync(PublisherDTO publisherDto)
+    public async Task<PublisherDTO> CreatePublisherAsync(CreatePublisherDTO publisherDto)
     {
         var existing = await _publisherRepository
             .ListAllAsync(g => g.Name.ToLower() == publisherDto.Name.ToLower());

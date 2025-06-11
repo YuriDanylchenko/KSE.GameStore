@@ -1,6 +1,7 @@
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Mapping;
 using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Publisher;
 using KSE.GameStore.DataAccess.Entities;
 
 namespace KSE.GameStore.Tests.UnitTests.Mappings;

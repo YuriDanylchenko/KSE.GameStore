@@ -1,4 +1,5 @@
 ﻿using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Publisher;
 
 namespace KSE.GameStore.ApplicationCore.Services;
 
@@ -41,7 +42,7 @@ public interface IPublisherService
     /// Creates a new publisher.
     /// </summary>
     /// <param name="publisherDto">
-    /// The <see cref="PublisherDTO"/> containing the publisher details.
+    /// The <see cref="CreatePublisherDTO"/> containing the publisher details.
     /// </param>
     /// <returns>
     /// The newly created <see cref="PublisherDTO"/>.
@@ -51,7 +52,7 @@ public interface IPublisherService
     /// - A publisher with the same title already exists
     /// - Required fields are missing or invalid
     /// </exception>
-    Task<PublisherDTO> CreatePublisherAsync(PublisherDTO publisherDto);
+    Task<PublisherDTO> CreatePublisherAsync(CreatePublisherDTO publisherDto);
     
     /// <summary>
     /// Updates an existing publisher.

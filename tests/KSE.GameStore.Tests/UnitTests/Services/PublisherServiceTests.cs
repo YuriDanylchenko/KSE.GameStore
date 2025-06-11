@@ -2,6 +2,7 @@
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Mapping;
 using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Publisher;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
@@ -152,7 +153,7 @@ public class PublisherServiceTests
         public async Task CreatePublisherAsync_ThrowsBadRequest_WhenDuplicateName()
         {
             // Arrange
-            var dto = new PublisherDTO
+            var dto = new CreatePublisherDTO
             {
                 Name = "Test Game",
                 WebsiteUrl = "https://new.com",
@@ -172,7 +173,7 @@ public class PublisherServiceTests
         public async Task CreatePublisherAsync_CreatesPublisherSuccessfully()
         {
             // Arrange
-            var dto = new PublisherDTO
+            var dto = new CreatePublisherDTO
             {
                 Name = "New Publisher",
                 WebsiteUrl = "https://new.com",

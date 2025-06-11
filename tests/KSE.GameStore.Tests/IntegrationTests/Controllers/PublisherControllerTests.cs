@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using KSE.GameStore.ApplicationCore.Mapping;
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Publisher;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.Web.Mapping;
 using KSE.GameStore.Web.Requests.Publishers;
@@ -111,7 +111,7 @@ public class PublisherControllerTests : IClassFixture<WebApplicationFactory<Prog
         var deleteResponse = await client.DeleteAsync($"/publishers/{created!.Id}");
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
     }
     
     [Fact]

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Publisher;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Publishers;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,7 @@ public class PublishersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreatePublisher([FromBody] CreatePublisherRequest createPublisherRequest)
     {
-        var publisherDto = _mapper.Map<CreatePublisherRequest, PublisherDTO>(createPublisherRequest);
+        var publisherDto = _mapper.Map<CreatePublisherRequest, CreatePublisherDTO>(createPublisherRequest);
         var createdPublisherDto = await _publisherService.CreatePublisherAsync(publisherDto);
         return Ok(createdPublisherDto);
     }
@@ -53,6 +53,6 @@ public class PublishersController : ControllerBase
     public async Task<IActionResult> DeletePublisher(int id)
     {
         await _publisherService.DeletePublisherAsync(id);
-        return NoContent();
+        return Ok();
     }
 }
