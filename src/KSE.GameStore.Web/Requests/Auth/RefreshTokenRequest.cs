@@ -1,2 +1,2 @@
 ﻿namespace KSE.GameStore.Web.Requests.Auth;
-public record RefreshTokenRequest(int Id, string Token);
+public record RefreshTokenRequest(Guid Id, string Token);

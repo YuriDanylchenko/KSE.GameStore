@@ -6,9 +6,7 @@ using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +17,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer(options => { options.TokenValidationParameters = AuthService.CreateTokenValidationParameters(); });
+.AddJwtBearer(options => { options.TokenValidationParameters = AuthService.CreateTokenValidationParameters(jwtKey); });
 
 builder.Services.AddAuthorization();
 
@@ -67,6 +65,7 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
 }
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddSingleton(jwtKey);
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameService, GameService>();
@@ -83,6 +82,9 @@ var app = builder.Build();
 
 app.MapControllers();
 
+app.UseAuthorization();
+app.UseAuthentication();
+
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggerMiddleware>();
 
@@ -92,8 +94,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.Run();
 

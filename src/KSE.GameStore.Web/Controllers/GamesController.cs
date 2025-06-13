@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace KSE.GameStore.Web.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class GamesController : ControllerBase
 {
@@ -71,6 +72,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("platform/{platformId:int}")]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> GetGamesByPlatform(int platformId)
     {
         var gameDtos = await _gameService.GetGamesByPlatformAsync(platformId);

@@ -26,6 +26,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(256)
             .IsRequired();
 
+        builder.Property(u => u.HashedPassword)
+            .IsRequired(); 
+
+        builder.Property(u => u.PasswordSalt)
+            .IsRequired();
+
         builder.Property(u => u.RegionId)
             .HasColumnName("region_id")
             .IsRequired();

@@ -10,10 +10,14 @@ using System.Text;
 
 namespace KSE.GameStore.ApplicationCore.Services;
 
-public class AuthService(IRepository<User, int> userRepository, IRepository<Role, int> roleRepository, IRepository<Region, int> regionRepository, IRepository<RefreshToken, int> refreshTokenRepository, IMapper mapper) : IAuthService
+public class AuthService(
+    IRepository<User, Guid> userRepository,
+    IRepository<Role, int> roleRepository,
+    IRepository<Region, int> regionRepository,
+    IRepository<RefreshToken, int> refreshTokenRepository,
+    IMapper mapper,
+    string token) : IAuthService
 {
-    private static readonly string Token = Guid.NewGuid().ToString("N");
-
     public async Task<UserDTO?> RegisterUserAsync(string email, string password, int regionId)
     {
         var trimmedEmail = email.Trim().ToLower();
@@ -26,7 +30,7 @@ public class AuthService(IRepository<User, int> userRepository, IRepository<Role
 
         var salt = Guid.NewGuid().ToString("N");
 
-        var region = await regionRepository.GetByIdAsync(regionId) 
+        var region = await regionRepository.GetByIdAsync(regionId)
             ?? throw new ArgumentException("Region not found.");
         var user = new User
         {
@@ -72,7 +76,7 @@ public class AuthService(IRepository<User, int> userRepository, IRepository<Role
         return true;
     }
 
-    public async Task<UserDTO?> GetUserByIdAsync(int id)
+    public async Task<UserDTO?> GetUserByIdAsync(Guid id)
     {
         var users = await userRepository.ListAllAsync(
             u => u.Id == id
@@ -89,7 +93,7 @@ public class AuthService(IRepository<User, int> userRepository, IRepository<Role
         return user == null ? null : mapper.Map<UserDTO>(user);
     }
 
-    public async Task<bool?> UpdateUserRoleAsync(int userId, string role)
+    public async Task<bool?> UpdateUserRoleAsync(Guid userId, string role)
     {
         var users = await userRepository.ListAllAsync(u => u.Id == userId);
         var user = users.FirstOrDefault();
@@ -107,7 +111,7 @@ public class AuthService(IRepository<User, int> userRepository, IRepository<Role
         return true;
     }
 
-    public static AcessTokenDTO GenerateUserJwtToken(UserDTO user)
+    public AcessTokenDTO GenerateUserJwtToken(UserDTO user)
     {
         var userEntity = new User
         {
@@ -124,27 +128,31 @@ public class AuthService(IRepository<User, int> userRepository, IRepository<Role
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, userEntity.Id.ToString()),
-            new(ClaimTypes.Email, userEntity.Email)
+            new(ClaimTypes.Email, userEntity.Email),
+            new (ClaimTypes.Role, "Admin")
         };
 
-        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        //claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         const int expiration = 30;
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddMinutes(expiration),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Token)),
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token)),
                 SecurityAlgorithms.HmacSha512Signature)
-        };
+        }; 
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
 
-        return new
+        Console.WriteLine($"JWT Token: {tokenHandler.WriteToken(securityToken)}");
+
+        return new AcessTokenDTO
         (
-            tokenHandler.WriteToken(token),
-            token.ValidTo
+            tokenHandler.WriteToken(securityToken),
+            securityToken.ValidTo
         );
     }
 
@@ -157,12 +165,12 @@ public class AuthService(IRepository<User, int> userRepository, IRepository<Role
         return Convert.ToBase64String(hashedPassword);
     }
 
-    public static TokenValidationParameters CreateTokenValidationParameters()
+    public static TokenValidationParameters CreateTokenValidationParameters(string jwtKey)
     {
         return new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Token)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,

@@ -1,6 +1,6 @@
 ﻿namespace KSE.GameStore.DataAccess.Entities;
 
-public class User : BaseEntity<int>
+public class User : BaseEntity<Guid>
 {
     public string Name { get; set; } = null!;
     public string Email { get; set; } = null!;

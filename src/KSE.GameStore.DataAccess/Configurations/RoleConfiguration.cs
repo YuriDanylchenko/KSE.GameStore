@@ -16,7 +16,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             .IsRequired();
 
         builder.HasData(
-            new Role { Id = 1, Name = "Administrator" },
+            new Role { Id = 1, Name = "Admin" },
             new Role { Id = 2, Name = "Manager" },
             new Role { Id = 3, Name = "Moderator" },
             new Role { Id = 4, Name = "User" },

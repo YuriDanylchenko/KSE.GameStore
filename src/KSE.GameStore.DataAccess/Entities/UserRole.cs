@@ -2,7 +2,7 @@ namespace KSE.GameStore.DataAccess.Entities;
 
 public class UserRole : BaseEntity<int>
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public User User { get; set; } = null!;
 
     public int RoleId { get; set; }

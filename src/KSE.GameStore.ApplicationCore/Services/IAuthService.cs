@@ -12,7 +12,9 @@ public interface IAuthService
 
     public Task<UserDTO?> GetUserByEmailAsync(string email);
 
-    public Task<UserDTO?> GetUserByIdAsync(int id);
+    public Task<UserDTO?> GetUserByIdAsync(Guid id);
 
-    public Task<bool?> UpdateUserRoleAsync(int userId, string role);
+    public Task<bool?> UpdateUserRoleAsync(Guid userId, string role);
+
+    public AcessTokenDTO GenerateUserJwtToken(UserDTO userDto);
 }

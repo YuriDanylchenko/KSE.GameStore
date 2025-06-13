@@ -9,7 +9,7 @@ namespace KSE.GameStore.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class Auth(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("login")]
     [AllowAnonymous]
@@ -24,7 +24,7 @@ public class Auth(IAuthService authService) : ControllerBase
             return Unauthorized(new { message = "Invalid email or password." });
 
         var userEntity = users;
-        var tokenResult = AuthService.GenerateUserJwtToken(userEntity);
+        var tokenResult = authService.GenerateUserJwtToken(userEntity);
 
         return Ok(new
         {
@@ -66,7 +66,7 @@ public class Auth(IAuthService authService) : ControllerBase
         var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(uid))
             return BadRequest(new { message = "Invalid user ID." });
-        var userDto = await authService.GetUserByIdAsync(int.Parse(uid));
+        var userDto = await authService.GetUserByIdAsync(Guid.Parse(uid));
         if (userDto is null)
             return NotFound(new { message = "User not found." });
         
@@ -80,7 +80,7 @@ public class Auth(IAuthService authService) : ControllerBase
         var userDto = await authService.GetUserByIdAsync(request.Id);
         if (userDto is null)
             return NotFound(new { message = "User not found." });
-        var tokenResult = AuthService.GenerateUserJwtToken(userDto);
+        var tokenResult = authService.GenerateUserJwtToken(userDto);
         return Ok(new
         {
             token = tokenResult.Token,

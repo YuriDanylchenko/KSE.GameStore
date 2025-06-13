@@ -1,2 +1,2 @@
 ﻿namespace KSE.GameStore.Web.Requests.Auth;
-public record UpdateUserRoleRequest(int UserId, string RoleName);
+public record UpdateUserRoleRequest(Guid UserId, string RoleName);
