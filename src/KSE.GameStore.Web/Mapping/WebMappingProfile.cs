@@ -1,6 +1,7 @@
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.Web.Requests.Games;
 using AutoMapper;
+using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.Web.Responses;
 
 namespace KSE.GameStore.Web.Mapping;
@@ -11,39 +12,39 @@ public class WebMappingProfile : Profile
     {
         // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
 
-        // CreateGameRequest → GameDTO
-        CreateMap<CreateGameRequest, GameDTO>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => new PublisherDTO { Id = src.PublisherId }))
-            .ForMember(dest => dest.Genres, opt => opt.MapFrom(src =>
-                src.GenreIds.Select(id => new GenreDTO { Id = id })))
-            .ForMember(dest => dest.Platforms, opt => opt.MapFrom(src =>
-                src.PlatformIds.Select(id => new PlatformDTO { Id = id })))
-            .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src =>
-                src.RegionPermissionIds != null
-                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id }).ToList()
-                    : null))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+        // CreateGameRequest → CreateGameDTO
+        CreateMap<CreateGameRequest, CreateGameDTO>()
+            .ConstructUsing(src => new CreateGameDTO(
+                src.Title,
+                src.Description,
+                src.PublisherId,
+                src.GenreIds,
+                src.PlatformIds,
+                null!, // will be mapped below
+                src.RegionPermissionIds
+            ))
+            .ForMember(dest => dest.PriceDto, opt => opt.MapFrom(src => new CreateGamePriceDTO(src.Price.Value, src.Price.Stock)));
 
-        // CreateGamePriceRequest → GamePriceDTO
-        CreateMap<CreateGamePriceRequest, GamePriceDTO>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
-
-        // UpdateGameRequest → GameDTO
-        CreateMap<UpdateGameRequest, GameDTO>()
-            .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => new PublisherDTO { Id = src.PublisherId }))
-            .ForMember(dest => dest.Genres, opt => opt.MapFrom(src =>
-                src.GenreIds.Select(id => new GenreDTO { Id = id })))
-            .ForMember(dest => dest.Platforms, opt => opt.MapFrom(src =>
-                src.PlatformIds.Select(id => new PlatformDTO { Id = id })))
-            .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src =>
-                src.RegionPermissionIds != null
-                    ? src.RegionPermissionIds.Select(id => new RegionDTO { Id = id }).ToList()
-                    : null))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
-
-        // UpdateGamePriceRequest → GamePriceDTO
-        CreateMap<UpdateGamePriceRequest, GamePriceDTO>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+        // UpdateGameRequest → UpdateGameDTO
+        CreateMap<UpdateGameRequest, UpdateGameDTO>()
+            .ConstructUsing(src => new UpdateGameDTO(
+                src.Id,
+                src.Title,
+                src.Description,
+                src.PublisherId,
+                src.GenreIds,
+                src.PlatformIds,
+                null!, // will be mapped below
+                src.RegionPermissionIds
+            ))
+            .ForMember(dest => dest.PriceDto, opt => opt.MapFrom(src => new UpdateGamePriceDTO(src.Price.Value, src.Price.Stock)));
+        
+        // CreateGamePriceRequest → CreateGamePriceDTO
+        CreateMap<CreateGamePriceRequest, CreateGamePriceDTO>()
+            .ConstructUsing(src => new CreateGamePriceDTO(src.Value, src.Stock));
+        
+        // UpdateGamePriceRequest → UpdateGamePriceDTO
+        CreateMap<UpdateGamePriceRequest, UpdateGamePriceDTO>()
+            .ConstructUsing(src => new UpdateGamePriceDTO(src.Value, src.Stock));
     }
 }
