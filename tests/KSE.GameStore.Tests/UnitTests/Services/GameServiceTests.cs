@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Linq.Expressions;
 using AutoMapper;
+using KSE.GameStore.ApplicationCore.Models.Publisher;
 
 namespace KSE.GameStore.Tests.UnitTests.Services;
 
