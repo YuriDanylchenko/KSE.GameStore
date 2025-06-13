@@ -19,7 +19,6 @@ builder.Logging.AddDebug();
 // Core services
 // ---------------------------------------------
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 if (!builder.Environment.IsEnvironment("IntegrationTest"))
@@ -53,10 +52,10 @@ builder.Services.AddControllers();
 // ---------------------------------------------
 var app = builder.Build();
 
-app.MapControllers();
-
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggerMiddleware>();
+
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -14,7 +14,7 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
     public async Task<List<PlatformDTO>> GetAllAsync()
     {
         var platforms = await _repository.ListAsync();
-        return [.. platforms.Select(p => new PlatformDTO { Id = p.Id, Name = p.Name })];
+        return platforms.Select(p => new PlatformDTO { Id = p.Id, Name = p.Name }).ToList();
     }
 
     public async Task<PlatformDTO> GetByIdAsync(int id)

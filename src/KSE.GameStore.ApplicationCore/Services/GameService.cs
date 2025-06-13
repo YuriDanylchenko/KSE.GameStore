@@ -146,9 +146,8 @@ public class GameService : IGameService
         await _gameRepository.AddAsync(gameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var createdGameEntity = await _gameRepository.GetGameByIdAsync(gameEntity.Id);
-        var en = _mapper.Map<GameDTO>(createdGameEntity);
-        return en;
+        var createdGameEntity = await _gameRepository.GetGameByIdAsync(gameEntity.Id); 
+        return _mapper.Map<GameDTO>(createdGameEntity);
     }
 
     public async Task<GameDTO> UpdateGameAsync(GameDTO gameDto)
@@ -223,8 +222,6 @@ public class GameService : IGameService
             exisingGameEntity.RegionPermissions = newRegions;
         }
         else exisingGameEntity.RegionPermissions = null;
-
-        _mapper.Map(gameDto, exisingGameEntity);
 
         _gameRepository.Update(exisingGameEntity);
         await _gameRepository.SaveChangesAsync();
