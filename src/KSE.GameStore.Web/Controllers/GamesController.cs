@@ -25,8 +25,8 @@ public class GamesController : ControllerBase
     [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> GetAllGenres(int? pageNumber, int? pageSize)
     {
-        var gameDto = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
-        return Ok(gameDto);
+        var gameDtos = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
+        return Ok(gameDtos);
     }
 
     [HttpGet("{id:int}")]

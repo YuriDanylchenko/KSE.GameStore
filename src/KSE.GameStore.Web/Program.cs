@@ -88,6 +88,8 @@ app.UseAuthentication();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggerMiddleware>();
 
+app.MapControllers();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
