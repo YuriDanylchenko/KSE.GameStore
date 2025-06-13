@@ -1,6 +1,7 @@
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Mapping;
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Input;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess.Entities;
 
 namespace KSE.GameStore.Tests.UnitTests.Mappings;
@@ -204,30 +205,133 @@ public class ApplicationCoreMappingProfileTests
     public class WriteMappings : ApplicationCoreMappingProfileTests
     {
         [Fact]
-        public void Maps_GameDTO_To_Game_With_Basic_Properties()
+        public void Maps_CreateGameDTO_To_Game_With_Basic_Properties()
         {
             // Arrange
-            var dto = new GameDTO
+            var createDto = new CreateGameDTO(
+                Title: "Test Game",
+                Description: "Test Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1, 2 },
+                PlatformIds: new List<int> { 3 },
+                PriceDto: new CreateGamePriceDTO(Value: 59.99m, Stock: 10),
+                RegionPermissionIds: new List<int> { 4, 5 }
+            );
+
+            // Act
+            var game = _mapper.Map<Game>(createDto);
+
+            // Assert
+            Assert.Equal(0, game.Id);
+            Assert.Equal(createDto.Title, game.Title);
+            Assert.Equal(createDto.Description, game.Description);
+            Assert.Equal(createDto.PublisherId, game.PublisherId);
+            Assert.True(game.CreatedAt > DateTime.MinValue);
+            Assert.True((DateTime.UtcNow - game.UpdatedAt).TotalSeconds < 1);
+            Assert.Empty(game.Genres);
+            Assert.Empty(game.Platforms);
+            Assert.Empty(game.Prices);
+            Assert.Null(game.RegionPermissions);
+        }
+
+        [Fact]
+        public void Maps_CreateGameDTO_To_Game_Ignores_Publisher_Genres_Platforms_Prices_RegionPermissions()
+        {
+            // Arrange
+            var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
+            var genre = new Genre { Id = 1, Name = "RPG" };
+            var platform = new Platform { Id = 1, Name = "PC" };
+            var region = new Region { Id = 1, Name = "NA" };
+            var price = new GamePrice
+            {
+                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+            };
+
+            var existingGame = new Game
             {
                 Id = 1,
                 Title = "Test Game",
                 Description = "Test Description",
-                Publisher = new PublisherDTO { Id = 1, Name = "Test Publisher" },
-                Genres = new List<GenreDTO> { new GenreDTO { Id = 1, Name = "RPG" } },
-                Platforms = new List<PlatformDTO> { new PlatformDTO { Id = 1, Name = "PC" } },
-                Price = new GamePriceDTO { Value = 59.99m, Stock = 10 },
-                RegionPermissions = new List<RegionDTO>
-                    { new RegionDTO { Id = 1, Code = "NA", Name = "North America" } }
+                PublisherId = 2,
+                CreatedAt = DateTime.UtcNow.AddDays(-10),
+                UpdatedAt = DateTime.Now,
+                Publisher = publisher,
+                Genres = new List<Genre> { genre },
+                Platforms = new List<Platform> { platform },
+                Prices = new List<GamePrice> { price },
+                RegionPermissions = new List<Region> { region }
             };
 
+            var createDto = new CreateGameDTO(
+                Title: "Updated Game",
+                PublisherId: 1,
+                Description: "Updated Description",
+                GenreIds: [2],
+                PlatformIds: [2],
+                PriceDto: new CreateGamePriceDTO(Value: 59.99m, Stock: 5),
+                RegionPermissionIds: [2]
+            );
+
             // Act
-            var game = _mapper.Map<Game>(dto);
+            _mapper.Map(createDto, existingGame);
 
             // Assert
-            Assert.Equal(dto.Id, game.Id);
-            Assert.Equal(dto.Title, game.Title);
-            Assert.Equal(dto.Description, game.Description);
-            Assert.Equal(dto.Publisher.Id, game.PublisherId);
+            Assert.Equal(1, existingGame.Id);
+            Assert.Equal(1, existingGame.PublisherId);
+            Assert.Equal(publisher, existingGame.Publisher);
+            Assert.Single(existingGame.Genres);
+            Assert.Equal(genre, existingGame.Genres.First());
+            Assert.Single(existingGame.Platforms);
+            Assert.Equal(platform, existingGame.Platforms.First());
+            Assert.Single(existingGame.Prices);
+            Assert.Equal(price, existingGame.Prices.First());
+            Assert.Single(existingGame.RegionPermissions);
+            Assert.Equal(region, existingGame.RegionPermissions.First());
+        }
+
+        [Fact]
+        public void Maps_CreateGamePriceDTO_To_GamePrice()
+        {
+            // Arrange
+            var createDto = new CreateGamePriceDTO(
+                Value: 59.99m,
+                Stock: 10
+            );
+
+            // Act
+            var price = _mapper.Map<GamePrice>(createDto);
+
+            // Assert
+            Assert.Equal(0, price.Id);
+            Assert.Equal(createDto.Value, price.Value);
+            Assert.Equal(createDto.Stock, price.Stock);
+            Assert.True(price.StartDate > DateTime.MinValue);
+            Assert.Null(price.EndDate);
+        }
+
+        [Fact]
+        public void Maps_UpdateGameDTO_To_Game_With_Basic_Properties()
+        {
+            // Arrange
+            var updateDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Test Game",
+                Description: "Test Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1, 2 },
+                PlatformIds: new List<int> { 3 },
+                PriceDto: new UpdateGamePriceDTO(Value: 59.99m, Stock: 10),
+                RegionPermissionIds: new List<int> { 4, 5 }
+            );
+
+            // Act
+            var game = _mapper.Map<Game>(updateDto);
+
+            // Assert
+            Assert.Equal(updateDto.Id, game.Id);
+            Assert.Equal(updateDto.Title, game.Title);
+            Assert.Equal(updateDto.Description, game.Description);
+            Assert.Equal(updateDto.PublisherId, game.PublisherId);
             Assert.Equal(game.CreatedAt, DateTime.Parse("0001-01-01T00:00:00Z").ToUniversalTime());
             Assert.True((DateTime.UtcNow - game.UpdatedAt).TotalSeconds < 1);
             Assert.Empty(game.Genres);
@@ -237,18 +341,23 @@ public class ApplicationCoreMappingProfileTests
         }
 
         [Fact]
-        public void Maps_GameDTO_To_Game_Ignores_CreatedAt_And_Publisher()
+        public void Maps_UpdateGameDTO_To_Game_Ignores_CreatedAt_Publisher_Genres_Platforms_Prices_RegionPermissions()
         {
             // Arrange
-            var publisher = new Publisher { Id = 2, Name = "Original Publisher" };
-            var genre = new Genre { Id = 1, Name = "RPG" };
-            var platform = new Platform { Id = 1, Name = "PC" };
-            var region = new Region { Id = 1, Name = "NA" };
-            var price = new GamePrice
+            var publisher1 = new Publisher { Id = 2, Name = "Original Publisher" };
+            var genre1 = new Genre { Id = 1, Name = "RPG" };
+            var platform1 = new Platform { Id = 1, Name = "PC" };
+            var region1 = new Region { Id = 1, Name = "NA" };
+            var price1 = new GamePrice
             {
                 Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
             };
             var originalDate = DateTime.UtcNow.AddDays(-10);
+
+            var publisher2 = new Publisher { Id = 1, Name = "Updated Publisher" };
+            var genre2 = new Genre { Id = 2, Name = "Action" };
+            var platform2 = new Platform { Id = 2, Name = "Xbox" };
+            var region2 = new Region { Id = 2, Name = "EU" };
 
             var existingGame = new Game
             {
@@ -258,32 +367,44 @@ public class ApplicationCoreMappingProfileTests
                 PublisherId = 2,
                 CreatedAt = originalDate,
                 UpdatedAt = DateTime.Now,
-                Publisher = publisher,
-                Genres = new List<Genre> { genre },
-                Platforms = new List<Platform> { platform },
-                Prices = new List<GamePrice> { price },
-                RegionPermissions = new List<Region> { region }
+                Publisher = publisher1,
+                Genres = new List<Genre> { genre1 },
+                Platforms = new List<Platform> { platform1 },
+                Prices = new List<GamePrice> { price1 },
+                RegionPermissions = new List<Region> { region1 }
             };
 
-            var dto = new GameDTO
-            {
-                Id = 1,
-                Title = "Updated Game",
-                Publisher = new PublisherDTO { Id = 1, Name = "Updated Publisher" }
-            };
+            var updateDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                PublisherId: 1,
+                Description: "Updated Description",
+                GenreIds: [2],
+                PlatformIds: [2],
+                PriceDto: new UpdateGamePriceDTO(Value: 59.99m, Stock: 5),
+                RegionPermissionIds: [2]
+            );
 
             // Act
-            _mapper.Map(dto, existingGame);
+            _mapper.Map(updateDto, existingGame);
 
             // Assert
             Assert.Equal(originalDate, existingGame.CreatedAt);
             Assert.Equal(1, existingGame.PublisherId);
             Assert.Equal(2, existingGame.Publisher.Id);
             Assert.Equal("Original Publisher", existingGame.Publisher.Name);
+            Assert.Single(existingGame.Genres);
+            Assert.Equal(genre1, existingGame.Genres.First());
+            Assert.Single(existingGame.Platforms);
+            Assert.Equal(platform1, existingGame.Platforms.First());
+            Assert.Single(existingGame.Prices);
+            Assert.Equal(price1, existingGame.Prices.First());
+            Assert.Single(existingGame.RegionPermissions);
+            Assert.Equal(region1, existingGame.RegionPermissions.First());
         }
 
         [Fact]
-        public void Maps_GameDTO_To_Game_Updates_UpdatedAt()
+        public void Maps_UpdateGameDTO_To_Game_Updates_UpdatedAt()
         {
             // Arrange
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
@@ -311,34 +432,42 @@ public class ApplicationCoreMappingProfileTests
                 RegionPermissions = new List<Region> { region }
             };
 
-            var dto = new GameDTO { Id = 1, Title = "Updated Title" };
+            var updateDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                PublisherId: 1,
+                Description: "Updated Description",
+                GenreIds: [2],
+                PlatformIds: [2],
+                PriceDto: new UpdateGamePriceDTO(Value: 59.99m, Stock: 5),
+                RegionPermissionIds: [2]
+            );
 
             // Act
-            _mapper.Map(dto, existingGame);
+            _mapper.Map(updateDto, existingGame);
 
             // Assert
-            Assert.Equal("Updated Title", existingGame.Title);
+            Assert.Equal("Updated Game", existingGame.Title);
             Assert.NotEqual(originalDate, existingGame.UpdatedAt);
             Assert.True((DateTime.UtcNow - existingGame.UpdatedAt).TotalSeconds < 1);
         }
 
         [Fact]
-        public void Maps_GamePriceDTO_To_GamePrice()
+        public void Maps_UpdateGamePriceDTO_To_GamePrice()
         {
             // Arrange
-            var dto = new GamePriceDTO
-            {
-                Value = 59.99m,
-                Stock = 10
-            };
+            var updateDto = new UpdateGamePriceDTO(
+                Value: 59.99m,
+                Stock: 10
+            );
 
             // Act
-            var price = _mapper.Map<GamePrice>(dto);
+            var price = _mapper.Map<GamePrice>(updateDto);
 
             // Assert
             Assert.Equal(0, price.Id);
-            Assert.Equal(dto.Value, price.Value);
-            Assert.Equal(dto.Stock, price.Stock);
+            Assert.Equal(updateDto.Value, price.Value);
+            Assert.Equal(updateDto.Stock, price.Stock);
             Assert.True(price.StartDate > DateTime.MinValue);
             Assert.Null(price.EndDate);
         }
