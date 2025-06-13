@@ -1,4 +1,4 @@
-namespace KSE.GameStore.ApplicationCore.Models;
+namespace KSE.GameStore.ApplicationCore.Models.Output;
 
 public class BadRequestException : ServerException
 {
