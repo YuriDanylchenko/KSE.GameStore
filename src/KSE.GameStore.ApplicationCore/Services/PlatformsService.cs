@@ -1,4 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,7 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
     public async Task<List<PlatformDTO>> GetAllAsync()
     {
         var platforms = await _repository.ListAsync();
-        return platforms.Select(p => new PlatformDTO { Id = p.Id, Name = p.Name }).ToList();
+        return platforms.Select(p => new PlatformDTO(p.Id, p.Name)).ToList();
     }
 
     public async Task<PlatformDTO> GetByIdAsync(int id)
@@ -22,7 +22,7 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
         var platform = await _repository.GetByIdAsync(id);
         return platform is null
             ? throw new NotFoundException($"Platform with id {id} not found.")
-            : new PlatformDTO { Id = platform.Id, Name = platform.Name };
+            : new PlatformDTO(platform.Id, platform.Name);
     }
 
     public async Task<int> CreateAsync(string name)
