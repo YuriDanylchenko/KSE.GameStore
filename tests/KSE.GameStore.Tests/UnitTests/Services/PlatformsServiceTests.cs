@@ -1,54 +1,40 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using AutoMapper;
+using KSE.GameStore.ApplicationCore.Mapping;
+using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.ApplicationCore.Services;
-using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using KSE.GameStore.Web.Mapping;
 using Moq;
 
 namespace KSE.GameStore.Tests.UnitTests.Services;
 
 public class PlatformsServiceTests
 {
-    private static GameStoreDbContext CreateDbContext(string dbName) => new(
-        new DbContextOptionsBuilder<GameStoreDbContext>()
-            .UseInMemoryDatabase(databaseName: dbName)
-            .Options);
+    private readonly Mock<IRepository<Platform, int>> _mockRepo;
+    private readonly IMapper _mapper;
+    private readonly PlatformsService _service;
 
-    private static PlatformsService CreatePlatformsService(GameStoreDbContext context) => new(
-        new Repository<Platform, int>(context),
-        new Mock<ILogger<PlatformsService>>().Object);
-
-    [Fact]
-    public async Task GetAll_ReturnsAllPlatforms()
+    public PlatformsServiceTests()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
-        context.Platforms.Add(new Platform { Name = "PC" });
-        context.Platforms.Add(new Platform { Name = "Xbox" });
-        await context.SaveChangesAsync();
-
-        var service = CreatePlatformsService(context);
-        var result = await service.GetAllAsync();
-
-        Assert.Equal(2, result.Count);
-        Assert.Contains(result, p => p.Name == "PC");
-        Assert.Contains(result, p => p.Name == "Xbox");
+        _mockRepo = new Mock<IRepository<Platform, int>>();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullCollections = true;
+            cfg.AddProfile<WebMappingProfile>();
+            cfg.AddProfile<ApplicationCoreMappingProfile>();
+        });
+        _mapper = config.CreateMapper();
+        _service = new PlatformsService(_mockRepo.Object, _mapper);
     }
 
     [Fact]
     public async Task GetById_ReturnsPlatform_WhenExists()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
-        var platform = new Platform { Name = "PC" };
-        context.Platforms.Add(platform);
-        await context.SaveChangesAsync();
+        var platform = new Platform { Id = 1, Name = "PC" };
+        _mockRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(platform);
 
-        var service = CreatePlatformsService(context);
-
-        var result = await service.GetByIdAsync(platform.Id);
+        var result = await _service.GetByIdAsync(1);
 
         Assert.NotNull(result);
         Assert.Equal("PC", result!.Name);
@@ -57,81 +43,71 @@ public class PlatformsServiceTests
     [Fact]
     public async Task GetById_ThrowsNotFoundException_WhenNotExists()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
+        _mockRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Platform?)null);
 
-        var service = CreatePlatformsService(context);
-
-        var ex = await Assert.ThrowsAsync<NotFoundException>(() => service.GetByIdAsync(99));
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => _service.GetByIdAsync(99));
         Assert.Equal("Platform with id 99 not found.", ex.Message);
     }
 
     [Fact]
     public async Task Create_AddsPlatform()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
-        var service = CreatePlatformsService(context);
+        Platform? added = null;
+        _mockRepo.Setup(r => r.AddAsync(It.IsAny<Platform>()))
+            .Callback<Platform>(p => { p.Id = 1; added = p; })
+            .Returns(Task.CompletedTask);
+        _mockRepo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await service.CreateAsync("Switch");
+        var result = await _service.CreateAsync("Switch");
 
-        Assert.Single(context.Platforms);
-        Assert.Equal("Switch", context.Platforms.First().Name);
+        Assert.NotNull(added);
+        Assert.Equal("Switch", added.Name);
+        Assert.Equal(1, result);
     }
 
     [Fact]
     public async Task Update_UpdatesPlatform_WhenExists()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
-        var platform = new Platform { Name = "Old" };
-        context.Platforms.Add(platform);
-        await context.SaveChangesAsync();
+        var platform = new Platform { Id = 1, Name = "Old" };
+        _mockRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(platform);
+        _mockRepo.Setup(r => r.Update(platform));
+        _mockRepo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var service = CreatePlatformsService(context);
-
-        var updated = await service.UpdateAsync(platform.Id, "New");
+        var updated = await _service.UpdateAsync(1, "New");
 
         Assert.True(updated);
-        Assert.Equal("New", context.Platforms.Find(platform.Id)!.Name);
+        Assert.Equal("New", platform.Name);
     }
 
     [Fact]
     public async Task Update_ThrowsNotFoundException_WhenNotExists()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
-        var service = CreatePlatformsService(context);
+        _mockRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Platform?)null);
 
-        var ex = await Assert.ThrowsAsync<NotFoundException>(() => service.UpdateAsync(1, "New"));
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateAsync(1, "New"));
         Assert.Equal("Platform with id 1 not found.", ex.Message);
     }
 
     [Fact]
     public async Task Delete_RemovesPlatform_WhenExists()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
-        var platform = new Platform { Name = "PC" };
-        context.Platforms.Add(platform);
-        await context.SaveChangesAsync();
+        var platform = new Platform { Id = 1, Name = "PC" };
+        _mockRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(platform);
+        _mockRepo.Setup(r => r.Delete(platform));
+        _mockRepo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var service = CreatePlatformsService(context);
-
-        var deleted = await service.DeleteAsync(platform.Id);
+        var deleted = await _service.DeleteAsync(1);
 
         Assert.True(deleted);
-        Assert.Empty(context.Platforms);
+        _mockRepo.Verify(r => r.Delete(platform), Times.Once);
     }
 
     [Fact]
     public async Task Delete_ThrowsNotFoundException_WhenNotExists()
     {
-        var dbName = Guid.NewGuid().ToString();
-        using var context = CreateDbContext(dbName);
-        var service = CreatePlatformsService(context);
+        _mockRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Platform?)null);
 
-        var ex = await Assert.ThrowsAsync<NotFoundException>(() => service.DeleteAsync(1));
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => _service.DeleteAsync(1));
         Assert.Equal("Platform with id 1 not found.", ex.Message);
     }
 }

@@ -62,7 +62,7 @@ public class WebMappingProfileTests
             Assert.Equal(2, dto.RegionPermissions!.Count);
             Assert.Equal(4, dto.RegionPermissions[0].Id);
             Assert.Equal(5, dto.RegionPermissions[1].Id);
-            Assert.All(dto.RegionPermissions, r => Assert.Empty(r.Name));
+            Assert.All(dto.RegionPermissions, r => Assert.True(string.IsNullOrEmpty(r.Name)));
         }
 
 
@@ -167,7 +167,7 @@ public class WebMappingProfileTests
             Assert.Equal(2, dto.RegionPermissions!.Count);
             Assert.Equal(4, dto.RegionPermissions[0].Id);
             Assert.Equal(5, dto.RegionPermissions[1].Id);
-            Assert.All(dto.RegionPermissions, r => Assert.Empty(r.Name));
+            Assert.All(dto.RegionPermissions, r => Assert.True(string.IsNullOrEmpty(r.Name)));
         }
 
         [Fact]

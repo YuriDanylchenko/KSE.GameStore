@@ -16,12 +16,27 @@ public class ApplicationCoreMappingProfile : Profile
                 opt => opt.MapFrom(src =>
                     src.Prices.FirstOrDefault(p => p.EndDate == null)));
 
+        // Game → GameDTO
+        CreateMap<User, UserDTO>()
+            .ConstructUsing((src, context) => new UserDTO(
+                src.Id,
+                src.Email,
+                src.HashedPassword,
+                src.PasswordSalt,
+                src.Region != null ? context.Mapper.Map<RegionDTO>(src.Region) : null,
+                src.UserRoles != null
+                    ? [.. src.UserRoles.Select(ur => context.Mapper.Map<RoleDTO>(ur.Role))]
+                    : []
+            ))
+            .ForMember(dest => dest.Roles, opt => opt.Ignore());
+
         // sub-DTOs
         CreateMap<Publisher, PublisherDTO>();
         CreateMap<Genre, GenreDTO>();
         CreateMap<Platform, PlatformDTO>();
         CreateMap<Region, RegionDTO>();
         CreateMap<GamePrice, GamePriceDTO>();
+        CreateMap<Role, RoleDTO>();
 
         // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
 
