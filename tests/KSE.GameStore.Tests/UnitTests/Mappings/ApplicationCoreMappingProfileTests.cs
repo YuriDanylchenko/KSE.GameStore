@@ -266,10 +266,10 @@ public class ApplicationCoreMappingProfileTests
                 Title: "Updated Game",
                 PublisherId: 1,
                 Description: "Updated Description",
-                GenreIds: [2],
-                PlatformIds: [2],
+                GenreIds: new List<int> { 2 },
+                PlatformIds: new List<int> { 2 },
                 PriceDto: new CreateGamePriceDTO(Value: 59.99m, Stock: 5),
-                RegionPermissionIds: [2]
+                RegionPermissionIds: new List<int> { 2 }
             );
 
             // Act
@@ -379,10 +379,10 @@ public class ApplicationCoreMappingProfileTests
                 Title: "Updated Game",
                 PublisherId: 1,
                 Description: "Updated Description",
-                GenreIds: [2],
-                PlatformIds: [2],
+                GenreIds: new List<int> { 2 },
+                PlatformIds: new List<int> { 2 },
                 PriceDto: new UpdateGamePriceDTO(Value: 59.99m, Stock: 5),
-                RegionPermissionIds: [2]
+                RegionPermissionIds: new List<int> { 2 }
             );
 
             // Act
@@ -437,10 +437,10 @@ public class ApplicationCoreMappingProfileTests
                 Title: "Updated Game",
                 PublisherId: 1,
                 Description: "Updated Description",
-                GenreIds: [2],
-                PlatformIds: [2],
+                GenreIds: new List<int> { 2 },
+                PlatformIds: new List<int> { 2 },
                 PriceDto: new UpdateGamePriceDTO(Value: 59.99m, Stock: 5),
-                RegionPermissionIds: [2]
+                RegionPermissionIds: new List<int> { 2 }
             );
 
             // Act
