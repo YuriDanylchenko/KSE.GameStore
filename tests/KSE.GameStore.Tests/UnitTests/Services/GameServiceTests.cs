@@ -1,4 +1,6 @@
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Input;
+using KSE.GameStore.ApplicationCore.Models.Output;
+
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.Web.Mapping;
 using KSE.GameStore.ApplicationCore.Services;
@@ -243,32 +245,42 @@ public class GameServiceTests
         public async Task CreateGameAsync_ThrowsBadRequest_WhenTitleExists()
         {
             // Arrange
-            var gameDto = new GameDTO
-            {
-                Title = "Test Game",
-            };
+            var createGameDto = new CreateGameDTO(
+                Title: "Created Game",
+                Description: "Created Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new CreateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int> { 1 }
+            );
 
             _mockGameRepo.Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
                 .ReturnsAsync(true);
 
             // Act & Assert
-            await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateGameAsync(gameDto));
+            await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateGameAsync(createGameDto));
         }
 
         [Fact]
         public async Task CreateGameAsync_ThrowsNotFound_WhenPublisherMissing()
         {
             // Arrange
-            var gameDto = new GameDTO
-            {
-                Publisher = new PublisherDTO { Id = 1, Name = "Created Publisher" }
-            };
+            var createGameDto = new CreateGameDTO(
+                Title: "Created Game",
+                Description: "Created Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new CreateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int> { 1 }
+            );
 
             _mockPublisherRepo.Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync((Publisher?)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(createGameDto));
         }
 
         [Fact]
@@ -276,11 +288,15 @@ public class GameServiceTests
         {
             // Arrange
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
-            var gameDto = new GameDTO
-            {
-                Publisher = new PublisherDTO { Id = 1 },
-                Genres = new List<GenreDTO> { new() { Id = 99 } }
-            };
+            var createGameDto = new CreateGameDTO(
+                Title: "Created Game",
+                Description: "Created Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new CreateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int> { 1 }
+            );
 
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
@@ -295,7 +311,7 @@ public class GameServiceTests
                 .ReturnsAsync(new List<Genre>());
 
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(createGameDto));
         }
 
         [Fact]
@@ -304,13 +320,15 @@ public class GameServiceTests
             // Arrange
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
             var genre = new Genre { Id = 1, Name = "Action" };
-            var gameDto = new GameDTO
-            {
-                Publisher = new PublisherDTO { Id = 1 },
-                Genres = new List<GenreDTO> { new() { Id = 1 } },
-                Platforms = new List<PlatformDTO> { new() { Id = 99 } }
-            };
-
+            var createGameDto = new CreateGameDTO(
+                Title: "Created Game",
+                Description: "Created Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 99 },
+                PriceDto: new CreateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int> { 1 }
+            );
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
                 .ReturnsAsync(false);
@@ -328,7 +346,7 @@ public class GameServiceTests
                 .ReturnsAsync(new List<Platform>());
 
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(createGameDto));
         }
 
         [Fact]
@@ -338,16 +356,15 @@ public class GameServiceTests
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
             var genre = new Genre { Id = 1, Name = "Action" };
             var platform = new Platform { Id = 1, Name = "PC" };
-            var price = new GamePrice
-                { Value = 10.0m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null, Game = null! };
-            var gameDto = new GameDTO
-            {
-                Publisher = new PublisherDTO { Id = 1 },
-                Genres = new List<GenreDTO> { new() { Id = 1 } },
-                Platforms = new List<PlatformDTO> { new() { Id = 1 } },
-                Price = new GamePriceDTO { Value = price.Value, Stock = price.Stock },
-                RegionPermissions = new List<RegionDTO> { new() { Id = 99 } }
-            };
+            var createGameDto = new CreateGameDTO(
+                Title: "Created Game",
+                Description: "Created Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new CreateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int> { 4, 5 }
+            );
 
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
@@ -370,7 +387,7 @@ public class GameServiceTests
                 .ReturnsAsync(new List<Region>());
 
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(createGameDto));
         }
 
         [Fact]
@@ -380,19 +397,15 @@ public class GameServiceTests
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
             var genres = new List<Genre> { new() { Id = 1, Name = "Action" } };
             var platforms = new List<Platform> { new() { Id = 1, Name = "PC" } };
-            var price = new GamePrice
-                { Value = 10.0m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null, Game = null! };
-
-            var gameDto = new GameDTO
-            {
-                Title = "Created Game",
-                Description = "Created Description",
-                Publisher = new PublisherDTO { Id = 1 },
-                Genres = new List<GenreDTO> { new() { Id = 1 } },
-                Platforms = new List<PlatformDTO> { new() { Id = 1 } },
-                Price = new GamePriceDTO { Value = price.Value, Stock = price.Stock },
-                RegionPermissions = null
-            };
+            var createGameDto = new CreateGameDTO(
+                Title: "Created Game",
+                Description: "Created Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new CreateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: null
+            );
 
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
@@ -434,7 +447,7 @@ public class GameServiceTests
                 .ReturnsAsync(() => captured);
 
             // Act
-            var result = await _service.CreateGameAsync(gameDto);
+            var result = await _service.CreateGameAsync(createGameDto);
 
             // Assert
             Assert.NotNull(result);
@@ -447,7 +460,7 @@ public class GameServiceTests
             Assert.Single(result.Platforms);
             Assert.Equal("PC", result.Platforms[0].Name);
             Assert.NotNull(result.Price);
-            Assert.Equal(10.0m, result.Price.Value);
+            Assert.Equal(19.99m, result.Price.Value);
             Assert.Equal(10, result.Price.Stock);
             Assert.Null(result.RegionPermissions);
         }
@@ -459,19 +472,15 @@ public class GameServiceTests
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
             var genres = new List<Genre> { new() { Id = 1, Name = "Action" } };
             var platforms = new List<Platform> { new() { Id = 1, Name = "PC" } };
-            var price = new GamePrice
-                { Value = 10.0m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null, Game = null! };
-
-            var gameDto = new GameDTO
-            {
-                Title = "Created Game",
-                Description = "Created Description",
-                Publisher = new PublisherDTO { Id = 1 },
-                Genres = new List<GenreDTO> { new() { Id = 1 } },
-                Platforms = new List<PlatformDTO> { new() { Id = 1 } },
-                Price = new GamePriceDTO { Value = price.Value, Stock = price.Stock },
-                RegionPermissions = new List<RegionDTO>()
-            };
+            var createGameDto = new CreateGameDTO(
+                Title: "Created Game",
+                Description: "Created Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new CreateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
 
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
@@ -513,7 +522,7 @@ public class GameServiceTests
                 .ReturnsAsync(() => captured);
 
             // Act
-            var result = await _service.CreateGameAsync(gameDto);
+            var result = await _service.CreateGameAsync(createGameDto);
 
             // Assert
             Assert.NotNull(result);
@@ -526,7 +535,7 @@ public class GameServiceTests
             Assert.Single(result.Platforms);
             Assert.Equal("PC", result.Platforms[0].Name);
             Assert.NotNull(result.Price);
-            Assert.Equal(10.0m, result.Price.Value);
+            Assert.Equal(19.99m, result.Price.Value);
             Assert.Equal(10, result.Price.Stock);
             Assert.Empty(result.RegionPermissions!);
         }
@@ -538,20 +547,25 @@ public class GameServiceTests
         public async Task UpdateGameAsync_ThrowsNotFound_WhenGameMissing()
         {
             // Arrange
-            var gameDto = new GameDTO
-            {
-                Id = 99,
-                Title = "Updated Game",
-            };
-
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
+    
             _mockGameRepo
                 .Setup(r => r.GetGameWithCollectionsByIdAsync(99))
                 .ReturnsAsync((Game?)null);
-
+    
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(updateGameDto));
         }
-
+    
         [Fact]
         public async Task UpdateGameAsync_ThrowsBadRequest_WhenTitleExists()
         {
@@ -570,7 +584,7 @@ public class GameServiceTests
                 Prices = new List<GamePrice>(),
                 RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
             };
-
+    
             var currentPrice = new GamePrice
             {
                 GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
@@ -581,27 +595,32 @@ public class GameServiceTests
                 GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
                 EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
             };
-
+    
             existingGameEntity.Prices.Add(currentPrice);
             existingGameEntity.Prices.Add(historicalPrice);
-
-            var gameDto = new GameDTO
-            {
-                Id = 1,
-                Title = "Updated Game"
-            };
-
+    
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
+    
             _mockGameRepo
-                .Setup(r => r.GetGameWithCollectionsByIdAsync(gameDto.Id))
+                .Setup(r => r.GetGameWithCollectionsByIdAsync(updateGameDto.Id))
                 .ReturnsAsync(existingGameEntity);
-
+    
             _mockGameRepo.Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
                 .ReturnsAsync(true);
-
+    
             // Act & Assert
-            await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGameAsync(gameDto));
+            await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGameAsync(updateGameDto));
         }
-
+    
         [Fact]
         public async Task UpdateGameAsync_ThrowsNotFound_WhenPublisherMissing()
         {
@@ -620,7 +639,7 @@ public class GameServiceTests
                 Prices = new List<GamePrice>(),
                 RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
             };
-
+    
             var currentPrice = new GamePrice
             {
                 GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
@@ -631,26 +650,30 @@ public class GameServiceTests
                 GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
                 EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
             };
-
+    
             existingGameEntity.Prices.Add(currentPrice);
             existingGameEntity.Prices.Add(historicalPrice);
-
-            var gameDto = new GameDTO
-            {
-                Id = 1,
-                Title = "Updated Game",
-                Publisher = new PublisherDTO { Id = 99 },
-            };
-
+    
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
+    
             _mockGameRepo.Setup(r => r.GetGameWithCollectionsByIdAsync(1)).ReturnsAsync(existingGameEntity);
-
+    
             _mockPublisherRepo.Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync((Publisher?)null);
-
+    
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(updateGameDto));
         }
-
+    
         [Fact]
         public async Task UpdateGameAsync_ThrowsNotFound_WhenGenresMissing()
         {
@@ -669,7 +692,7 @@ public class GameServiceTests
                 Prices = new List<GamePrice>(),
                 RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
             };
-
+    
             var currentPrice = new GamePrice
             {
                 GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
@@ -680,36 +703,40 @@ public class GameServiceTests
                 GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
                 EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
             };
-
+    
             existingGameEntity.Prices.Add(currentPrice);
             existingGameEntity.Prices.Add(historicalPrice);
-
+    
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
-            var gameDto = new GameDTO
-            {
-                Id = 1,
-                Publisher = new PublisherDTO { Id = 1, Name = "Created Publisher" },
-                Genres = new List<GenreDTO> { new() { Id = 1, Name = "Action" } }
-            };
-
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
+    
             _mockGameRepo.Setup(r => r.GetGameWithCollectionsByIdAsync(1)).ReturnsAsync(existingGameEntity);
-
+    
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
                 .ReturnsAsync(false);
-
+    
             _mockPublisherRepo
                 .Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(publisher);
-
+    
             _mockGenreRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
                 .ReturnsAsync(new List<Genre>());
-
+    
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(updateGameDto));
         }
-
+    
         [Fact]
         public async Task UpdateGameAsync_ThrowsNotFound_WhenPlatformsMissing()
         {
@@ -728,7 +755,7 @@ public class GameServiceTests
                 Prices = new List<GamePrice>(),
                 RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
             };
-
+    
             var currentPrice = new GamePrice
             {
                 GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
@@ -739,40 +766,43 @@ public class GameServiceTests
                 GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
                 EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
             };
-
+    
             existingGameEntity.Prices.Add(currentPrice);
             existingGameEntity.Prices.Add(historicalPrice);
-
+    
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
             var genre = new Genre { Id = 1, Name = "Action" };
-            var gameDto = new GameDTO
-            {
-                Id = 1,
-                Publisher = new PublisherDTO { Id = 1, Name = "Created Publisher" },
-                Genres = new List<GenreDTO> { new() { Id = 1, Name = "Action" } },
-                Platforms = new List<PlatformDTO> { new() { Id = 1, Name = "PC" } },
-            };
-
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
+    
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
                 .ReturnsAsync(false);
-
+    
             _mockPublisherRepo
                 .Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(publisher);
-
+    
             _mockGenreRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
                 .ReturnsAsync(new List<Genre> { genre });
-
+    
             _mockPlatformRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
                 .ReturnsAsync(new List<Platform>());
-
+    
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(updateGameDto));
         }
-
+    
         [Fact]
         public async Task UpdateGameAsync_ThrowsNotFound_WhenRegionsMissing()
         {
@@ -791,7 +821,7 @@ public class GameServiceTests
                 Prices = new List<GamePrice>(),
                 RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
             };
-
+    
             var currentPrice = new GamePrice
             {
                 GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
@@ -802,153 +832,48 @@ public class GameServiceTests
                 GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
                 EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
             };
-
+    
             existingGameEntity.Prices.Add(currentPrice);
             existingGameEntity.Prices.Add(historicalPrice);
-
+    
             var publisher = new Publisher { Id = 1, Name = "Test Publisher" };
             var genre = new Genre { Id = 1, Name = "Action" };
             var platform = new Platform { Id = 1, Name = "PC" };
-            var gameDto = new GameDTO
-            {
-                Id = 1,
-                Publisher = new PublisherDTO { Id = 1, Name = "Created Publisher" },
-                Genres = new List<GenreDTO> { new() { Id = 1, Name = "Action" } },
-                Platforms = new List<PlatformDTO> { new() { Id = 1, Name = "PC" } },
-                Price = new GamePriceDTO { Value = 20.0m, Stock = 5 },
-                RegionPermissions = new List<RegionDTO> { new() { Id = 1, Code = "US", Name = "United States" } }
-            };
-
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int> { 1 },
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
+    
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
                 .ReturnsAsync(false);
-
+    
             _mockPublisherRepo
                 .Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(publisher);
-
+    
             _mockGenreRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
                 .ReturnsAsync(new List<Genre> { genre });
-
+    
             _mockPlatformRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
                 .ReturnsAsync(new List<Platform> { platform });
-
+    
             _mockRegionRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Region, bool>>>()))
                 .ReturnsAsync(new List<Region>());
-
+    
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateGameAsync(gameDto));
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGameAsync(updateGameDto));
         }
-
-        [Fact]
-        public async Task UpdateGameAsync_CreatesGame_WhenEmptyRegionPermissions()
-        {
-            // Arrange
-            var existingGameEntity = new Game
-            {
-                Id = 1,
-                Title = "Test Game",
-                Description = "Test Description",
-                PublisherId = 1,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Publisher = new Publisher { Name = "Test Publisher" },
-                Genres = new List<Genre> { new() { Id = 1, Name = "RPG" } },
-                Platforms = new List<Platform> { new() { Id = 1, Name = "PC" } },
-                Prices = new List<GamePrice>(),
-                RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
-            };
-
-            var currentPrice = new GamePrice
-            {
-                GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
-                Game = existingGameEntity
-            };
-            var historicalPrice = new GamePrice
-            {
-                GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
-                EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
-            };
-
-            existingGameEntity.Prices.Add(currentPrice);
-            existingGameEntity.Prices.Add(historicalPrice);
-
-            var publisher = new Publisher { Id = 1, Name = "Updated Publisher" };
-            var genres = new List<Genre>();
-            var platforms = new List<Platform> { new() { Id = 1, Name = "Xbox" } };
-            var price = new GamePrice
-                { Value = 10.0m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null, Game = null! };
-
-            var gameDto = new GameDTO
-            {
-                Id = 1,
-                Title = "Updated Game",
-                Description = "Updated Description",
-                Publisher = new PublisherDTO { Id = 1 },
-                Genres = new List<GenreDTO>(),
-                Platforms = new List<PlatformDTO> { new() { Id = 1 } },
-                Price = new GamePriceDTO { Value = price.Value, Stock = price.Stock },
-                RegionPermissions = null
-            };
-
-            _mockGameRepo
-                .Setup(r => r.GetGameWithCollectionsByIdAsync(1))
-                .ReturnsAsync(existingGameEntity);
-
-            _mockGameRepo
-                .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
-                .ReturnsAsync(false);
-
-            _mockPublisherRepo
-                .Setup(r => r.GetByIdAsync(1))
-                .ReturnsAsync(publisher);
-
-            _mockGenreRepo
-                .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
-                .ReturnsAsync(genres);
-
-            _mockPlatformRepo
-                .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
-                .ReturnsAsync(platforms);
-
-            _mockRegionRepo
-                .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Region, bool>>>()))
-                .ReturnsAsync(new List<Region>());
-
-            Game captured = null!;
-            _mockGameRepo
-                .Setup(r => r.Update(It.IsAny<Game>()))
-                .Callback<Game>(g => captured = g);
-
-            _mockGameRepo
-                .Setup(r => r.SaveChangesAsync())
-                .Returns(Task.CompletedTask);
-
-            _mockGameRepo
-                .Setup(r => r.GetGameByIdAsync(1))
-                .ReturnsAsync(() => captured);
-
-            // Act
-            var result = await _service.UpdateGameAsync(gameDto);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("Updated Game", result.Title);
-            Assert.Equal("Updated Description", result.Description);
-            Assert.Equal(1, result.Publisher.Id);
-            Assert.Equal("Updated Publisher", result.Publisher.Name);
-            Assert.Empty(result.Genres);
-            Assert.Single(result.Platforms);
-            Assert.Equal("Xbox", result.Platforms[0].Name);
-            Assert.NotNull(result.Price);
-            Assert.Equal(10.0m, result.Price.Value);
-            Assert.Equal(10, result.Price.Stock);
-            Assert.Null(result.RegionPermissions);
-        }
-
+        
         [Fact]
         public async Task UpdateGameAsync_CreatesGame_WhenRegionPermissionsNull()
         {
@@ -967,7 +892,7 @@ public class GameServiceTests
                 Prices = new List<GamePrice>(),
                 RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
             };
-
+    
             var currentPrice = new GamePrice
             {
                 GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
@@ -978,68 +903,65 @@ public class GameServiceTests
                 GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
                 EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
             };
-
+    
             existingGameEntity.Prices.Add(currentPrice);
             existingGameEntity.Prices.Add(historicalPrice);
-
+    
             var publisher = new Publisher { Id = 1, Name = "Updated Publisher" };
             var genres = new List<Genre>();
             var platforms = new List<Platform> { new() { Id = 1, Name = "Xbox" } };
-            var price = new GamePrice
-                { Value = 10.0m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null, Game = null! };
-
-            var gameDto = new GameDTO
-            {
-                Id = 1,
-                Title = "Updated Game",
-                Description = "Updated Description",
-                Publisher = new PublisherDTO { Id = 1 },
-                Genres = new List<GenreDTO>(),
-                Platforms = new List<PlatformDTO> { new() { Id = 1 } },
-                Price = new GamePriceDTO { Value = price.Value, Stock = price.Stock },
-                RegionPermissions = null
-            };
-
+          
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int>(),
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: null
+            );
+    
             _mockGameRepo
                 .Setup(r => r.GetGameWithCollectionsByIdAsync(1))
                 .ReturnsAsync(existingGameEntity);
-
+    
             _mockGameRepo
                 .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
                 .ReturnsAsync(false);
-
+    
             _mockPublisherRepo
                 .Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(publisher);
-
+    
             _mockGenreRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
                 .ReturnsAsync(genres);
-
+    
             _mockPlatformRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
                 .ReturnsAsync(platforms);
-
+    
             _mockRegionRepo
                 .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Region, bool>>>()))
                 .ReturnsAsync(new List<Region>());
-
+    
             Game captured = null!;
             _mockGameRepo
                 .Setup(r => r.Update(It.IsAny<Game>()))
                 .Callback<Game>(g => captured = g);
-
+    
             _mockGameRepo
                 .Setup(r => r.SaveChangesAsync())
                 .Returns(Task.CompletedTask);
-
+    
             _mockGameRepo
                 .Setup(r => r.GetGameByIdAsync(1))
                 .ReturnsAsync(() => captured);
-
+    
             // Act
-            var result = await _service.UpdateGameAsync(gameDto);
-
+            var result = await _service.UpdateGameAsync(updateGameDto);
+    
             // Assert
             Assert.NotNull(result);
             Assert.Equal("Updated Game", result.Title);
@@ -1050,9 +972,112 @@ public class GameServiceTests
             Assert.Single(result.Platforms);
             Assert.Equal("Xbox", result.Platforms[0].Name);
             Assert.NotNull(result.Price);
-            Assert.Equal(10.0m, result.Price.Value);
+            Assert.Equal(19.99m, result.Price.Value);
             Assert.Equal(10, result.Price.Stock);
             Assert.Null(result.RegionPermissions);
+        }
+    
+        [Fact]
+        public async Task UpdateGameAsync_CreatesGame_WhenEmptyRegionPermissions()
+        {
+            // Arrange
+            var existingGameEntity = new Game
+            {
+                Id = 1,
+                Title = "Test Game",
+                Description = "Test Description",
+                PublisherId = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Publisher = new Publisher { Name = "Test Publisher" },
+                Genres = new List<Genre> { new() { Id = 1, Name = "RPG" } },
+                Platforms = new List<Platform> { new() { Id = 1, Name = "PC" } },
+                Prices = new List<GamePrice>(),
+                RegionPermissions = new List<Region> { new() { Code = "US", Name = "United States" } }
+            };
+    
+            var currentPrice = new GamePrice
+            {
+                GameId = 1, Value = 59.99m, Stock = 10, StartDate = DateTime.UtcNow, EndDate = null,
+                Game = existingGameEntity
+            };
+            var historicalPrice = new GamePrice
+            {
+                GameId = 1, Value = 49.99m, Stock = 5, StartDate = DateTime.UtcNow.AddDays(-1),
+                EndDate = DateTime.UtcNow.AddDays(30), Game = existingGameEntity
+            };
+    
+            existingGameEntity.Prices.Add(currentPrice);
+            existingGameEntity.Prices.Add(historicalPrice);
+    
+            var publisher = new Publisher { Id = 1, Name = "Updated Publisher" };
+            var genres = new List<Genre>();
+            var platforms = new List<Platform> { new() { Id = 1, Name = "Xbox" } };
+
+            var updateGameDto = new UpdateGameDTO(
+                Id: 1,
+                Title: "Updated Game",
+                Description: "Updated Description",
+                PublisherId: 1,
+                GenreIds: new List<int>(),
+                PlatformIds: new List<int> { 1 },
+                PriceDto: new UpdateGamePriceDTO(Value: 19.99m, Stock: 10),
+                RegionPermissionIds: new List<int>()
+            );
+    
+            _mockGameRepo
+                .Setup(r => r.GetGameWithCollectionsByIdAsync(1))
+                .ReturnsAsync(existingGameEntity);
+    
+            _mockGameRepo
+                .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>()))
+                .ReturnsAsync(false);
+    
+            _mockPublisherRepo
+                .Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(publisher);
+    
+            _mockGenreRepo
+                .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
+                .ReturnsAsync(genres);
+    
+            _mockPlatformRepo
+                .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
+                .ReturnsAsync(platforms);
+    
+            _mockRegionRepo
+                .Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Region, bool>>>()))
+                .ReturnsAsync(new List<Region>());
+    
+            Game captured = null!;
+            _mockGameRepo
+                .Setup(r => r.Update(It.IsAny<Game>()))
+                .Callback<Game>(g => captured = g);
+    
+            _mockGameRepo
+                .Setup(r => r.SaveChangesAsync())
+                .Returns(Task.CompletedTask);
+    
+            _mockGameRepo
+                .Setup(r => r.GetGameByIdAsync(1))
+                .ReturnsAsync(() => captured);
+    
+            // Act
+            var result = await _service.UpdateGameAsync(updateGameDto);
+    
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Updated Game", result.Title);
+            Assert.Equal("Updated Description", result.Description);
+            Assert.Equal(1, result.Publisher.Id);
+            Assert.Equal("Updated Publisher", result.Publisher.Name);
+            Assert.Empty(result.Genres);
+            Assert.Single(result.Platforms);
+            Assert.Equal("Xbox", result.Platforms[0].Name);
+            Assert.NotNull(result.Price);
+            Assert.Equal(19.99m, result.Price.Value);
+            Assert.Equal(10, result.Price.Stock);
+            Assert.Empty(result.RegionPermissions!);
         }
     }
 
