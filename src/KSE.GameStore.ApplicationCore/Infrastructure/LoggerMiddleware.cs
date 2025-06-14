@@ -9,7 +9,8 @@ public class LoggerMiddleware(RequestDelegate next, ILogger<LoggerMiddleware> lo
 
     public async Task Invoke(HttpContext context)
     {
-        _logger.LogInformation("Received request: {Method} {Path} at {Date}", context.Request.Method, context.Request.Path, DateTime.UtcNow);
+        _logger.LogInformation("Received request: {Method} {Path} at {Date}", context.Request.Method,
+            context.Request.Path, DateTime.UtcNow);
         await next(context);
         _logger.LogInformation("Request completed with status code: {StatusCode}", context.Response.StatusCode);
     }

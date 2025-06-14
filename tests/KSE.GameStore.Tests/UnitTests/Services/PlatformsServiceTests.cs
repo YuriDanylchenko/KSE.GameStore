@@ -1,4 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Entities;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace KSE.GameStore.Tests.UnitTests;
+namespace KSE.GameStore.Tests.UnitTests.Services;
 
 public class PlatformsServiceTests
 {

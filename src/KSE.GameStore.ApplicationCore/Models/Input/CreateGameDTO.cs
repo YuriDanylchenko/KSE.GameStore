@@ -1,16 +1,16 @@
-namespace KSE.GameStore.ApplicationCore.Mapping.Games;
+namespace KSE.GameStore.ApplicationCore.Models.Input;
 
-public record CreateGameRequest(
+public record CreateGameDTO(
     string Title,
     string? Description,
     int PublisherId,
     IReadOnlyList<int> GenreIds,
     IReadOnlyList<int> PlatformIds,
-    CreateGamePriceRequest Price,
+    CreateGamePriceDTO PriceDto,
     IReadOnlyList<int>? RegionPermissionIds
 );
 
-public record CreateGamePriceRequest(
+public record CreateGamePriceDTO(
     decimal Value,
     int? Stock
 );

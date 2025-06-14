@@ -1,0 +1,50 @@
+using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.Web.Requests.Games;
+using AutoMapper;
+using KSE.GameStore.ApplicationCore.Models.Input;
+using KSE.GameStore.Web.Responses;
+
+namespace KSE.GameStore.Web.Mapping;
+
+public class WebMappingProfile : Profile
+{
+    public WebMappingProfile()
+    {
+        // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
+
+        // CreateGameRequest → CreateGameDTO
+        CreateMap<CreateGameRequest, CreateGameDTO>()
+            .ConstructUsing(src => new CreateGameDTO(
+                src.Title,
+                src.Description,
+                src.PublisherId,
+                src.GenreIds,
+                src.PlatformIds,
+                null!, // will be mapped below
+                src.RegionPermissionIds
+            ))
+            .ForMember(dest => dest.PriceDto, opt => opt.MapFrom(src => new CreateGamePriceDTO(src.Price.Value, src.Price.Stock)));
+
+        // UpdateGameRequest → UpdateGameDTO
+        CreateMap<UpdateGameRequest, UpdateGameDTO>()
+            .ConstructUsing(src => new UpdateGameDTO(
+                src.Id,
+                src.Title,
+                src.Description,
+                src.PublisherId,
+                src.GenreIds,
+                src.PlatformIds,
+                null!, // will be mapped below
+                src.RegionPermissionIds
+            ))
+            .ForMember(dest => dest.PriceDto, opt => opt.MapFrom(src => new UpdateGamePriceDTO(src.Price.Value, src.Price.Stock)));
+        
+        // CreateGamePriceRequest → CreateGamePriceDTO
+        CreateMap<CreateGamePriceRequest, CreateGamePriceDTO>()
+            .ConstructUsing(src => new CreateGamePriceDTO(src.Value, src.Stock));
+        
+        // UpdateGamePriceRequest → UpdateGamePriceDTO
+        CreateMap<UpdateGamePriceRequest, UpdateGamePriceDTO>()
+            .ConstructUsing(src => new UpdateGamePriceDTO(src.Value, src.Stock));
+    }
+}

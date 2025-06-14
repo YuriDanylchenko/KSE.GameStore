@@ -1,5 +1,6 @@
 using KSE.GameStore.ApplicationCore.Infrastructure;
 using KSE.GameStore.ApplicationCore.Services;
+using KSE.GameStore.ApplicationCore.Mapping;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Mapping;
@@ -13,7 +14,6 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 if (!builder.Environment.IsEnvironment("IntegrationTest"))
@@ -27,27 +27,21 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IPlatformsService, PlatformsService>();
+builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IGenreService, GenreService>();
 
-builder.Services.AddControllers();
-
-builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
-
-builder.Services.AddScoped<IGameService, GameService>();
-
-builder.Services
-    .AddRouting(options => { options.LowercaseUrls = true; });
-
-builder.Services.AddControllers();
+builder.Services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; },
+    typeof(ApplicationCoreMappingProfile),
+    typeof(WebMappingProfile));
 
 var app = builder.Build();
 
-app.MapControllers();
-
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggerMiddleware>();
+
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
