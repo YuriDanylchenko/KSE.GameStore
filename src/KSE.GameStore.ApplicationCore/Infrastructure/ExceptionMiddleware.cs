@@ -1,4 +1,4 @@
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 

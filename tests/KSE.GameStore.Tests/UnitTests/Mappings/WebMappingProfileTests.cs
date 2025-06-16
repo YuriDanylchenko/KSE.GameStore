@@ -1,5 +1,6 @@
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.Web.Mapping;
 using KSE.GameStore.Web.Requests.Games;
 
@@ -41,28 +42,23 @@ public class WebMappingProfileTests
                 RegionPermissionIds: new List<int> { 4, 5 });
 
             // Act
-            var dto = _mapper.Map<GameDTO>(request);
+            var dto = _mapper.Map<CreateGameDTO>(request);
 
             // Assert
             Assert.NotNull(dto);
-            Assert.Equal(0, dto.Id);
             Assert.Equal("Test Game", dto.Title);
             Assert.Equal("Test Description", dto.Description);
-            Assert.Empty(dto.Publisher.Name);
-            Assert.Equal(1, dto.Publisher.Id);
-            Assert.Equal(2, dto.Genres.Count);
-            Assert.Equal(1, dto.Genres[0].Id);
-            Assert.Equal(2, dto.Genres[1].Id);
-            Assert.All(dto.Genres, g => Assert.Empty(g.Name));
-            Assert.Contains(dto.Platforms, p => p.Id == 3);
-            Assert.All(dto.Platforms, p => Assert.Empty(p.Name));
-            Assert.NotNull(dto.Price);
-            Assert.Equal(59.99m, dto.Price.Value);
-            Assert.Equal(10, dto.Price.Stock);
-            Assert.Equal(2, dto.RegionPermissions!.Count);
-            Assert.Equal(4, dto.RegionPermissions[0].Id);
-            Assert.Equal(5, dto.RegionPermissions[1].Id);
-            Assert.All(dto.RegionPermissions, r => Assert.True(string.IsNullOrEmpty(r.Name)));
+            Assert.Equal(1, dto.PublisherId);
+            Assert.Equal(2, dto.GenreIds.Count);
+            Assert.Equal(1, dto.GenreIds[0]);
+            Assert.Equal(2, dto.GenreIds[1]);
+            Assert.Contains(dto.PlatformIds, p => p == 3);
+            Assert.NotNull(dto.PriceDto);
+            Assert.Equal(59.99m, dto.PriceDto.Value);
+            Assert.Equal(10, dto.PriceDto.Stock);
+            Assert.Equal(2, dto.RegionPermissionIds!.Count);
+            Assert.Equal(4, dto.RegionPermissionIds[0]);
+            Assert.Equal(5, dto.RegionPermissionIds[1]);
         }
 
 
@@ -81,10 +77,10 @@ public class WebMappingProfileTests
             );
 
             // Act
-            var dto = _mapper.Map<GameDTO>(request);
+            var dto = _mapper.Map<CreateGameDTO>(request);
 
             // Assert
-            Assert.Null(dto.RegionPermissions);
+            Assert.Null(dto.RegionPermissionIds);
         }
 
         [Fact]
@@ -102,11 +98,11 @@ public class WebMappingProfileTests
             );
 
             // Act
-            var dto = _mapper.Map<GameDTO>(request);
+            var dto = _mapper.Map<CreateGameDTO>(request);
 
             // Assert
-            Assert.NotNull(dto.RegionPermissions);
-            Assert.Empty(dto.RegionPermissions);
+            Assert.NotNull(dto.RegionPermissionIds);
+            Assert.Empty(dto.RegionPermissionIds);
         }
     }
 
@@ -119,11 +115,10 @@ public class WebMappingProfileTests
             var request = new CreateGamePriceRequest(59.99m, 10);
 
             // Act
-            var dto = _mapper.Map<GamePriceDTO>(request);
+            var dto = _mapper.Map<CreateGamePriceDTO>(request);
 
             // Assert
             Assert.NotNull(dto);
-            Assert.Equal(0, dto.Id);
             Assert.Equal(59.99m, dto.Value);
             Assert.Equal(10, dto.Stock);
         }
@@ -146,28 +141,24 @@ public class WebMappingProfileTests
                 RegionPermissionIds: new List<int> { 4, 5 });
 
             // Act
-            var dto = _mapper.Map<GameDTO>(request);
+            var dto = _mapper.Map<UpdateGameDTO>(request);
 
             // Assert
             Assert.NotNull(dto);
             Assert.Equal(1, dto.Id);
             Assert.Equal("Test Game", dto.Title);
             Assert.Equal("Test Description", dto.Description);
-            Assert.Empty(dto.Publisher.Name);
-            Assert.Equal(1, dto.Publisher.Id);
-            Assert.Equal(2, dto.Genres.Count);
-            Assert.Equal(1, dto.Genres[0].Id);
-            Assert.Equal(2, dto.Genres[1].Id);
-            Assert.All(dto.Genres, g => Assert.Empty(g.Name));
-            Assert.Contains(dto.Platforms, p => p.Id == 3);
-            Assert.All(dto.Platforms, p => Assert.Empty(p.Name));
-            Assert.NotNull(dto.Price);
-            Assert.Equal(59.99m, dto.Price.Value);
-            Assert.Equal(10, dto.Price.Stock);
-            Assert.Equal(2, dto.RegionPermissions!.Count);
-            Assert.Equal(4, dto.RegionPermissions[0].Id);
-            Assert.Equal(5, dto.RegionPermissions[1].Id);
-            Assert.All(dto.RegionPermissions, r => Assert.True(string.IsNullOrEmpty(r.Name)));
+            Assert.Equal(1, dto.PublisherId);
+            Assert.Equal(2, dto.GenreIds.Count);
+            Assert.Equal(1, dto.GenreIds[0]);
+            Assert.Equal(2, dto.GenreIds[1]);
+            Assert.Contains(dto.PlatformIds, p => p == 3);
+            Assert.NotNull(dto.PriceDto);
+            Assert.Equal(59.99m, dto.PriceDto.Value);
+            Assert.Equal(10, dto.PriceDto.Stock);
+            Assert.Equal(2, dto.RegionPermissionIds!.Count);
+            Assert.Equal(4, dto.RegionPermissionIds[0]);
+            Assert.Equal(5, dto.RegionPermissionIds[1]);
         }
 
         [Fact]
@@ -186,10 +177,10 @@ public class WebMappingProfileTests
             );
 
             // Act
-            var dto = _mapper.Map<GameDTO>(request);
+            var dto = _mapper.Map<UpdateGameDTO>(request);
 
             // Assert
-            Assert.Null(dto.RegionPermissions);
+            Assert.Null(dto.RegionPermissionIds);
         }
 
         [Fact]
@@ -208,11 +199,11 @@ public class WebMappingProfileTests
             );
 
             // Act
-            var dto = _mapper.Map<GameDTO>(request);
+            var dto = _mapper.Map<UpdateGameDTO>(request);
 
             // Assert
-            Assert.NotNull(dto.RegionPermissions);
-            Assert.Empty(dto.RegionPermissions);
+            Assert.NotNull(dto.RegionPermissionIds);
+            Assert.Empty(dto.RegionPermissionIds);
         }
     }
 
@@ -225,11 +216,10 @@ public class WebMappingProfileTests
             var request = new UpdateGamePriceRequest(59.99m, 10);
 
             // Act
-            var dto = _mapper.Map<GamePriceDTO>(request);
+            var dto = _mapper.Map<UpdateGamePriceDTO>(request);
 
             // Assert
             Assert.NotNull(dto);
-            Assert.Equal(0, dto.Id);
             Assert.Equal(59.99m, dto.Value);
             Assert.Equal(10, dto.Stock);
         }

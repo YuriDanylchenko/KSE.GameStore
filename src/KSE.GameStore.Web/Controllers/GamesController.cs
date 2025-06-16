@@ -1,5 +1,5 @@
 using AutoMapper;
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Games;
 using Microsoft.AspNetCore.Authorization;
@@ -41,8 +41,8 @@ public class GamesController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateGame([FromBody] CreateGameRequest createGameRequest)
     {
-        var gameDto = _mapper.Map<CreateGameRequest, GameDTO>(createGameRequest);
-        var createdGameDto = await _gameService.CreateGameAsync(gameDto);
+        var createGameDto = _mapper.Map<CreateGameRequest, CreateGameDTO>(createGameRequest);
+        var createdGameDto = await _gameService.CreateGameAsync(createGameDto);
         return Ok(createdGameDto);
     }
 
@@ -50,8 +50,8 @@ public class GamesController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateGame([FromBody] UpdateGameRequest updateGameRequest)
     {
-        var gameDto = _mapper.Map<UpdateGameRequest, GameDTO>(updateGameRequest);
-        var updatedGameDto = await _gameService.UpdateGameAsync(gameDto);
+        var updateGameDto = _mapper.Map<UpdateGameRequest, UpdateGameDTO>(updateGameRequest);
+        var updatedGameDto = await _gameService.UpdateGameAsync(updateGameDto);
         return Ok(updatedGameDto);
     }
 

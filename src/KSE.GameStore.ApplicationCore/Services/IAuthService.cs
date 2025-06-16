@@ -1,4 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
 
 namespace KSE.GameStore.ApplicationCore.Services;
 
