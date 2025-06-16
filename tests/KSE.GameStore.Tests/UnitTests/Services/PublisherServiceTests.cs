@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Mapping;
-using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.ApplicationCore.Models.Publisher;
+using KSE.GameStore.ApplicationCore.Models.Input;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
@@ -154,11 +154,11 @@ public class PublisherServiceTests
         {
             // Arrange
             var dto = new CreatePublisherDTO
-            {
-                Name = "Test Game",
-                WebsiteUrl = "https://new.com",
-                Description = "desc"
-            };
+            (
+                "Test Game",
+                "https://new.com",
+                "desc"
+            );
 
             var existingPublishers = new List<Publisher> { new() { Name = "Test Game" } };
 
@@ -174,11 +174,11 @@ public class PublisherServiceTests
         {
             // Arrange
             var dto = new CreatePublisherDTO
-            {
-                Name = "New Publisher",
-                WebsiteUrl = "https://new.com",
-                Description = "new desc"
-            };
+            (
+                "New Publisher",
+                "https://new.com",
+                "new desc"
+            );
 
             _mockRepo.Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Publisher, bool>>>()))
                 .ReturnsAsync(new List<Publisher>());
@@ -211,7 +211,12 @@ public class PublisherServiceTests
         public async Task UpdatePublisherAsync_ThrowsNotFound_WhenPublisherMissing()
         {
             // Arrange
-            var dto = new PublisherDTO { Id = 1, Name = "Updated", Description = "desc", WebsiteUrl = "url" };
+            var dto = new UpdatePublisherDTO(
+                1, 
+                "Updated", 
+                "url", 
+                "desc"
+            );
 
             _mockRepo.Setup(r => r.GetByIdAsync(dto.Id)).ReturnsAsync((Publisher)null!);
 
@@ -223,7 +228,12 @@ public class PublisherServiceTests
         public async Task UpdatePublisherAsync_ThrowsBadRequest_WhenNameAlreadyExists()
         {
             // Arrange
-            var dto = new PublisherDTO { Id = 1, Name = "Updated Name", Description = "desc", WebsiteUrl = "url" };
+            var dto = new UpdatePublisherDTO(
+                1,
+                "Updated Name",
+                "url",
+                "desc"
+            );
             var existingPublisher = new Publisher { Id = 1, Name = "Old Name", Description = "desc", WebsiteUrl = "url" };
 
             _mockRepo.Setup(r => r.GetByIdAsync(dto.Id)).ReturnsAsync(existingPublisher);
@@ -238,7 +248,13 @@ public class PublisherServiceTests
         public async Task UpdatePublisherAsync_UpdatesSuccessfully()
         {
             // Arrange
-            var dto = new PublisherDTO { Id = 1, Name = "Updated Name", Description = "new desc", WebsiteUrl = "new url" };
+            var dto = new UpdatePublisherDTO (
+                1,
+                "Updated Name",
+                "new url",
+                "new desc"
+            );
+
             var existingPublisher = new Publisher { Id = 1, Name = "Old Name", Description = "desc", WebsiteUrl = "url" };
 
             _mockRepo.Setup(r => r.GetByIdAsync(dto.Id)).ReturnsAsync(existingPublisher);
