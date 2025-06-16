@@ -1,3 +1,4 @@
+using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models;
 using KSE.GameStore.Web.Requests.Games;
 using AutoMapper;

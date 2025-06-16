@@ -1,20 +1,25 @@
 ﻿using KSE.GameStore.ApplicationCore.Models.Output;
+using AutoMapper;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace KSE.GameStore.ApplicationCore.Services;
 
-public class PlatformsService(IRepository<Platform, int> repository, ILogger<PlatformsService> logger)
-    : IPlatformsService
+public class PlatformsService : IPlatformsService
 {
-    private readonly IRepository<Platform, int> _repository = repository;
-    private readonly ILogger<PlatformsService> _logger = logger;
+    private readonly IRepository<Platform, int> _repository;
+    private readonly IMapper _mapper;
+
+    public PlatformsService(IRepository<Platform, int> repository, IMapper mapper)
+    {
+        _repository = repository;
+        _mapper = mapper;
+    }
 
     public async Task<List<PlatformDTO>> GetAllAsync()
     {
         var platforms = await _repository.ListAsync();
-        return platforms.Select(p => new PlatformDTO(p.Id, p.Name)).ToList();
+        return _mapper.Map<List<PlatformDTO>>(platforms);
     }
 
     public async Task<PlatformDTO> GetByIdAsync(int id)
@@ -22,7 +27,7 @@ public class PlatformsService(IRepository<Platform, int> repository, ILogger<Pla
         var platform = await _repository.GetByIdAsync(id);
         return platform is null
             ? throw new NotFoundException($"Platform with id {id} not found.")
-            : new PlatformDTO(platform.Id, platform.Name);
+            : _mapper.Map<PlatformDTO>(platform);
     }
 
     public async Task<int> CreateAsync(string name)

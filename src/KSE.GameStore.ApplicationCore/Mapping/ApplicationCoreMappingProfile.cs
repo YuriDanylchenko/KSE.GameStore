@@ -30,6 +30,20 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Prices.FirstOrDefault(p => p.EndDate == null)))
             .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src => src.RegionPermissions));
 
+        // User → UserDTO
+        CreateMap<User, UserDTO>()
+            .ConstructUsing((src, context) => new UserDTO(
+                src.Id,
+                src.Email,
+                src.HashedPassword,
+                src.PasswordSalt,
+                src.Region != null ? context.Mapper.Map<RegionDTO>(src.Region) : null,
+                src.UserRoles != null
+                    ? src.UserRoles.Select(ur => context.Mapper.Map<RoleDTO>(ur.Role)).ToList()
+                    : []
+            ))
+            .ForMember(dest => dest.Roles, opt => opt.Ignore());
+
         // sub-DTOs
         CreateMap<Publisher, PublisherDTO>()
             .ConstructUsing(src => new PublisherDTO(

@@ -2,11 +2,13 @@ using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Games;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class GamesController : ControllerBase
 {
@@ -20,13 +22,15 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllGames(int? pageNumber, int? pageSize)
+    [Authorize(Roles = "Admin,User")]
+    public async Task<IActionResult> GetAllGenres(int? pageNumber, int? pageSize)
     {
         var gameDtos = await _gameService.GetAllGamesAsync(pageNumber, pageSize);
         return Ok(gameDtos);
     }
 
     [HttpGet("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> GetGameById(int id)
     {
         var gameDto = await _gameService.GetGameByIdAsync(id);
@@ -34,6 +38,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateGame([FromBody] CreateGameRequest createGameRequest)
     {
         var createGameDto = _mapper.Map<CreateGameRequest, CreateGameDTO>(createGameRequest);
@@ -42,6 +47,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateGame([FromBody] UpdateGameRequest updateGameRequest)
     {
         var updateGameDto = _mapper.Map<UpdateGameRequest, UpdateGameDTO>(updateGameRequest);
@@ -50,6 +56,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteGame(int id)
     {
         await _gameService.DeleteGameAsync(id);
@@ -57,6 +64,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("/genre/{genreId:int}")]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> GetGamesByGenre(int genreId)
     {
         var gameDtos = await _gameService.GetGamesByGenreAsync(genreId);
@@ -64,6 +72,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("platform/{platformId:int}")]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> GetGamesByPlatform(int platformId)
     {
         var gameDtos = await _gameService.GetGamesByPlatformAsync(platformId);

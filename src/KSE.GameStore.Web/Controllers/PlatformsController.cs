@@ -1,11 +1,13 @@
 ﻿using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Platforms;
 using KSE.GameStore.Web.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Admin,User")]
 [Route("[controller]")]
 public class PlatformsController(IPlatformsService service) : ControllerBase
 {
@@ -25,6 +27,7 @@ public class PlatformsController(IPlatformsService service) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<int>> CreatePlatforms(CreatePlatformRequest createPlatformRequest)
     {
         var id = await service.CreateAsync(createPlatformRequest.Name);
@@ -32,6 +35,7 @@ public class PlatformsController(IPlatformsService service) : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdatePlatforms(int id, UpdatePlatformRequest updatePlatformRequest)
     {
         var updated = await service.UpdateAsync(id, updatePlatformRequest.Name);
@@ -41,6 +45,7 @@ public class PlatformsController(IPlatformsService service) : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePlatforms(int id)
     {
         var deleted = await service.DeleteAsync(id);
