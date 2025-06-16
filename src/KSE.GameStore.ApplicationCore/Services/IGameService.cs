@@ -1,5 +1,5 @@
-using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.DataAccess.Entities;
+using KSE.GameStore.ApplicationCore.Models.Output;
+using KSE.GameStore.ApplicationCore.Models.Input;
 
 namespace KSE.GameStore.ApplicationCore.Services;
 
@@ -44,8 +44,8 @@ public interface IGameService
     /// <summary>
     /// Creates a new game with all specified relationships.
     /// </summary>
-    /// <param name="gameDto">
-    /// The <see cref="GameDTO"/> containing the game details and related entity IDs.
+    /// <param name="createGameDto">
+    /// The <see cref="CreateGameDTO"/> containing the game details and related entity IDs.
     /// </param>
     /// <returns>
     /// The newly created <see cref="GameDTO"/> with all relationships populated.
@@ -58,14 +58,14 @@ public interface IGameService
     /// <exception cref="NotFoundException">
     /// Thrown when referenced entities (publisher, genres, etc.) are not found.
     /// </exception>
-    Task<GameDTO> CreateGameAsync(GameDTO gameDto);
+    Task<GameDTO> CreateGameAsync(CreateGameDTO createGameDto);
 
     /// <summary>
     /// Updates an existing game and its relationships.
     /// Creates a new price entry while archiving the previous price.
     /// </summary>
-    /// <param name="gameDto">
-    /// The <see cref="GameDTO"/> containing updated game details and relationship IDs.
+    /// <param name="updateGameDto">
+    /// The <see cref="UpdateGameDTO"/> containing updated game details and relationship IDs.
     /// </param>
     /// <returns>
     /// The updated <see cref="GameDTO"/> with all relationships populated.
@@ -80,7 +80,7 @@ public interface IGameService
     /// - The game to update doesn't exist
     /// - Referenced entities (publisher, genres, etc.) are not found
     /// </exception>
-    Task<GameDTO> UpdateGameAsync(GameDTO gameDto);
+    Task<GameDTO> UpdateGameAsync(UpdateGameDTO updateGameDto);
 
     /// <summary>
     /// Deletes a game by its unique identifier.

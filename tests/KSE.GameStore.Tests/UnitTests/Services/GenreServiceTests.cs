@@ -1,4 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;

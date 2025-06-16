@@ -1,9 +1,9 @@
 using AutoMapper;
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.ApplicationCore.Infrastructure;
-
+using KSE.GameStore.ApplicationCore.Models.Input;
 using Microsoft.Extensions.Logging;
 
 namespace KSE.GameStore.ApplicationCore.Services;
@@ -67,27 +67,27 @@ public class GameService : IGameService
         return _mapper.Map<List<GameDTO>>(gameEntities);
     }
 
-    public async Task<GameDTO> CreateGameAsync(GameDTO gameDto)
+    public async Task<GameDTO> CreateGameAsync(CreateGameDTO createGameDto)
     {
         // bad request for invalid data (fluent validation)
 
-        if (await _gameRepository.ExistsAsync(g => g.Title.ToLower() == gameDto.Title.ToLower()))
-            throw new BadRequestException($"Game with title '{gameDto.Title}' already exists.");
+        if (await _gameRepository.ExistsAsync(g => g.Title.ToLower() == createGameDto.Title.ToLower()))
+            throw new BadRequestException($"Game with title '{createGameDto.Title}' already exists.");
 
-        var gameEntity = _mapper.Map<Game>(gameDto);
+        var gameEntity = _mapper.Map<Game>(createGameDto);
 
-        var publisherEntity = await _publisherRepository.GetByIdAsync(gameDto.Publisher.Id);
+        var publisherEntity = await _publisherRepository.GetByIdAsync(createGameDto.PublisherId);
         if (publisherEntity == null)
         {
-            _logger.LogNotFound($"publishers/{gameDto.Publisher.Id}");
-            throw new NotFoundException($"Publisher with ID {gameDto.Publisher.Id} not found.");
+            _logger.LogNotFound($"publishers/{createGameDto.PublisherId}");
+            throw new NotFoundException($"Publisher with ID {createGameDto.PublisherId} not found.");
         }
 
         gameEntity.Publisher = publisherEntity;
         publisherEntity.Games ??= new List<Game>();
         publisherEntity.Games.Add(gameEntity);
 
-        var genreIds = gameDto.Genres.Select(ge => ge.Id).ToList();
+        var genreIds = createGameDto.GenreIds;
         var genreEntities = (await _genreRepository.ListAllAsync(g => genreIds.Contains(g.Id))).ToList();
         if (genreEntities.Count != genreIds.Count)
         {
@@ -103,7 +103,7 @@ public class GameService : IGameService
             genre.Games.Add(gameEntity);
         }
 
-        var platformIds = gameDto.Platforms.Select(pe => pe.Id).ToList();
+        var platformIds = createGameDto.PlatformIds;
         var platformEntities = (await _platformRepository.ListAllAsync(p => platformIds.Contains(p.Id))).ToList();
         if (platformEntities.Count != platformIds.Count)
         {
@@ -119,13 +119,13 @@ public class GameService : IGameService
             platform.Games.Add(gameEntity);
         }
 
-        var priceEntity = _mapper.Map<GamePrice>(gameDto.Price);
+        var priceEntity = _mapper.Map<GamePrice>(createGameDto.PriceDto);
         gameEntity.Prices.Add(priceEntity);
         priceEntity.Game = gameEntity;
 
-        if (gameDto.RegionPermissions != null)
+        if (createGameDto.RegionPermissionIds != null)
         {
-            var regionIds = gameDto.RegionPermissions.Select(r => r.Id).ToList();
+            var regionIds = createGameDto.RegionPermissionIds;
             var regionEntities = (await _regionRepository.ListAllAsync(r => regionIds.Contains(r.Id))).ToList();
 
             if (regionIds.Any() && regionEntities.Count != regionIds.Count)
@@ -150,33 +150,33 @@ public class GameService : IGameService
         return _mapper.Map<GameDTO>(createdGameEntity);
     }
 
-    public async Task<GameDTO> UpdateGameAsync(GameDTO gameDto)
+    public async Task<GameDTO> UpdateGameAsync(UpdateGameDTO updateGameDto)
     {
         // bad request for invalid data (fluent validation)
 
-        var exisingGameEntity = await _gameRepository.GetGameWithCollectionsByIdAsync(gameDto.Id);
+        var exisingGameEntity = await _gameRepository.GetGameWithCollectionsByIdAsync(updateGameDto.Id);
         if (exisingGameEntity == null)
         {
-            _logger.LogNotFound($"games/{gameDto.Id}");
-            throw new NotFoundException($"Game with ID {gameDto.Id} not found.");
+            _logger.LogNotFound($"games/{updateGameDto.Id}");
+            throw new NotFoundException($"Game with ID {updateGameDto.Id} not found.");
         }
 
-        if (gameDto.Title != exisingGameEntity.Title &&
-            await _gameRepository.ExistsAsync(g => g.Title.ToLower() == gameDto.Title.ToLower()))
-            throw new BadRequestException($"Game with title '{gameDto.Title}' already exists.");
+        if (updateGameDto.Title != exisingGameEntity.Title &&
+            await _gameRepository.ExistsAsync(g => g.Title.ToLower() == updateGameDto.Title.ToLower()))
+            throw new BadRequestException($"Game with title '{updateGameDto.Title}' already exists.");
 
-        _mapper.Map(gameDto, exisingGameEntity);
+        _mapper.Map(updateGameDto, exisingGameEntity);
 
-        var newPublisherEntity = await _publisherRepository.GetByIdAsync(gameDto.Publisher.Id);
+        var newPublisherEntity = await _publisherRepository.GetByIdAsync(updateGameDto.PublisherId);
         if (newPublisherEntity == null)
         {
-            _logger.LogNotFound($"publishers/{gameDto.Publisher.Id}");
-            throw new NotFoundException($"Publisher with ID {gameDto.Publisher.Id} not found.");
+            _logger.LogNotFound($"publishers/{updateGameDto.PublisherId}");
+            throw new NotFoundException($"Publisher with ID {updateGameDto.PublisherId} not found.");
         }
 
         exisingGameEntity.Publisher = newPublisherEntity;
 
-        var newGenreIds = gameDto.Genres.Select(ge => ge.Id).ToList();
+        var newGenreIds = updateGameDto.GenreIds;
         var newGenres = (await _genreRepository.ListAllAsync(g => newGenreIds.Contains(g.Id))).ToList();
 
         if (newGenres.Count != newGenreIds.Count)
@@ -188,7 +188,7 @@ public class GameService : IGameService
 
         exisingGameEntity.Genres = newGenres;
 
-        var newPlatformIds = gameDto.Platforms.Select(pe => pe.Id).ToList();
+        var newPlatformIds = updateGameDto.PlatformIds;
         var newPlatforms = (await _platformRepository.ListAllAsync(p => newPlatformIds.Contains(p.Id))).ToList();
 
         if (newPlatforms.Count != newPlatformIds.Count)
@@ -204,13 +204,13 @@ public class GameService : IGameService
         if (currentPriceEntity != null)
             currentPriceEntity.EndDate = DateTime.UtcNow;
 
-        var newPriceEntity = _mapper.Map<GamePrice>(gameDto.Price);
+        var newPriceEntity = _mapper.Map<GamePrice>(updateGameDto.PriceDto);
         newPriceEntity.GameId = exisingGameEntity.Id;
         exisingGameEntity.Prices.Add(newPriceEntity);
 
-        if (gameDto.RegionPermissions != null)
+        if (updateGameDto.RegionPermissionIds != null)
         {
-            var newRegionIds = gameDto.RegionPermissions.Select(r => r.Id).ToList();
+            var newRegionIds = updateGameDto.RegionPermissionIds;
             var newRegions = (await _regionRepository.ListAllAsync(r => newRegionIds.Contains(r.Id))).ToList();
 
             if (newRegionIds.Any() && newRegions.Count != newRegionIds.Count)
