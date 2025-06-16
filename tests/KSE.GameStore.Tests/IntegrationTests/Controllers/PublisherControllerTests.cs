@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using KSE.GameStore.ApplicationCore.Mapping;
-using KSE.GameStore.ApplicationCore.Models.Publisher;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.Web.Mapping;
 using KSE.GameStore.Web.Requests.Publishers;
