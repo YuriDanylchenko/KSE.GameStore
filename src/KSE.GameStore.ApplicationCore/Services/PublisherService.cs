@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using KSE.GameStore.ApplicationCore.Infrastructure;
-using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.ApplicationCore.Models.Publisher;
+using KSE.GameStore.ApplicationCore.Models.Input;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using Microsoft.Extensions.Logging;
@@ -58,20 +58,15 @@ public class PublisherService : IPublisherService
         if (existing.Any())
             throw new BadRequestException($"A publisher with the name '{publisherDto.Name}' already exists.");
 
-        var publisher = new Publisher
-        {
-            Name = publisherDto.Name,
-            WebsiteUrl = publisherDto.WebsiteUrl,
-            Description = publisherDto.Description
-        };
+        var publisher = _mapper.Map<Publisher>(publisherDto);
 
         await _publisherRepository.AddAsync(publisher);
         await _publisherRepository.SaveChangesAsync();
 
-        return _mapper.Map<PublisherDTO>(publisher);;
+        return _mapper.Map<PublisherDTO>(publisher);
     }
 
-    public async Task<PublisherDTO> UpdatePublisherAsync(PublisherDTO publisherDto)
+    public async Task<PublisherDTO> UpdatePublisherAsync(UpdatePublisherDTO publisherDto)
     {
         var publisherEntity = await _publisherRepository.GetByIdAsync(publisherDto.Id);
 
@@ -89,9 +84,7 @@ public class PublisherService : IPublisherService
             throw new BadRequestException($"A publisher with the name '{publisherDto.Name}' already exists.");
         
         // Update all fields
-        publisherEntity.Name = publisherDto.Name;
-        publisherEntity.Description = publisherDto.Description;
-        publisherEntity.WebsiteUrl = publisherDto.WebsiteUrl;
+        _mapper.Map(publisherDto, publisherEntity);
 
         _publisherRepository.Update(publisherEntity);
         await _publisherRepository.SaveChangesAsync();

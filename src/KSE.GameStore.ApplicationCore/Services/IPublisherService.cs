@@ -1,5 +1,5 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
-using KSE.GameStore.ApplicationCore.Models.Publisher;
+﻿using KSE.GameStore.ApplicationCore.Models.Input;
+using KSE.GameStore.ApplicationCore.Models.Output;
 
 namespace KSE.GameStore.ApplicationCore.Services;
 
@@ -58,7 +58,7 @@ public interface IPublisherService
     /// Updates an existing publisher.
     /// </summary>
     /// <param name="publisherDto">
-    /// The <see cref="PublisherDTO"/> containing updated publisher details.
+    /// The <see cref="UpdatePublisherDTO"/> containing updated publisher details.
     /// </param>
     /// <returns>
     /// The updated <see cref="PublisherDTO"/>.
@@ -72,7 +72,7 @@ public interface IPublisherService
     /// Thrown when:
     /// - The publisher to update doesn't exist
     /// </exception>
-    Task<PublisherDTO> UpdatePublisherAsync(PublisherDTO publisherDto);
+    Task<PublisherDTO> UpdatePublisherAsync(UpdatePublisherDTO publisherDto);
     
     /// <summary>
     /// Deletes a publisher by its unique identifier.

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using KSE.GameStore.ApplicationCore.Models.Publisher;
+using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Publishers;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +44,7 @@ public class PublishersController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdatePublisher([FromBody] UpdatePublisherRequest updatePublisherRequest)
     {
-        var publisherDto = _mapper.Map<UpdatePublisherRequest, PublisherDTO>(updatePublisherRequest);
+        var publisherDto = _mapper.Map<UpdatePublisherRequest, UpdatePublisherDTO>(updatePublisherRequest);
         var updatedPublisherDto = await _publisherService.UpdatePublisherAsync(publisherDto);
         return Ok(updatedPublisherDto);
     }
