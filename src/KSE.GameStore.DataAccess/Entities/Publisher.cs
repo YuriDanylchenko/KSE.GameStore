@@ -6,5 +6,5 @@ public class Publisher : BaseEntity<int>
     public string? WebsiteUrl { get; set; }
     public string? Description { get; set; }
 
-    public ICollection<Game>? Games { get; set; }
+    public ICollection<Game>? Games { get; set; } = new List<Game>();
 }
