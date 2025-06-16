@@ -1,17 +1,17 @@
-namespace KSE.GameStore.ApplicationCore.Mapping.Games;
+namespace KSE.GameStore.ApplicationCore.Models.Input;
 
-public record UpdateGameRequest(
+public record UpdateGameDTO(
     int Id,
     string Title,
     string? Description,
     int PublisherId,
     IReadOnlyList<int> GenreIds,
     IReadOnlyList<int> PlatformIds,
-    UpdateGamePriceRequest Price,
+    UpdateGamePriceDTO PriceDto,
     IReadOnlyList<int>? RegionPermissionIds
 );
 
-public record UpdateGamePriceRequest(
+public record UpdateGamePriceDTO(
     decimal Value,
     int? Stock
 );

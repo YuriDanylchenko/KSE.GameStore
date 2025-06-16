@@ -1,4 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 
@@ -20,7 +20,7 @@ public class GenreService : IGenreService
 
         if (genre == null)
             throw new NotFoundException($"Genre with ID {id} was not found.");
-        
+
         return genre;
     }
 

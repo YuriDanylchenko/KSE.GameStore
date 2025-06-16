@@ -9,5 +9,4 @@ public class OrderItem : BaseEntity<int>
 
     public required Order Order { get; set; }
     public required Game Game { get; set; }
-
 }

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace KSE.GameStore.Tests.IntegrationTests;
+namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
 
 public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -26,10 +26,7 @@ public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Prog
                 if (dbContext != null)
                     services.Remove(dbContext);
 
-                services.AddDbContext<GameStoreDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase(dbName);
-                });
+                services.AddDbContext<GameStoreDbContext>(options => { options.UseInMemoryDatabase(dbName); });
             });
         });
     }

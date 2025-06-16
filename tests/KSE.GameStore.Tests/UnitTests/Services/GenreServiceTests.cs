@@ -1,10 +1,10 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using Moq;
 
-namespace KSE.GameStore.Tests.UnitTests;
+namespace KSE.GameStore.Tests.UnitTests.Services;
 
 public class GenreServiceTests
 {

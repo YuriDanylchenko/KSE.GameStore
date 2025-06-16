@@ -1,5 +1,5 @@
 using KSE.GameStore.ApplicationCore.Infrastructure;
-using KSE.GameStore.ApplicationCore.Models;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -8,25 +8,19 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Text.Json;
 
-namespace KSE.GameStore.Tests.IntegrationTests;
+namespace KSE.GameStore.Tests.IntegrationTests.Middlewares;
 
 public class ExceptionMiddlewareTests
 {
     private TestServer CreateServerThatThrows(Exception ex)
     {
         return new TestServer(new WebHostBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddLogging();
-            })
+            .ConfigureServices(services => { services.AddLogging(); })
             .Configure(app =>
             {
                 app.UseMiddleware<ExceptionMiddleware>();
 
-                app.Use((HttpContext _, Func<Task> _) =>
-                {
-                    throw ex;
-                });
+                app.Use((HttpContext _, Func<Task> _) => { throw ex; });
             }));
     }
 
