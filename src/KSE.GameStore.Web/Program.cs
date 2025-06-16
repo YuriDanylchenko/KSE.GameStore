@@ -6,6 +6,7 @@ using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,9 +60,12 @@ builder.Services.AddSwaggerGen(option =>
 if (!builder.Environment.IsEnvironment("IntegrationTest"))
 {
     builder.Services.AddDbContext<GameStoreDbContext>(options =>
+    {
         options.UseSqlServer(
             builder.Configuration.GetConnectionString("GameStoreDb"),
-            x => x.MigrationsAssembly("KSE.GameStore.Migrations")));
+            x => x.MigrationsAssembly("KSE.GameStore.Migrations"));
+        options.EnableSensitiveDataLogging();
+    });
 }
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();

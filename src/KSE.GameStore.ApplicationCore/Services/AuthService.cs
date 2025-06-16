@@ -16,7 +16,9 @@ public class AuthService(
     IRepository<Region, int> regionRepository,
     IRepository<RefreshToken, int> refreshTokenRepository,
     IMapper mapper,
-    string token) : IAuthService
+    string token,
+    int tokenExpirationMinutes = 30
+) : IAuthService
 {
     public async Task<UserDTO?> RegisterUserAsync(string email, string password, int regionId)
     {
@@ -25,8 +27,8 @@ public class AuthService(
         var existingUser = await userRepository
             .ListAllAsync(u => u.Email == trimmedEmail);
 
-        if (existingUser.Any())
-            return null;
+        if (existingUser.Count != 0)
+            throw new ServerException("User already exists.", 400);
 
         var salt = Guid.NewGuid().ToString("N");
 
@@ -51,11 +53,7 @@ public class AuthService(
         var trimmedEmail = email.Trim().ToLower();
 
         var users = await userRepository.ListAllAsync(u => u.Email == trimmedEmail);
-        var user = users.FirstOrDefault();
-
-        if (user == null)
-            return null;
-
+        var user = users.FirstOrDefault() ?? throw new ServerException("User not found.", 404);
         var hashedPassword = HashPassword(password, user.PasswordSalt);
 
         return hashedPassword != user.HashedPassword ? null : mapper.Map<UserDTO>(user);
@@ -129,31 +127,46 @@ public class AuthService(
         {
             new(ClaimTypes.NameIdentifier, userEntity.Id.ToString()),
             new(ClaimTypes.Email, userEntity.Email),
-            new (ClaimTypes.Role, "Admin")
+            // new (ClaimTypes.Role, "Admin")
         };
 
-        //claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        const int expiration = 30;
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(expiration),
+            Expires = DateTime.UtcNow.AddMinutes(tokenExpirationMinutes),
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token)),
                 SecurityAlgorithms.HmacSha512Signature)
-        }; 
+        };
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var securityToken = tokenHandler.CreateToken(tokenDescriptor);
 
-        Console.WriteLine($"JWT Token: {tokenHandler.WriteToken(securityToken)}");
+        // Console.WriteLine($"JWT Token: {tokenHandler.WriteToken(securityToken)}");
 
         return new AcessTokenDTO
         (
             tokenHandler.WriteToken(securityToken),
             securityToken.ValidTo
         );
+    }
+
+    public async Task<RefreshTokenDTO> GenerateRefreshTokenAsync(Guid userId)
+    {
+        var refreshToken = new RefreshToken
+        {
+            UserId = userId,
+            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            CreatedAt = DateTime.UtcNow,
+            IsRevoked = false
+        };
+
+        await refreshTokenRepository.AddAsync(refreshToken);
+        await refreshTokenRepository.SaveChangesAsync();
+        return new(userId, refreshToken.Token, refreshToken.ExpiresAt);
     }
 
     public static string HashPassword(string password, string salt)

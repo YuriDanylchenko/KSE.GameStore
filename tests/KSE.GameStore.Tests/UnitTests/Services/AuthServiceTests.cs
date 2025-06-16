@@ -20,15 +20,14 @@ public class AuthServiceTests
         new(_userRepo.Object, _roleRepo.Object, _regionRepo.Object, _refreshTokenRepo.Object, _mapper.Object, Guid.NewGuid().ToString());
 
     [Fact]
-    public async Task RegisterUserAsync_ReturnsNull_WhenUserExists()
+    public async Task RegisterUserAsync_Returns400_WhenUserExists()
     {
         _userRepo.Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
             .ReturnsAsync([new() { Email = "test@test.com", Region = new Region { Id = 1, Name = "Default", Code = "DR" } }]);
 
         var service = CreateService();
-        var result = await service.RegisterUserAsync("test@test.com", "pass", 1);
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<ServerException>(() =>
+            service.RegisterUserAsync("test@test.com", "pass", 1));
     }
 
     [Fact]
@@ -62,15 +61,14 @@ public class AuthServiceTests
     }
 
     [Fact]
-    public async Task LoginUserAsync_ReturnsNull_WhenUserNotFound()
+    public async Task LoginUserAsync_Returns404_WhenUserNotFound()
     {
         _userRepo.Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
             .ReturnsAsync([]);
 
         var service = CreateService();
-        var result = await service.LoginUserAsync("test@test.com", "pass");
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<ServerException>(() =>
+             service.LoginUserAsync("test@test.com", "pass"));
     }
 
     [Fact]

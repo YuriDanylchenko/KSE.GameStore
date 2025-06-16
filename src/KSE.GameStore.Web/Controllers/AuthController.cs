@@ -26,10 +26,14 @@ public class AuthController(IAuthService authService) : ControllerBase
         var userEntity = users;
         var tokenResult = authService.GenerateUserJwtToken(userEntity);
 
+        var refreshToken = await authService.GenerateRefreshTokenAsync(userEntity.Id);
+
         return Ok(new
         {
             token = tokenResult.Token,
             expires = tokenResult.Expiration,
+            refreshToken = refreshToken.Token,
+            refreshTokenExpires = refreshToken.Expires,
             user = userDto
         });
     }
@@ -69,7 +73,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         var userDto = await authService.GetUserByIdAsync(Guid.Parse(uid));
         if (userDto is null)
             return NotFound(new { message = "User not found." });
-        
+
         return Ok(userDto);
     }
 
@@ -99,7 +103,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         var updated = await authService.UpdateUserRoleAsync(request.UserId, request.RoleName);
         if (updated is null)
             return BadRequest(new { message = "Failed to update user role." });
-        
+
         return Ok(new { message = "User role updated successfully." });
     }
 }

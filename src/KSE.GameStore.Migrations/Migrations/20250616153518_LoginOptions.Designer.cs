@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KSE.GameStore.Migrations.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    [Migration("20250612110447_LoginOptions")]
+    [Migration("20250616153518_LoginOptions")]
     partial class LoginOptions
     {
         /// <inheritdoc />

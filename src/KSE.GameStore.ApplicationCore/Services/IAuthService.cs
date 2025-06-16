@@ -17,4 +17,6 @@ public interface IAuthService
     public Task<bool?> UpdateUserRoleAsync(Guid userId, string role);
 
     public AcessTokenDTO GenerateUserJwtToken(UserDTO userDto);
+
+    public Task<RefreshTokenDTO> GenerateRefreshTokenAsync(Guid userId);
 }

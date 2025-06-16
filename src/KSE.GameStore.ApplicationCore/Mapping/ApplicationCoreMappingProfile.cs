@@ -16,7 +16,7 @@ public class ApplicationCoreMappingProfile : Profile
                 opt => opt.MapFrom(src =>
                     src.Prices.FirstOrDefault(p => p.EndDate == null)));
 
-        // Game → GameDTO
+        // User → UserDTO
         CreateMap<User, UserDTO>()
             .ConstructUsing((src, context) => new UserDTO(
                 src.Id,
@@ -25,7 +25,7 @@ public class ApplicationCoreMappingProfile : Profile
                 src.PasswordSalt,
                 src.Region != null ? context.Mapper.Map<RegionDTO>(src.Region) : null,
                 src.UserRoles != null
-                    ? [.. src.UserRoles.Select(ur => context.Mapper.Map<RoleDTO>(ur.Role))]
+                    ? src.UserRoles.Select(ur => context.Mapper.Map<RoleDTO>(ur.Role)).ToList()
                     : []
             ))
             .ForMember(dest => dest.Roles, opt => opt.Ignore());
