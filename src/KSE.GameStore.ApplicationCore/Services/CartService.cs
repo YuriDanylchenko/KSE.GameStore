@@ -1,4 +1,3 @@
-using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 
