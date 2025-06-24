@@ -1,6 +1,6 @@
 ﻿namespace KSE.GameStore.ApplicationCore.Models.Output;
 
-public enum PaymentMethod
+public enum PaymentMethodDTO
 {
     CreditCards = 0,
     IBoxTerminals = 1,

@@ -5,5 +5,5 @@ public record PaymentDTO(
     int OrderId,
     bool Confirmed,
     DateTime PayedAt,
-    PaymentMethod PaymentMethod
+    PaymentMethodDTO? PaymentMethod
 );
