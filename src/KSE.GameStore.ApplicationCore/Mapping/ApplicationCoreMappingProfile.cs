@@ -78,6 +78,12 @@ public class ApplicationCoreMappingProfile : Profile
 
         CreateMap<PaymentMethod, PaymentMethodDTO>();
 
+        CreateMap<Order, OrderDTO>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
+
+        CreateMap<OrderItem, OrderItemDTO>();
+
         // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
         
         // CreateGameDTO → Game

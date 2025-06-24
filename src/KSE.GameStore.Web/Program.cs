@@ -40,6 +40,7 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; },
