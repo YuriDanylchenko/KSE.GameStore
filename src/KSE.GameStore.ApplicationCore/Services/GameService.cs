@@ -39,8 +39,6 @@ public class GameService : IGameService
 
     public async Task<GameDTO> GetGameByIdAsync(int id)
     {
-        // bad request for invalid id
-
         var gameEntity = await _gameRepository.GetGameByIdAsync(id);
 
         if (gameEntity == null)
@@ -54,8 +52,6 @@ public class GameService : IGameService
 
     public async Task<List<GameDTO>> GetAllGamesAsync(int? pageNumber, int? pageSize)
     {
-        // replace with bad request for invalid params (fluent validation)
-
         if (pageNumber.HasValue && pageNumber <= 0)
             throw new BadRequestException($"Page number must be a positive integer. Provided: {pageNumber}");
 
@@ -69,8 +65,6 @@ public class GameService : IGameService
 
     public async Task<GameDTO> CreateGameAsync(CreateGameDTO createGameDto)
     {
-        // bad request for invalid data (fluent validation)
-
         if (await _gameRepository.ExistsAsync(g => g.Title.ToLower() == createGameDto.Title.ToLower()))
             throw new BadRequestException($"Game with title '{createGameDto.Title}' already exists.");
 
@@ -152,8 +146,6 @@ public class GameService : IGameService
 
     public async Task<GameDTO> UpdateGameAsync(UpdateGameDTO updateGameDto)
     {
-        // bad request for invalid data (fluent validation)
-
         var exisingGameEntity = await _gameRepository.GetGameWithCollectionsByIdAsync(updateGameDto.Id);
         if (exisingGameEntity == null)
         {
@@ -232,8 +224,6 @@ public class GameService : IGameService
 
     public async Task DeleteGameAsync(int id)
     {
-        // bad request for invalid id (fluent validation)
-
         var gameEntity = await _gameRepository.GetByIdAsync(id);
         if (gameEntity == null)
         {
@@ -247,8 +237,6 @@ public class GameService : IGameService
 
     public async Task<List<GameDTO>> GetGamesByGenreAsync(int genreId)
     {
-        // bad request for invalid id (fluent validation)
-
         var genreEntity = await _genreRepository.GetByIdAsync(genreId);
         if (genreEntity == null)
         {
@@ -263,8 +251,6 @@ public class GameService : IGameService
 
     public async Task<List<GameDTO>> GetGamesByPlatformAsync(int platformId)
     {
-        // bad request for invalid id (fluent validation)
-
         var genreEntity = await _platformRepository.GetByIdAsync(platformId);
         if (genreEntity == null)
         {

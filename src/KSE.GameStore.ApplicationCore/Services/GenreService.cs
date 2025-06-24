@@ -26,9 +26,6 @@ public class GenreService : IGenreService
 
     public async Task<Genre?> CreateGenreAsync(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new BadRequestException("Genre name cannot be null, empty, or whitespace.");
-
         var existing = await _genreRepository
             .ListAsync(g => g.Name.ToLower() == name.ToLower());
 
@@ -49,9 +46,6 @@ public class GenreService : IGenreService
 
     public async Task<Genre?> UpdateGenreAsync(int id, string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new BadRequestException("Genre name cannot be null, empty, or whitespace.");
-
         var genre = await GetGenreByIdAsync(id);
 
         if (genre == null)
