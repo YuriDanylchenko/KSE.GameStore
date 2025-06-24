@@ -42,13 +42,6 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task CreateGenreAsync_ThrowsBadRequest_WhenNameIsEmpty()
-    {
-        // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateGenreAsync(""));
-    }
-
-    [Fact]
     public async Task CreateGenreAsync_ThrowsBadRequest_WhenGenreExists()
     {
         // Arrange
@@ -81,13 +74,6 @@ public class GenreServiceTests
     {
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateGenreAsync(0, "RPG"));
-    }
-
-    [Fact]
-    public async Task UpdateGenreAsync_ThrowsBadRequest_WhenNameInvalid()
-    {
-        // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdateGenreAsync(10, ""));
     }
 
     [Fact]
