@@ -10,7 +10,7 @@ namespace KSE.GameStore.ApplicationCore.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IRepository<User, Guid> _userRepository;
         private readonly IGameRepository _gameRepository;
-        private readonly IMapper _mapper;    
+        private readonly IMapper _mapper;
 
         public CartService(
             IOrderRepository orderRepository,

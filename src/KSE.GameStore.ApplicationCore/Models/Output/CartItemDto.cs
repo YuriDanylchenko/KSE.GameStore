@@ -2,7 +2,7 @@
 
 public record CartItemDto(
     int Id,
-    int    GameId,
+    int GameId,
     string Title,
     decimal Price,
-    int    Quantity);
+    int Quantity);
