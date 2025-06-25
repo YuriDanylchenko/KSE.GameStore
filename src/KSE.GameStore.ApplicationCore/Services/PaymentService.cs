@@ -13,20 +13,22 @@ public class PaymentService : IPaymentService
 {
     private readonly IRepository<Payment, int> _paymentRepository;
     private readonly IRepository<Order, int> _orderRepository;
+    private readonly IRepository<UserGameStock, int> _stockRepository;
     private readonly ILogger<PaymentService> _logger;
     private readonly IMapper _mapper;
 
     public PaymentService(
         IRepository<Payment, int> paymentRepository,
         IRepository<Order, int> orderRepository,
-        // IRepository<UserGameStock, (Guid, int)> userGameStockRepo,
         ILogger<PaymentService> logger,
-        IMapper mapper)
+        IMapper mapper, 
+        IRepository<UserGameStock, int> stockRepository)
     {
         _paymentRepository = paymentRepository;
         _orderRepository = orderRepository;
         _logger = logger;
         _mapper = mapper;
+        _stockRepository = stockRepository;
     }
 
     public async Task<List<PaymentDTO>> GetAllPaymentsAsync(int? pageNumber, int? pageSize)
@@ -64,8 +66,6 @@ public class PaymentService : IPaymentService
             throw new NotFoundException($"Order with ID {paymentDto.OrderId} not found.");
         }
         
-        // TODO: check regions permissions
-        
         var payment = _mapper.Map<Payment>(paymentDto);
         payment.Confirmed = true;
         payment.PayedAt = DateTime.UtcNow;
@@ -75,22 +75,32 @@ public class PaymentService : IPaymentService
         orderEntity.UpdatedAt = DateTime.UtcNow;
         orderEntity.Status = OrderStatus.Payed;
         
-        await _paymentRepository.AddAsync(payment);
-        _orderRepository.Update(orderEntity);
-        await _paymentRepository.SaveChangesAsync();
-        
         // generate license keys for each game
         var licenseKeys = new Dictionary<string, string>(); // Game Title -> License Key
+        
         foreach (var item in orderEntity.OrderItems)
         {
-            licenseKeys[item.Game.Title] = GenerateLicenseKey(item.Game.Id, orderEntity.UserId);
+            var license = GenerateLicenseKey(item.Game.Id, orderEntity.UserId);
+            licenseKeys[item.Game.Title] = license;
+            
+            await _stockRepository.AddAsync(new UserGameStock
+            {
+                UserId  = orderEntity.UserId,
+                GameId  = item.Game.Id,
+                License = license,
+                User = orderEntity.User,
+                Game = item.Game
+            });
         }
+        
+        await _paymentRepository.AddAsync(payment);
+        _orderRepository.Update(orderEntity);
+        await _stockRepository.SaveChangesAsync();
+        await _paymentRepository.SaveChangesAsync();
+        await _orderRepository.SaveChangesAsync();
 
         // return Excel
         using var workbook = CreateExcelFile(orderEntity, licenseKeys);
-        
-        // TODO: add to the db table "user-game-stock"
-
         using var stream = new MemoryStream();
         workbook.SaveAs(stream);
         return stream.ToArray();

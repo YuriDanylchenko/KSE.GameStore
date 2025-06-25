@@ -19,6 +19,7 @@ public class GameStoreDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Platform> Platforms { get; set; }
     public DbSet<Publisher> Publishers { get; set; }
+    public DbSet<UserGameStock> Stock { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -10,12 +10,16 @@ public class UserGameStockConfiguration : IEntityTypeConfiguration<UserGameStock
     public void Configure(EntityTypeBuilder<UserGameStock> builder)
     {
         builder.ToTable("user_game_stock");
+        
+        builder.HasKey(ugs => ugs.Id);
+        
+        builder.Property(ugs => ugs.Id)
+            .HasColumnName("id");
 
         builder.HasKey(ugs => new { ugs.UserId, ugs.GameId });
 
         builder.Property(ugs => ugs.License)
             .HasColumnName("license")
-            .HasDefaultValueSql("NEWID()")
             .IsRequired();
 
         builder.Property(ugs => ugs.UserId)
