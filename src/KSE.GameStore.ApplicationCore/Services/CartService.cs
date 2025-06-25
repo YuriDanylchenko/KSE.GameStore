@@ -1,3 +1,5 @@
+using AutoMapper;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 
@@ -5,25 +7,25 @@ namespace KSE.GameStore.ApplicationCore.Services
 {
     public class CartService : ICartService
     {
-        private readonly IRepository<Order, int> _orderRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IRepository<User, Guid> _userRepository;
         private readonly IGameRepository _gameRepository;
+        private readonly IMapper _mapper;    
 
         public CartService(
-            IRepository<Order, int> orderRepository,
+            IOrderRepository orderRepository,
             IRepository<User, Guid> userRepository,
-            IGameRepository gameRepository)
+            IGameRepository gameRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _gameRepository = gameRepository;
+            _mapper = mapper;
         }
 
         public async Task AddGameToCartAsync(Guid userId, int gameId, int quantity = 1)
         {
-            var orders = await _orderRepository.ListAllAsync(
-                o => o.UserId == userId && o.Status == OrderStatus.Initiated);
-            var order = orders.FirstOrDefault();
+            var order = await _orderRepository.GetOrderByUserId(userId);
 
             if (order == null)
             {
@@ -55,6 +57,8 @@ namespace KSE.GameStore.ApplicationCore.Services
                 {
                     GameId = game.Id,
                     OrderId = order.Id,
+                    // TODO: add Price (we do not have separate field for current price, there we need
+                    // TODO: to decide whether we need to apply it, or write a method that will go through all prices and fins the current one
                     Quantity = quantity,
                     Order = order,
                     Game = game
@@ -67,20 +71,18 @@ namespace KSE.GameStore.ApplicationCore.Services
             await _orderRepository.SaveChangesAsync();
         }
 
-        public async Task<IList<OrderItem>> GetGamesInCartAsync(Guid userId)
+        public async Task<List<CartItemDto>> GetGamesInCartAsync(Guid userId)
         {
-            var orders = await _orderRepository.ListAllAsync(
-                o => o.UserId == userId && o.Status == OrderStatus.Initiated);
-            var order = orders.FirstOrDefault();
+            var order = await _orderRepository.GetOrderByUserId(userId);
 
-            return order?.OrderItems.ToList() ?? [];
+            return order is null
+                ? []
+                : _mapper.Map<List<CartItemDto>>(order.OrderItems);
         }
 
         public async Task RemoveGameFromCartAsync(Guid userId, int orderItemId)
         {
-            var orders = await _orderRepository.ListAllAsync(
-                o => o.UserId == userId && o.Status == OrderStatus.Initiated);
-            var order = orders.FirstOrDefault();
+            var order = await _orderRepository.GetOrderByUserId(userId);
 
             if (order == null) return;
 
@@ -96,9 +98,7 @@ namespace KSE.GameStore.ApplicationCore.Services
 
         public async Task ClearCartAsync(Guid userId)
         {
-            var orders = await _orderRepository.ListAllAsync(
-                o => o.UserId == userId && o.Status == OrderStatus.Initiated);
-            var order = orders.FirstOrDefault();
+            var order = await _orderRepository.GetOrderByUserId(userId);
 
             if (order == null) return;
 

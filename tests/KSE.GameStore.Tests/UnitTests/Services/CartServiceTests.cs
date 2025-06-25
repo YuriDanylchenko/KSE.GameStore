@@ -4,22 +4,36 @@ using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
 using Moq;
 using System.Linq.Expressions;
+using AutoMapper;
+using KSE.GameStore.ApplicationCore.Mapping;
+using KSE.GameStore.Web.Mapping;
 
 namespace KSE.GameStore.Tests.UnitTests.Services;
 
 public class CartServiceTests
 {
-    private readonly Mock<IRepository<Order, int>> _orderRepo = new();
+    private readonly Mock<IOrderRepository> _orderRepo = new();
     private readonly Mock<IRepository<User, Guid>> _userRepo = new();
     private readonly Mock<IGameRepository> _gameRepo = new();
     private readonly CartService _service;
+    private readonly IMapper _mapper;    
 
     public CartServiceTests()
     {
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullCollections = true;
+            cfg.AddProfile<WebMappingProfile>();
+            cfg.AddProfile<ApplicationCoreMappingProfile>();
+        });
+        
+        _mapper = config.CreateMapper();
+
         _service = new CartService(
             _orderRepo.Object,
             _userRepo.Object,
-            _gameRepo.Object
+            _gameRepo.Object,
+            _mapper
         );
     }
 

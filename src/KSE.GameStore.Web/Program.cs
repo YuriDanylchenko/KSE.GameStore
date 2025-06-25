@@ -31,6 +31,7 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
 
 // Repositories
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 // Domain services
