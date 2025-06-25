@@ -11,28 +11,28 @@ namespace KSE.GameStore.Web.Controllers;
 public class PublishersController : ControllerBase
 {
     private readonly IPublisherService _publisherService;
-    private readonly IMapper _mapper; 
+    private readonly IMapper _mapper;
 
     public PublishersController(IPublisherService publisherService, IMapper mapper)
     {
         _publisherService = publisherService;
         _mapper = mapper;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetAllPublishers(int? pageNumber, int? pageSize)
     {
         var publisherDto = await _publisherService.GetAllPublishersAsync(pageNumber, pageSize);
         return Ok(publisherDto);
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetPublisherById([FromRoute] int id)
     {
         var publisherDto = await _publisherService.GetPublisherByIdAsync(id);
         return Ok(publisherDto);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreatePublisher([FromBody] CreatePublisherRequest createPublisherRequest)
     {

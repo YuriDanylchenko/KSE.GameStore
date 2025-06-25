@@ -21,7 +21,7 @@ public interface IPublisherService
     /// Thrown when either parameter is less than or equal to zero.
     /// </exception>
     Task<List<PublisherDTO>> GetAllPublishersAsync(int? pageNumber, int? pageSize);
-    
+
     /// <summary>
     /// Retrieves a publisher by its unique identifier with all related entities.
     /// </summary>
@@ -37,7 +37,7 @@ public interface IPublisherService
     /// Thrown when no publisher exists with the specified id.
     /// </exception>
     Task<PublisherDTO> GetPublisherByIdAsync(int id);
-    
+
     /// <summary>
     /// Creates a new publisher.
     /// </summary>
@@ -53,7 +53,7 @@ public interface IPublisherService
     /// - Required fields are missing or invalid
     /// </exception>
     Task<PublisherDTO> CreatePublisherAsync(CreatePublisherDTO publisherDto);
-    
+
     /// <summary>
     /// Updates an existing publisher.
     /// </summary>
@@ -73,7 +73,7 @@ public interface IPublisherService
     /// - The publisher to update doesn't exist
     /// </exception>
     Task<PublisherDTO> UpdatePublisherAsync(UpdatePublisherDTO publisherDto);
-    
+
     /// <summary>
     /// Deletes a publisher by its unique identifier.
     /// </summary>

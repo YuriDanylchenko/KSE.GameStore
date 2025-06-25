@@ -66,6 +66,15 @@ public class ApplicationCoreMappingProfile : Profile
                 src.Stock
             ));
 
+        CreateMap<OrderItem, CartItemDto>()
+            .ConstructUsing(src => new CartItemDto(
+                src.Id,
+                src.GameId,
+                src.Game.Title,
+                src.Price,
+                src.Quantity))
+            .ForMember(d => d.Title, o => o.MapFrom(s => s.Game.Title));
+
         CreateMap<Payment, PaymentDTO>()
             .ConstructUsing(src => new PaymentDTO(
                 src.Id,
@@ -85,7 +94,7 @@ public class ApplicationCoreMappingProfile : Profile
         CreateMap<OrderItem, OrderItemDTO>();
 
         // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
-        
+
         // CreateGameDTO → Game
         CreateMap<CreateGameDTO, Game>()
             .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id, will be set by EF
@@ -96,7 +105,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Platforms, opt => opt.Ignore()) // Will be handled in service layer
             .ForMember(dest => dest.Prices, opt => opt.Ignore()) // Will be handled in service layer
             .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore()); // Will be handled in service layer
-        
+
         // CreateGamePriceDTO → GamePrice
         CreateMap<CreateGamePriceDTO, GamePrice>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -131,7 +140,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Platforms, opt => opt.Ignore()) // Will be handled separately
             .ForMember(dest => dest.Prices, opt => opt.Ignore()) // Will be handled separately
             .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore()); // Will be handled separately
-           
+
         // UpdateGamePriceDTO → GamePrice
         CreateMap<UpdateGamePriceDTO, GamePrice>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -139,7 +148,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(_ => (DateTime?)null))
             .ForMember(dest => dest.Game, opt => opt.Ignore())
             .ForMember(dest => dest.GameId, opt => opt.Ignore());
-        
+
         // UpdatePublisherDTO → Publisher
         CreateMap<UpdatePublisherDTO, Publisher>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())

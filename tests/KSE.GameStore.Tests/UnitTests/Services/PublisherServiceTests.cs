@@ -20,12 +20,12 @@ public class PublisherServiceTests
     private readonly PublisherService _service;
 
     #region Constructor
-    
+
     public PublisherServiceTests()
     {
         _mockRepo = new Mock<IRepository<Publisher, int>>();
         _mockLogger = new Mock<ILogger<PublisherService>>();
-        
+
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AllowNullCollections = true;
@@ -33,13 +33,13 @@ public class PublisherServiceTests
             cfg.AddProfile<ApplicationCoreMappingProfile>();
         });
         _mapper = config.CreateMapper();
-        
+
         _service = new PublisherService(
-            _mockRepo.Object, 
-            _mockLogger.Object, 
+            _mockRepo.Object,
+            _mockLogger.Object,
             _mapper);
     }
-    
+
     #endregion
 
     #region GetAll Tests
@@ -102,9 +102,9 @@ public class PublisherServiceTests
     }
 
     #endregion
-    
+
     #region GetById Tests
-    
+
     public class GetPublisherById : PublisherServiceTests
     {
         [Fact]
@@ -116,7 +116,7 @@ public class PublisherServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(() => _service.GetPublisherByIdAsync(1));
         }
-        
+
         [Fact]
         public async Task GetPublisherByIdAsync_ReturnsPublisher_WhenExists()
         {
@@ -142,11 +142,11 @@ public class PublisherServiceTests
             Assert.Equal(publisher.Description, result.Description);
         }
     }
-    
+
     #endregion
 
     #region Create Tests
-    
+
     public class CreatePublisher : PublisherServiceTests
     {
         [Fact]
@@ -168,7 +168,7 @@ public class PublisherServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<BadRequestException>(() => _service.CreatePublisherAsync(dto));
         }
-        
+
         [Fact]
         public async Task CreatePublisherAsync_CreatesPublisherSuccessfully()
         {
@@ -200,11 +200,11 @@ public class PublisherServiceTests
             Assert.Equal(dto.WebsiteUrl, addedPublisher?.WebsiteUrl);
         }
     }
-    
+
     #endregion
 
     #region Update Tests
-    
+
     public class UpdatePublisher : PublisherServiceTests
     {
         [Fact]
@@ -212,9 +212,9 @@ public class PublisherServiceTests
         {
             // Arrange
             var dto = new UpdatePublisherDTO(
-                1, 
-                "Updated", 
-                "url", 
+                1,
+                "Updated",
+                "url",
                 "desc"
             );
 
@@ -223,7 +223,7 @@ public class PublisherServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdatePublisherAsync(dto));
         }
-        
+
         [Fact]
         public async Task UpdatePublisherAsync_ThrowsBadRequest_WhenNameAlreadyExists()
         {
@@ -243,12 +243,12 @@ public class PublisherServiceTests
             // Act & Assert
             await Assert.ThrowsAsync<BadRequestException>(() => _service.UpdatePublisherAsync(dto));
         }
-        
+
         [Fact]
         public async Task UpdatePublisherAsync_UpdatesSuccessfully()
         {
             // Arrange
-            var dto = new UpdatePublisherDTO (
+            var dto = new UpdatePublisherDTO(
                 1,
                 "Updated Name",
                 "new url",
@@ -275,7 +275,7 @@ public class PublisherServiceTests
             Assert.Equal(dto.WebsiteUrl, result.WebsiteUrl);
         }
     }
-    
+
     #endregion
 
     #region Delete Tests
