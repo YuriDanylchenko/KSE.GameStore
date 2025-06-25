@@ -65,6 +65,15 @@ public class ApplicationCoreMappingProfile : Profile
                 src.Stock
             ));
 
+        CreateMap<OrderItem, CartItemDto>()
+            .ConstructUsing(src => new CartItemDto(
+                src.Id,
+                src.GameId,
+                src.Game.Title,
+                src.Price,
+                src.Quantity
+            ));
+
         // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
         
         // CreateGameDTO → Game
