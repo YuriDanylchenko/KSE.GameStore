@@ -1,7 +1,7 @@
-using KSE.GameStore.Web.Requests.Games;
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.Web.Requests.Publishers;
+using KSE.GameStore.Web.Requests.Games;
 
 namespace KSE.GameStore.Web.Mapping;
 

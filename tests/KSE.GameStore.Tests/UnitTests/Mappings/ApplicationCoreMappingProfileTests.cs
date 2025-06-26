@@ -38,8 +38,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2),
-                EndDate = null, Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = null,
+                Game = null!
             };
 
 
@@ -93,8 +97,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2),
-                EndDate = DateTime.UtcNow.AddDays(-1), Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = DateTime.UtcNow.AddDays(-1),
+                Game = null!
             };
 
 
@@ -244,7 +252,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = null,
+                Game = null!
             };
 
             var existingGame = new Game
@@ -413,7 +426,12 @@ public class ApplicationCoreMappingProfileTests
             var region = new Region { Id = 1, Name = "NA" };
             var price = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = null,
+                Game = null!
             };
             var originalDate = DateTime.UtcNow.AddDays(-10);
 
