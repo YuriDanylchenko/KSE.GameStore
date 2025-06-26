@@ -53,6 +53,6 @@ public class PublishersController : ControllerBase
     public async Task<IActionResult> DeletePublisher(int id)
     {
         await _publisherService.DeletePublisherAsync(id);
-        return Ok();
+        return NoContent();
     }
 }
