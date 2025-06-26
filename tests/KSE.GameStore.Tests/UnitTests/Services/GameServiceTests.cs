@@ -1,15 +1,14 @@
+using AutoMapper;
+using KSE.GameStore.ApplicationCore.Mapping;
 using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.ApplicationCore.Models.Output;
-
-using KSE.GameStore.DataAccess.Entities;
-using KSE.GameStore.Web.Mapping;
 using KSE.GameStore.ApplicationCore.Services;
-using KSE.GameStore.ApplicationCore.Mapping;
+using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
+using KSE.GameStore.Web.Mapping;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Linq.Expressions;
-using AutoMapper;
 
 namespace KSE.GameStore.Tests.UnitTests.Services;
 
