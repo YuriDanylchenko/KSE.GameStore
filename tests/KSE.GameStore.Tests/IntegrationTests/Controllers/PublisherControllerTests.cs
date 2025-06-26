@@ -1,29 +1,25 @@
-using System.Net;
-using System.Net.Http.Json;
 using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.Tests.Helpers;
 using KSE.GameStore.Web.Requests.Publishers;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
 
-public class PublisherControllerTests : BaseIntegrationTest
+public class PublisherControllerTests(CustomWebApplicationFactory factory) : BaseIntegrationTest(factory)
 {
-    public PublisherControllerTests(CustomWebApplicationFactory factory) : base(factory)
-    {
-    }
-    
     [Fact]
     public async Task GetAllPublishers_ReturnsOkAndEmptyListInitially()
     {
         TestHelper.SetupAuthenticatedClient(Client, "Admin");
         var response = await Client.GetAsync("/publishers");
-        
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var publishers = await response.Content.ReadFromJsonAsync<List<PublisherDTO>>();
         Assert.NotNull(publishers);
         Assert.Empty(publishers);
     }
-    
+
     [Fact]
     public async Task CreatePublisher_ReturnsOkAndCreatedPublisher()
     {
@@ -40,7 +36,7 @@ public class PublisherControllerTests : BaseIntegrationTest
         Assert.Equal(request.WebsiteUrl, result.WebsiteUrl);
         Assert.Equal(request.Description, result.Description);
     }
-    
+
     [Fact]
     public async Task GetPublisherById_ReturnsOk_WhenExists()
     {
@@ -60,9 +56,9 @@ public class PublisherControllerTests : BaseIntegrationTest
         Assert.Equal("https://lookup.com", result.WebsiteUrl);
         Assert.Equal("desc", result.Description);
     }
-    
+
     [Fact]
-    public async Task DeletePublisher_ReturnsNoContent_WhenExists()
+    public async Task DeletePublisher_ReturnsOk_WhenExists()
     {
         TestHelper.SetupAuthenticatedClient(Client, "Admin");
         var createRequest = new CreatePublisherRequest("DeleteMe", "To be deleted", "https://delete.com");
@@ -72,12 +68,12 @@ public class PublisherControllerTests : BaseIntegrationTest
 
         var deleteResponse = await Client.DeleteAsync($"/publishers/{created!.Id}");
 
-        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
 
         var getResponse = await Client.GetAsync($"/publishers/{created.Id}");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
-    
+
     [Fact]
     public async Task UpdatePublisher_ReturnsOk_WhenValid()
     {
@@ -92,7 +88,7 @@ public class PublisherControllerTests : BaseIntegrationTest
         var created = await createResponse.Content.ReadFromJsonAsync<PublisherDTO>();
 
         var updateRequest = new UpdatePublisherRequest(
-            created!.Id, 
+            created!.Id,
             "UpdatedName",
             "https://after.com",
             "after update"

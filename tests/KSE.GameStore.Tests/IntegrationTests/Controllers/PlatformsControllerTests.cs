@@ -7,12 +7,8 @@ using System.Net.Http.Json;
 
 namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
 
-public class PlatformsControllerTests : BaseIntegrationTest
+public class PlatformsControllerTests(CustomWebApplicationFactory factory) : BaseIntegrationTest(factory)
 {
-    public PlatformsControllerTests(CustomWebApplicationFactory factory) : base(factory)
-    {
-    }
-
     [Fact]
     public async Task GetAll_ReturnsEmptyList_Initially()
     {

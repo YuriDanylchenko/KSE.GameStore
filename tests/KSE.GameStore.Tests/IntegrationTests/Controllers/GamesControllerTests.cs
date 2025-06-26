@@ -1,6 +1,5 @@
 using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess;
-using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.Tests.Helpers;
 using KSE.GameStore.Web.Requests.Games;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +8,8 @@ using System.Net.Http.Json;
 
 namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
 
-public class GamesControllerTests : BaseIntegrationTest
+public class GamesControllerTests(CustomWebApplicationFactory factory) : BaseIntegrationTest(factory)
 {
-    public GamesControllerTests(CustomWebApplicationFactory factory) : base(factory)
-    {
-    }
-
     private async Task<(int PublisherId, int GenreId, int PlatformId)> CreateTestEntitiesAsync()
     {
         using var scope = Factory.Services.CreateScope();
@@ -229,7 +224,7 @@ public class GamesControllerTests : BaseIntegrationTest
     public async Task GetGamesByPlatform_ReturnsNotFound_ForInvalidPlatform()
     {
         TestHelper.SetupAuthenticatedClient(Client, "Admin");
-        var response = await Client.GetAsync("/platform/9999");
+        var response = await Client.GetAsync("/games/platform/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
@@ -252,7 +247,7 @@ public class GamesControllerTests : BaseIntegrationTest
 
         await Client.PostAsJsonAsync("/games", newGame);
 
-        var response = await Client.GetAsync($"/platform/{testIds.PlatformId}");
+        var response = await Client.GetAsync($"/games/platform/{testIds.PlatformId}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var games = await response.Content.ReadFromJsonAsync<List<GameDTO>>();
