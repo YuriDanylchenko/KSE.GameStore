@@ -13,14 +13,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured.");
 
-builder.Services.AddAuthentication(options =>
+// Skip authentication setup in test environment to avoid duplicate registration
+if (!builder.Environment.IsEnvironment("IntegrationTest"))
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options => { options.TokenValidationParameters = AuthService.CreateTokenValidationParameters(jwtKey); });
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options => { options.TokenValidationParameters = AuthService.CreateTokenValidationParameters(jwtKey); });
 
-builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization();
+}
 
 // Add services to the container.
 // ---------------------------------------------
@@ -104,8 +108,9 @@ var app = builder.Build();
 
 app.MapControllers();
 
-app.UseAuthorization();
+// Use correct Authentication/Authorization order
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggerMiddleware>();
