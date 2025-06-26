@@ -229,7 +229,7 @@ public class GamesControllerTests : BaseIntegrationTest
     public async Task GetGamesByPlatform_ReturnsNotFound_ForInvalidPlatform()
     {
         TestHelper.SetupAuthenticatedClient(Client, "Admin");
-        var response = await Client.GetAsync("/platform/9999");
+        var response = await Client.GetAsync("/games/platform/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
@@ -252,7 +252,7 @@ public class GamesControllerTests : BaseIntegrationTest
 
         await Client.PostAsJsonAsync("/games", newGame);
 
-        var response = await Client.GetAsync($"/platform/{testIds.PlatformId}");
+        var response = await Client.GetAsync($"/games/platform/{testIds.PlatformId}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var games = await response.Content.ReadFromJsonAsync<List<GameDTO>>();

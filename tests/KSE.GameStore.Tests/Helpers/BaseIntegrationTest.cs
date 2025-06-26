@@ -22,6 +22,32 @@ public class BaseIntegrationTest : IClassFixture<CustomWebApplicationFactory>
     {
         Factory = factory;
         Client = factory.CreateClient();
+        
+        // Clear database for each test
+        ClearDatabase().Wait();
+    }
+
+    private async Task ClearDatabase()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<GameStoreDbContext>();
+        
+        // Clear all data (order matters due to foreign key constraints)
+        dbContext.Games.RemoveRange(dbContext.Games);
+        dbContext.Orders.RemoveRange(dbContext.Orders);
+        dbContext.Payments.RemoveRange(dbContext.Payments);
+        dbContext.Prices.RemoveRange(dbContext.Prices);
+        dbContext.Publishers.RemoveRange(dbContext.Publishers);
+        dbContext.Genres.RemoveRange(dbContext.Genres);
+        dbContext.Platforms.RemoveRange(dbContext.Platforms);
+        dbContext.RefreshTokens.RemoveRange(dbContext.RefreshTokens);
+        dbContext.UserRoles.RemoveRange(dbContext.UserRoles);
+        dbContext.Users.RemoveRange(dbContext.Users);
+        
+        await dbContext.SaveChangesAsync();
+        
+        // Re-seed essential data
+        await Factory.SeedTestDataAsync();
     }
 }
 
