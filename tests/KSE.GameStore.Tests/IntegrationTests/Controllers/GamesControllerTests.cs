@@ -1,14 +1,18 @@
 using KSE.GameStore.ApplicationCore.Models.Output;
+using KSE.GameStore.ApplicationCore.Mapping;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Entities;
-using KSE.GameStore.ApplicationCore.Mapping;
+using KSE.GameStore.Tests.UnitTests;
 using KSE.GameStore.Web.Mapping;
 using KSE.GameStore.Web.Requests.Games;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
@@ -34,7 +38,23 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
                 // Add in-memory database
                 services.AddDbContext<GameStoreDbContext>(options => { options.UseInMemoryDatabase(dbName); });
 
-                services.AddAutoMapper(typeof(ApplicationCoreMappingProfile), typeof(WebMappingProfile));
+                services.AddAutoMapper(config =>
+                {
+                    config.AddProfile<ApplicationCoreMappingProfile>();
+                    config.AddProfile<WebMappingProfile>();
+                });
+
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = "Test";
+                    options.DefaultChallengeScheme = "Test";
+                })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+            });
+            builder.Configure(app =>
+            {
+                app.UseAuthentication();
+                app.UseAuthorization();
             });
         });
     }
@@ -62,6 +82,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetAll_ReturnsEmptyList_Initially()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         var response = await client.GetAsync("/games");
 
         response.EnsureSuccessStatusCode();
@@ -74,6 +95,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetById_ReturnsNotFound_ForInvalidId()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         var response = await client.GetAsync("/games/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -83,6 +105,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Create_And_GetById()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
         // First create a publisher (required relationship)
         var testIds = await CreateTestEntities(client);
@@ -127,6 +150,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Update_ModifiesExistingGame()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
         // Setup - Create a game first
         var testIds = await CreateTestEntities(client);
@@ -178,6 +202,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Delete_RemovesGame()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
         // Setup - Create a game
         var testIds = await CreateTestEntities(client);
@@ -212,6 +237,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Update_ReturnsNotFound_ForInvalidId()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
         var testIds = await CreateTestEntities(client);
         var publisherId = testIds[0];
@@ -236,6 +262,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Delete_ReturnsNotFound_ForInvalidId()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         var response = await client.DeleteAsync("/games/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -245,6 +272,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetAll_SupportsPagination()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
         // Create test data
         for (int i = 1; i <= 5; i++)
@@ -280,6 +308,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetGamesByGenre_ReturnsNotFound_ForInvalidGenre()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         var response = await client.GetAsync("/genre/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -288,6 +317,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetGamesByGenre_ReturnsGames_ForValidGenre()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
         // Setup – create publisher, genre, platform
         var ids = await CreateTestEntities(client);
@@ -362,6 +392,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetGamesByPlatform_ReturnsNotFound_ForInvalidPlatform()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         var response = await client.GetAsync("/platform/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -370,6 +401,7 @@ public class GamesControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetGamesByPlatform_ReturnsGames_ForValidPlatform()
     {
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
         // Setup – create publisher, genre, platform
         var ids = await CreateTestEntities(client);
