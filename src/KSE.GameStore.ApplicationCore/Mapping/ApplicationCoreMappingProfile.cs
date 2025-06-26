@@ -30,6 +30,20 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Prices.FirstOrDefault(p => p.EndDate == null)))
             .ForMember(dest => dest.RegionPermissions, opt => opt.MapFrom(src => src.RegionPermissions));
 
+        // User → UserDTO
+        CreateMap<User, UserDTO>()
+            .ConstructUsing((src, context) => new UserDTO(
+                src.Id,
+                src.Email,
+                src.HashedPassword,
+                src.PasswordSalt,
+                src.Region != null ? context.Mapper.Map<RegionDTO>(src.Region) : null,
+                src.UserRoles != null
+                    ? src.UserRoles.Select(ur => context.Mapper.Map<RoleDTO>(ur.Role)).ToList()
+                    : []
+            ))
+            .ForMember(dest => dest.Roles, opt => opt.Ignore());
+
         // sub-DTOs
         CreateMap<Publisher, PublisherDTO>()
             .ConstructUsing(src => new PublisherDTO(
@@ -65,14 +79,17 @@ public class ApplicationCoreMappingProfile : Profile
                 src.Stock
             ));
 
-        CreateMap<Order, OrderDTO>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
-
-        CreateMap<OrderItem, OrderItemDTO>();
+        CreateMap<OrderItem, CartItemDto>()
+            .ConstructUsing(src => new CartItemDto(
+                src.Id,
+                src.GameId,
+                src.Game.Title,
+                src.Price,
+                src.Quantity))
+            .ForMember(d => d.Title, o => o.MapFrom(s => s.Game.Title));
 
         // ─── WRITE MAPPINGS ──────────────────────────────────────────────────────────
-        
+
         // CreateGameDTO → Game
         CreateMap<CreateGameDTO, Game>()
             .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id, will be set by EF
@@ -83,7 +100,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Platforms, opt => opt.Ignore()) // Will be handled in service layer
             .ForMember(dest => dest.Prices, opt => opt.Ignore()) // Will be handled in service layer
             .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore()); // Will be handled in service layer
-        
+
         // CreateGamePriceDTO → GamePrice
         CreateMap<CreateGamePriceDTO, GamePrice>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -99,7 +116,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.WebsiteUrl, opt => opt.MapFrom(src => src.WebsiteUrl))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Games, opt => opt.Ignore());
-        
+
         // UpdateGameDTO → Game
         CreateMap<UpdateGameDTO, Game>()
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) // Preserve existing
@@ -109,7 +126,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Platforms, opt => opt.Ignore()) // Will be handled separately
             .ForMember(dest => dest.Prices, opt => opt.Ignore()) // Will be handled separately
             .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore()); // Will be handled separately
-           
+
         // UpdateGamePriceDTO → GamePrice
         CreateMap<UpdateGamePriceDTO, GamePrice>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -117,7 +134,7 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(_ => (DateTime?)null))
             .ForMember(dest => dest.Game, opt => opt.Ignore())
             .ForMember(dest => dest.GameId, opt => opt.Ignore());
-        
+
         // UpdatePublisherDTO → Publisher
         CreateMap<UpdatePublisherDTO, Publisher>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
