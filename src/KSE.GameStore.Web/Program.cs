@@ -23,10 +23,16 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Add services to the container.
+// ---------------------------------------------
+// Logging
+// ---------------------------------------------
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+// ---------------------------------------------
+// Core services
+// ---------------------------------------------
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -68,20 +74,29 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
     });
 }
 
+// Repositories
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddSingleton(jwtKey);
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IGameService, GameService>();
-builder.Services.AddScoped<IGenreService, GenreService>();
-builder.Services.AddScoped<IPlatformsService, PlatformsService>();
 
+// Domain services
+builder.Services.AddScoped<IPlatformsService, PlatformsService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IPublisherService, PublisherService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// AutoMapper
 builder.Services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; },
     typeof(ApplicationCoreMappingProfile),
     typeof(WebMappingProfile));
 
+// MVC controllers
 builder.Services.AddControllers();
 
+// ---------------------------------------------
+// Build pipeline
+// ---------------------------------------------
 var app = builder.Build();
 
 app.MapControllers();

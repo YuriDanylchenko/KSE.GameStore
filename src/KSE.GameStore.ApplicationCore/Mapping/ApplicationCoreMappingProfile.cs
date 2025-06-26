@@ -100,6 +100,14 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Game, opt => opt.Ignore())
             .ForMember(dest => dest.GameId, opt => opt.Ignore());
 
+        // CreatePublisherDTO → Publisher
+        CreateMap<CreatePublisherDTO, Publisher>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id, will be set by EF
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.WebsiteUrl, opt => opt.MapFrom(src => src.WebsiteUrl))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Games, opt => opt.Ignore());
+        
         // UpdateGameDTO → Game
         CreateMap<UpdateGameDTO, Game>()
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) // Preserve existing
@@ -117,5 +125,13 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(_ => (DateTime?)null))
             .ForMember(dest => dest.Game, opt => opt.Ignore())
             .ForMember(dest => dest.GameId, opt => opt.Ignore());
+        
+        // UpdatePublisherDTO → Publisher
+        CreateMap<UpdatePublisherDTO, Publisher>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.WebsiteUrl, opt => opt.MapFrom(src => src.WebsiteUrl))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Games, opt => opt.Ignore());
     }
 }
