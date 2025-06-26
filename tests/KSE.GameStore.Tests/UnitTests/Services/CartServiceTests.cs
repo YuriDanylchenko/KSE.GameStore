@@ -42,7 +42,6 @@ public class CartServiceTests
         Id = id,
         Name = "Test",
         Email = "test@test.com",
-        Role = "User",
         RegionId = 1,
         Region = new Region { Id = 1, Name = "Test", Code = "T" }
     };
