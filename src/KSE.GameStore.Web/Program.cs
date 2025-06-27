@@ -76,6 +76,7 @@ if (!builder.Environment.IsEnvironment("IntegrationTest"))
 
 // Repositories
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddSingleton(jwtKey);
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
@@ -84,6 +85,8 @@ builder.Services.AddScoped<IPlatformsService, PlatformsService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // AutoMapper

@@ -12,11 +12,11 @@ public class PublisherService : IPublisherService
 {
     private readonly IRepository<Publisher, int> _publisherRepository;
     private readonly ILogger<PublisherService> _logger;
-    private readonly IMapper _mapper;    
+    private readonly IMapper _mapper;
 
     public PublisherService(
-        IRepository<Publisher, int> publisherRepository, 
-        ILogger<PublisherService> logger, 
+        IRepository<Publisher, int> publisherRepository,
+        ILogger<PublisherService> logger,
         IMapper mapper)
     {
         _publisherRepository = publisherRepository;
@@ -75,14 +75,14 @@ public class PublisherService : IPublisherService
             _logger.LogNotFound($"publisher/{publisherDto.Id}");
             throw new NotFoundException($"Publisher with ID {publisherDto.Id} not found.");
         }
-        
+
         // Check whether new name already exists
         var existing = await _publisherRepository
             .ListAllAsync(g => g.Name.ToLower() == publisherDto.Name.ToLower());
 
         if (existing.Any())
             throw new BadRequestException($"A publisher with the name '{publisherDto.Name}' already exists.");
-        
+
         // Update all fields
         _mapper.Map(publisherDto, publisherEntity);
 
@@ -101,7 +101,7 @@ public class PublisherService : IPublisherService
             _logger.LogNotFound($"publisher/{id}");
             throw new NotFoundException($"Publisher with ID {id} not found.");
         }
-        
+
         _publisherRepository.Delete(publisherEntity);
         await _publisherRepository.SaveChangesAsync();
     }

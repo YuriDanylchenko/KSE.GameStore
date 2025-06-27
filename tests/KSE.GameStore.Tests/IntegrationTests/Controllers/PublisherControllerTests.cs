@@ -37,7 +37,7 @@ public class PublisherControllerTests : IClassFixture<WebApplicationFactory<Prog
             });
         });
     }
-    
+
     [Fact]
     public async Task GetAllPublishers_ReturnsOkAndEmptyListInitially()
     {
@@ -52,7 +52,7 @@ public class PublisherControllerTests : IClassFixture<WebApplicationFactory<Prog
         Assert.NotNull(result);
         Assert.Empty(result!);
     }
-    
+
     [Fact]
     public async Task CreatePublisher_ReturnsOkAndCreatedPublisher()
     {
@@ -73,7 +73,7 @@ public class PublisherControllerTests : IClassFixture<WebApplicationFactory<Prog
         Assert.Equal(request.WebsiteUrl, result.WebsiteUrl);
         Assert.Equal(request.Description, result.Description);
     }
-    
+
     [Fact]
     public async Task GetPublisherById_ReturnsOk_WhenExists()
     {
@@ -96,7 +96,7 @@ public class PublisherControllerTests : IClassFixture<WebApplicationFactory<Prog
         Assert.Equal("https://lookup.com", result.WebsiteUrl);
         Assert.Equal("desc", result.Description);
     }
-    
+
     [Fact]
     public async Task DeletePublisher_ReturnsNoContent_WhenExists()
     {
@@ -113,7 +113,7 @@ public class PublisherControllerTests : IClassFixture<WebApplicationFactory<Prog
         // Assert
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
     }
-    
+
     [Fact]
     public async Task UpdatePublisher_ReturnsOk_WhenValid()
     {
@@ -130,7 +130,7 @@ public class PublisherControllerTests : IClassFixture<WebApplicationFactory<Prog
         var created = await createResponse.Content.ReadFromJsonAsync<PublisherDTO>();
 
         var updateRequest = new UpdatePublisherRequest(
-            created!.Id, 
+            created!.Id,
             "UpdatedName",
             "https://after.com",
             "after update"

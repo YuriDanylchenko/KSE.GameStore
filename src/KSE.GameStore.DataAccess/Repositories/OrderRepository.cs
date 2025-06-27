@@ -1,0 +1,27 @@
+﻿using KSE.GameStore.DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace KSE.GameStore.DataAccess.Repositories;
+
+public class OrderRepository(GameStoreDbContext context) : Repository<Order, int>(context), IOrderRepository
+{
+    public async Task<Order?> GetOrderWithCollectionsByIdAsync(int id)
+    {
+        return await _dbSet
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Game)
+            .Include(o => o.User)
+            .Include(o => o.Status)
+            .SingleOrDefaultAsync(o => o.Id == id);
+    }
+
+    public async Task<Order?> GetOrderByUserId(Guid id)
+    {
+        return await _dbSet
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Game)
+            .Include(o => o.User)
+            .Where(o => o.UserId == id && o.Status == OrderStatus.Initiated)
+            .FirstOrDefaultAsync();
+    }
+}

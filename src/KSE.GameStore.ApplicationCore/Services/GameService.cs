@@ -146,7 +146,7 @@ public class GameService : IGameService
         await _gameRepository.AddAsync(gameEntity);
         await _gameRepository.SaveChangesAsync();
 
-        var createdGameEntity = await _gameRepository.GetGameByIdAsync(gameEntity.Id); 
+        var createdGameEntity = await _gameRepository.GetGameByIdAsync(gameEntity.Id);
         return _mapper.Map<GameDTO>(createdGameEntity);
     }
 

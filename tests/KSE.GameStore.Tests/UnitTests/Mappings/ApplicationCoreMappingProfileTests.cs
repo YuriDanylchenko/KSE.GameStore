@@ -363,7 +363,12 @@ public class ApplicationCoreMappingProfileTests
             var region1 = new Region { Id = 1, Name = "NA" };
             var price1 = new GamePrice
             {
-                Id = 1, Value = 49.99m, Stock = 1, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = null, Game = null!
+                Id = 1,
+                Value = 49.99m,
+                Stock = 1,
+                StartDate = DateTime.UtcNow.AddDays(-2),
+                EndDate = null,
+                Game = null!
             };
             var originalDate = DateTime.UtcNow.AddDays(-10);
 
