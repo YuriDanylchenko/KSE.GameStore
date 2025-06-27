@@ -11,7 +11,6 @@ public class OrderRepository(GameStoreDbContext context) : Repository<Order, int
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Game)
             .Include(o => o.User)
-            .Include(o => o.Status)
             .SingleOrDefaultAsync(o => o.Id == id);
     }
 

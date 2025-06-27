@@ -1,6 +1,8 @@
 using KSE.GameStore.Web.Requests.Games;
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models.Input;
+using KSE.GameStore.ApplicationCore.Models.Output;
+using KSE.GameStore.Web.Requests.Payments;
 using KSE.GameStore.Web.Requests.Publishers;
 
 namespace KSE.GameStore.Web.Mapping;
@@ -61,6 +63,13 @@ public class WebMappingProfile : Profile
                 src.Name,
                 src.WebsiteUrl,
                 src.Description
+            ));
+        
+        // CreatePaymentRequest → CreatePaymentDTO
+        CreateMap<CreatePaymentRequest, CreatePaymentDTO>()
+            .ConstructUsing(src => new CreatePaymentDTO(
+                src.OrderId,
+                (PaymentMethodDTO)src.PaymentMethod
             ));
     }
 }

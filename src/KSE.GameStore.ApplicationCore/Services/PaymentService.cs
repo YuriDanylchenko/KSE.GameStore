@@ -12,14 +12,14 @@ namespace KSE.GameStore.ApplicationCore.Services;
 public class PaymentService : IPaymentService
 {
     private readonly IRepository<Payment, int> _paymentRepository;
-    private readonly IRepository<Order, int> _orderRepository;
+    private readonly IOrderRepository _orderRepository;
     private readonly IRepository<UserGameStock, int> _stockRepository;
     private readonly ILogger<PaymentService> _logger;
     private readonly IMapper _mapper;
 
     public PaymentService(
         IRepository<Payment, int> paymentRepository,
-        IRepository<Order, int> orderRepository,
+        IOrderRepository orderRepository,
         ILogger<PaymentService> logger,
         IMapper mapper, 
         IRepository<UserGameStock, int> stockRepository)
@@ -59,7 +59,7 @@ public class PaymentService : IPaymentService
 
     public async Task<byte[]> CreatePaymentAsync(CreatePaymentDTO paymentDto)
     {
-        var orderEntity = await _orderRepository.GetByIdAsync(paymentDto.OrderId);
+        var orderEntity = await _orderRepository.GetOrderWithCollectionsByIdAsync(paymentDto.OrderId);
         
         if (orderEntity == null)
         {
