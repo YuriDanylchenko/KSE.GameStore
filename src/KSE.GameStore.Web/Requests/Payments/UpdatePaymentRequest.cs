@@ -3,5 +3,5 @@
 public record UpdatePaymentRequest(
     int Id,
     DateTime PayedAt,
-    int PaymentMethod
+    PaymentMethodRequest PaymentMethod
 );

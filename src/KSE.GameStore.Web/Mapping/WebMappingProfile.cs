@@ -69,7 +69,7 @@ public class WebMappingProfile : Profile
         CreateMap<CreatePaymentRequest, CreatePaymentDTO>()
             .ConstructUsing(src => new CreatePaymentDTO(
                 src.OrderId,
-                (PaymentMethodDTO)src.PaymentMethod
+                (PaymentMethodDTO)(int)src.PaymentMethod
             ));
         
         // UpdatePaymentRequest → UpdatePaymentDTO
@@ -77,7 +77,7 @@ public class WebMappingProfile : Profile
             .ConstructUsing(src => new UpdatePaymentDTO(
                 src.Id,
                 src.PayedAt,
-                (PaymentMethodDTO)src.PaymentMethod
+                (PaymentMethodDTO)(int)src.PaymentMethod
             ));
     }
 }

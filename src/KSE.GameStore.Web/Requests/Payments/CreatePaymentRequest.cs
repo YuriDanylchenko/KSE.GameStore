@@ -2,5 +2,5 @@
 
 public record CreatePaymentRequest(
     int OrderId,
-    int PaymentMethod
+    PaymentMethodRequest PaymentMethod
 );
