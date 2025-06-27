@@ -71,5 +71,13 @@ public class WebMappingProfile : Profile
                 src.OrderId,
                 (PaymentMethodDTO)src.PaymentMethod
             ));
+        
+        // UpdatePaymentRequest → UpdatePaymentDTO
+        CreateMap<UpdatePaymentRequest, UpdatePaymentDTO>()
+            .ConstructUsing(src => new UpdatePaymentDTO(
+                src.Id,
+                src.PayedAt,
+                (PaymentMethodDTO)src.PaymentMethod
+            ));
     }
 }

@@ -18,6 +18,19 @@ public class PaymentsController : ControllerBase
         _paymentService = paymentService;
         _mapper = mapper;
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetPaymentById([FromRoute] int id)
+    {
+        return Ok(await _paymentService.GetPaymentByIdAsync(id));
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAllPayments(int? pageNumber, int? pageSize)
+    {
+        var payments = await _paymentService.GetAllPaymentsAsync(pageNumber, pageSize);
+        return Ok(payments);
+    }
     
     [HttpPost]
     public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentRequest createPaymentRequest)
@@ -32,5 +45,14 @@ public class PaymentsController : ControllerBase
             contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             fileDownloadName: fileName
         );
+    }
+    
+    [HttpPut]
+    public async Task<IActionResult> UpdatePayment([FromBody] UpdatePaymentRequest updatePaymentRequest)
+    {
+        var paymentDto = _mapper.Map<UpdatePaymentRequest, UpdatePaymentDTO>(updatePaymentRequest);
+        var changedPayment = await _paymentService.UpdatePaymentAsync(paymentDto);
+
+        return Ok(changedPayment);
     }
 }
