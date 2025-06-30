@@ -1,44 +1,22 @@
-using KSE.GameStore.DataAccess;
-using KSE.GameStore.DataAccess.Entities;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using KSE.GameStore.ApplicationCore.Models.Output;
+using KSE.GameStore.Tests.Helpers;
+using KSE.GameStore.Web.Requests.Platforms;
+using KSE.GameStore.Web.Responses;
 using System.Net;
 using System.Net.Http.Json;
 
 namespace KSE.GameStore.Tests.IntegrationTests.Controllers;
 
-public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Program>>
+public class PlatformsControllerTests(CustomWebApplicationFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly WebApplicationFactory<Program> _factory;
-
-    public PlatformsControllerTests(WebApplicationFactory<Program> factory)
-    {
-        var dbName = $"IntegrationTestDb-{Guid.NewGuid()}";
-        _factory = factory.WithWebHostBuilder(builder =>
-        {
-            builder.UseEnvironment("IntegrationTest");
-            builder.ConfigureServices(services =>
-            {
-                var dbContext = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<GameStoreDbContext>));
-                if (dbContext != null)
-                    services.Remove(dbContext);
-
-                services.AddDbContext<GameStoreDbContext>(options => { options.UseInMemoryDatabase(dbName); });
-            });
-        });
-    }
-
     [Fact]
     public async Task GetAll_ReturnsEmptyList_Initially()
     {
-        var client = _factory.CreateClient();
-        var response = await client.GetAsync("/platforms");
+        TestHelper.SetupAuthenticatedClient(Client, "Admin");
+        var response = await Client.GetAsync("/platforms");
         response.EnsureSuccessStatusCode();
 
-        var platforms = await response.Content.ReadFromJsonAsync<List<Platform>>();
+        var platforms = await response.Content.ReadFromJsonAsync<List<PlatformDTO>>();
         Assert.NotNull(platforms);
         Assert.Empty(platforms!);
     }
@@ -46,18 +24,18 @@ public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Prog
     [Fact]
     public async Task Create_And_GetById()
     {
-        var client = _factory.CreateClient();
-        var newPlatform = new Platform { Name = "PlayStation" };
+        TestHelper.SetupAuthenticatedClient(Client, "Admin");
+        var newPlatform = new CreatePlatformRequest("PlayStation");
 
-        var createResponse = await client.PostAsJsonAsync("/platforms", newPlatform);
+        var createResponse = await Client.PostAsJsonAsync("/platforms", newPlatform);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
         var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
         Assert.True(createdId > 0);
 
-        var getResponse = await client.GetAsync($"/platforms/{createdId}");
+        var getResponse = await Client.GetAsync($"/platforms/{createdId}");
         getResponse.EnsureSuccessStatusCode();
-        var fetched = await getResponse.Content.ReadFromJsonAsync<Platform>();
+        var fetched = await getResponse.Content.ReadFromJsonAsync<PlatformResponse>();
         Assert.NotNull(fetched);
         Assert.Equal("PlayStation", fetched.Name);
     }
@@ -65,51 +43,51 @@ public class PlatformsControllerTests : IClassFixture<WebApplicationFactory<Prog
     [Fact]
     public async Task Update()
     {
-        var client = _factory.CreateClient();
-        var platform = new Platform { Name = "Wii" };
-        var createResponse = await client.PostAsJsonAsync("/platforms", platform);
+        TestHelper.SetupAuthenticatedClient(Client, "Admin");
+        var platform = new CreatePlatformRequest("Xbox");
+        var createResponse = await Client.PostAsJsonAsync("/platforms", platform);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
         var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
 
-        var updated = new Platform { Name = "Wii U" };
-        var updateResponse = await client.PutAsJsonAsync($"/platforms/{createdId}", updated);
+        var updated = new UpdatePlatformRequest("Xbox Series X");
+        var updateResponse = await Client.PutAsJsonAsync($"/platforms/{createdId}", updated);
         Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
 
-        var getResponse = await client.GetAsync($"/platforms/{createdId}");
-        var fetched = await getResponse.Content.ReadFromJsonAsync<Platform>();
-        Assert.Equal("Wii U", fetched!.Name);
+        var getResponse = await Client.GetAsync($"/platforms/{createdId}");
+        var fetched = await getResponse.Content.ReadFromJsonAsync<PlatformResponse>();
+        Assert.Equal("Xbox Series X", fetched!.Name);
     }
 
     [Fact]
     public async Task Delete()
     {
-        var client = _factory.CreateClient();
-        var platform = new Platform { Name = "Stadia" };
-        var createResponse = await client.PostAsJsonAsync("/platforms", platform);
+        TestHelper.SetupAuthenticatedClient(Client, "Admin");
+        var platform = new CreatePlatformRequest("Stadia");
+        var createResponse = await Client.PostAsJsonAsync("/platforms", platform);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
         var createdId = await createResponse.Content.ReadFromJsonAsync<int>();
 
-        var deleteResponse = await client.DeleteAsync($"/platforms/{createdId}");
+        var deleteResponse = await Client.DeleteAsync($"/platforms/{createdId}");
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
 
-        var getResponse = await client.GetAsync($"/platforms/{createdId}");
+        var getResponse = await Client.GetAsync($"/platforms/{createdId}");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 
     [Fact]
     public async Task Update_NotFound_Returns404()
     {
-        var client = _factory.CreateClient();
-        var updated = new Platform { Name = "NonExistent" };
-        var response = await client.PutAsJsonAsync("/platforms/9999", updated);
+        TestHelper.SetupAuthenticatedClient(Client, "Admin");
+        var updated = new UpdatePlatformRequest("NonExistent");
+        var response = await Client.PutAsJsonAsync("/platforms/9999", updated);
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task Delete_NotFound_Returns404()
     {
-        var client = _factory.CreateClient();
-        var response = await client.DeleteAsync("/platforms/9999");
+        TestHelper.SetupAuthenticatedClient(Client, "Admin");
+        var response = await Client.DeleteAsync("/platforms/9999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

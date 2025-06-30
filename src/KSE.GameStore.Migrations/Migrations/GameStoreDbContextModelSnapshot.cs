@@ -17,7 +17,7 @@ namespace KSE.GameStore.Migrations.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("ProductVersion", "9.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -213,6 +213,82 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.ToTable("payments", (string)null);
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("permissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "All.View"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "All.Create"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "All.Update"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "All.Delete"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Games.View"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Games.Create"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Games.Update"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Games.Delete"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Users.Create"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Users.Update"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Users.Delete"
+                        });
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Platform", b =>
                 {
                     b.Property<int>("Id")
@@ -259,6 +335,38 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.ToTable("publishers", (string)null);
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("refresh_tokens", (string)null);
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Region", b =>
                 {
                     b.Property<int>("Id")
@@ -283,6 +391,67 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.ToTable("regions", (string)null);
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Manager"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Moderator"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Guest"
+                        });
+                });
+
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.RolePermission", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("role_permissions", (string)null);
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -297,27 +466,50 @@ namespace KSE.GameStore.Migrations.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasColumnName("email");
 
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)")
                         .HasColumnName("name");
 
+                    b.Property<string>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("RegionId")
                         .HasColumnType("int")
                         .HasColumnName("region_id");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)")
-                        .HasColumnName("role");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RegionId");
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("user_roles", (string)null);
                 });
 
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserGameStock", b =>
@@ -459,6 +651,36 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.RolePermission", b =>
+                {
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.User", b =>
                 {
                     b.HasOne("KSE.GameStore.DataAccess.Entities.Region", "Region")
@@ -468,6 +690,25 @@ namespace KSE.GameStore.Migrations.Migrations
                         .IsRequired();
 
                     b.Navigation("Region");
+                });
+
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
+                {
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserGameStock", b =>
@@ -548,6 +789,11 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.Navigation("Payment");
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Publisher", b =>
                 {
                     b.Navigation("Games");
@@ -558,11 +804,20 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.User", b =>
                 {
                     b.Navigation("GameStock");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
