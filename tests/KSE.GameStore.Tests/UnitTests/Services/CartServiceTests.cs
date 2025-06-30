@@ -46,18 +46,23 @@ public class CartServiceTests
         Region = new Region { Id = 1, Name = "Test", Code = "T" }
     };
 
-    private static Game NewGame(int id) => new()
+    private static Game NewGame(int id, decimal price)
     {
-        Id = id,
-        Title = $"Game {id}",
-        PublisherId = 1,
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow,
-        Publisher = new Publisher { Id = 1, Name = "Pub" },
-        Genres = [],
-        Platforms = [],
-        Prices = []
-    };
+        var game = new Game
+        {
+            Id = id,
+            Title = $"Game {id}",
+            PublisherId = 1,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Publisher = new Publisher { Id = 1, Name = "Pub" },
+            Genres = [],
+            Platforms = [],
+            Prices = []
+        };
+        game.Prices.Add(new GamePrice{ EndDate = null, StartDate = DateTime.UtcNow, Value = price, Stock = 100_000, Game = game, GameId = id});
+        return game;
+    }
 
     private static Order NewOrder(Guid userId, OrderItem orderItem) => new()
     {
@@ -87,14 +92,15 @@ public class CartServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var gameId = 1;
+        var gamePrice = 1000;
 
         var user = NewUser(userId);
-        var game = NewGame(gameId);
+        var game = NewGame(gameId, gamePrice);
 
         _orderRepo.Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<Order, bool>>>()))
             .ReturnsAsync([]);
         _userRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-        _gameRepo.Setup(r => r.GetByIdAsync(gameId)).ReturnsAsync(game);
+        _gameRepo.Setup(r => r.GetGameByIdAsync(gameId)).ReturnsAsync(game);
 
         // Act
         await _service.AddGameToCartAsync(userId, gameId, 2);
@@ -109,8 +115,9 @@ public class CartServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var gameId = 1;
+        var gamePrice = 1000;
         var user = NewUser(userId);
-        var game = NewGame(gameId);
+        var game = NewGame(gameId, gamePrice);
         var item = NewOrderItem(game.Id, game, qty: 1);
         var order = NewOrder(userId, item);
         item.Order = order;
@@ -118,7 +125,7 @@ public class CartServiceTests
         _orderRepo.Setup(r => r.GetOrderByUserId(userId))
             .ReturnsAsync(order);
         _userRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-        _gameRepo.Setup(r => r.GetByIdAsync(gameId)).ReturnsAsync(game);
+        _gameRepo.Setup(r => r.GetGameByIdAsync(gameId)).ReturnsAsync(game);
 
         // Act
         await _service.AddGameToCartAsync(userId, gameId, 3);
@@ -133,8 +140,9 @@ public class CartServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var game1 = NewGame(1);
-        var game2 = NewGame(2);
+        var gamePrice = 1000;
+        var game1 = NewGame(1, gamePrice);
+        var game2 = NewGame(2, gamePrice);
 
         var user = NewUser(userId);
         var item1 = NewOrderItem(game1.Id, game1, qty: 2);
@@ -165,8 +173,9 @@ public class CartServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var gameId = 1;
+        var gamePrice = 1000;
         var user = NewUser(userId);
-        var game = NewGame(gameId);
+        var game = NewGame(gameId, gamePrice);
         var item = NewOrderItem(game.Id, game, qty: 1);
         var order = NewOrder(userId, item);
         item.Order = order;
@@ -189,8 +198,9 @@ public class CartServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var game1 = NewGame(1);
-        var game2 = NewGame(2);
+        var gamePrice = 1000;
+        var game1 = NewGame(1, gamePrice);
+        var game2 = NewGame(2, gamePrice);
 
         var user = NewUser(userId);
         var item1 = NewOrderItem(game1.Id, game1, qty: 2);
