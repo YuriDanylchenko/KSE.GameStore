@@ -1,4 +1,5 @@
-﻿using KSE.GameStore.ApplicationCore.Services;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
+using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Genre;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,14 @@ public class GenresController : ControllerBase
     public async Task<IActionResult> GetGenreById([FromRoute] int id)
     {
         var genre = await _genreService.GetGenreByIdAsync(id);
+        return Ok(genre);
+    }
+    
+    [HttpGet]
+    [Authorize(Roles = "Admin,User")]
+    public async Task<IActionResult> GetAllGenres(int? pageNumber, int? pageSize)
+    {
+        var genre = await _genreService.GetAllGenresAsync(pageNumber, pageSize);
         return Ok(genre);
     }
 

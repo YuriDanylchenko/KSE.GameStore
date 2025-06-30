@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using KSE.GameStore.DataAccess.Entities;
+using Microsoft.Identity.Client;
 
 namespace KSE.GameStore.DataAccess.Repositories;
 

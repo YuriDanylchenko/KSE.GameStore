@@ -1,7 +1,10 @@
-﻿using KSE.GameStore.ApplicationCore.Models.Output;
+﻿using AutoMapper;
+using KSE.GameStore.ApplicationCore.Mapping;
+using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess.Entities;
 using KSE.GameStore.DataAccess.Repositories;
+using KSE.GameStore.Web.Mapping;
 using Moq;
 
 namespace KSE.GameStore.Tests.UnitTests.Services;
@@ -9,12 +12,20 @@ namespace KSE.GameStore.Tests.UnitTests.Services;
 public class GenreServiceTests
 {
     private readonly Mock<IRepository<Genre, int>> _mockRepo;
+    private readonly IMapper _mapper;
     private readonly GenreService _service;
 
     public GenreServiceTests()
     {
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullCollections = true;
+            cfg.AddProfile<WebMappingProfile>();
+            cfg.AddProfile<ApplicationCoreMappingProfile>();
+        });
+        _mapper = config.CreateMapper();
         _mockRepo = new Mock<IRepository<Genre, int>>();
-        _service = new GenreService(_mockRepo.Object);
+        _service = new GenreService(_mapper, _mockRepo.Object);
     }
 
     [Fact]
