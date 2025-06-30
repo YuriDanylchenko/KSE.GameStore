@@ -72,7 +72,7 @@ namespace KSE.GameStore.Migrations.Migrations
                 {
                     new Guid("485930e2-9bdd-4768-b410-cbea12d230f0"), 
                     "Admin", 
-                    "admin@ tore.com", 
+                    "admin@gamestore.com", 
                     // password1234
                     "tLtrdg3TDLCdpPcm+SSAc6n7XNdub/ocZN7YrGrh2VAEF72AKtD3hiak6K6nX6c6MQ89oeCYRkL3wVEScEst3A==",
                     "0370758ad27447e3871ddccd2c2bacac0370758ad27447e3871ddccd2c2bacac",
