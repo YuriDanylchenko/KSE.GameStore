@@ -1,7 +1,7 @@
-using KSE.GameStore.Web.Requests.Games;
 using AutoMapper;
 using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.Web.Requests.Publishers;
+using KSE.GameStore.Web.Requests.Games;
 
 namespace KSE.GameStore.Web.Mapping;
 
@@ -37,15 +37,15 @@ public class WebMappingProfile : Profile
                 src.RegionPermissionIds
             ))
             .ForMember(dest => dest.PriceDto, opt => opt.MapFrom(src => new UpdateGamePriceDTO(src.Price.Value, src.Price.Stock)));
-        
+
         // CreateGamePriceRequest → CreateGamePriceDTO
         CreateMap<CreateGamePriceRequest, CreateGamePriceDTO>()
             .ConstructUsing(src => new CreateGamePriceDTO(src.Value, src.Stock));
-        
+
         // UpdateGamePriceRequest → UpdateGamePriceDTO
         CreateMap<UpdateGamePriceRequest, UpdateGamePriceDTO>()
             .ConstructUsing(src => new UpdateGamePriceDTO(src.Value, src.Stock));
-        
+
         // CreatePublisherRequest → CreatePublisherDTO
         CreateMap<CreatePublisherRequest, CreatePublisherDTO>()
             .ConstructUsing(src => new CreatePublisherDTO(
@@ -53,7 +53,7 @@ public class WebMappingProfile : Profile
                 src.WebsiteUrl,
                 src.Description
             ));
-        
+
         // UpdatePublisherRequest → UpdatePublisherDTO
         CreateMap<UpdatePublisherRequest, UpdatePublisherDTO>()
             .ConstructUsing(src => new UpdatePublisherDTO(
