@@ -5,8 +5,9 @@
 namespace KSE.GameStore.Migrations.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedInitialData : Migration
+    public partial class SeedData : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
@@ -66,17 +67,20 @@ namespace KSE.GameStore.Migrations.Migrations
 
             migrationBuilder.InsertData(
                 table: "users",
-                columns: new[] { "id", "name", "email", "role", "region_id" },
+                columns: new[] { "id", "name", "email", "HashedPassword", "PasswordSalt", "region_id" },
                 values: new object[]
                 {
                     Guid.NewGuid(), 
                     "Admin", 
                     "admin@gamestore.com", 
-                    "Administrator",
+                    // password1234
+                    "tLtrdg3TDLCdpPcm+SSAc6n7XNdub/ocZN7YrGrh2VAEF72AKtD3hiak6K6nX6c6MQ89oeCYRkL3wVEScEst3A==",
+                    "0370758ad27447e3871ddccd2c2bacac0370758ad27447e3871ddccd2c2bacac",
                     1
                 });
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("DELETE FROM users WHERE email = 'admin@gamestore.com'");

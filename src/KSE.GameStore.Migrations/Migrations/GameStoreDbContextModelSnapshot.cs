@@ -491,27 +491,6 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("user_roles", (string)null);
-                });
-
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserGameStock", b =>
                 {
                     b.Property<int>("Id")
@@ -541,6 +520,27 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_game_stock", (string)null);
+                });
+
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("user_roles", (string)null);
                 });
 
             modelBuilder.Entity("game_genres", b =>
@@ -692,25 +692,6 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.Navigation("Region");
                 });
 
-            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
-                {
-                    b.HasOne("KSE.GameStore.DataAccess.Entities.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KSE.GameStore.DataAccess.Entities.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserGameStock", b =>
                 {
                     b.HasOne("KSE.GameStore.DataAccess.Entities.Game", "Game")
@@ -726,6 +707,25 @@ namespace KSE.GameStore.Migrations.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
+                {
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });

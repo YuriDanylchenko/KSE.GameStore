@@ -10,4 +10,8 @@
     <ProjectReference Include="..\KSE.GameStore.DataAccess\KSE.GameStore.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
