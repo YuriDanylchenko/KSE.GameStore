@@ -4,8 +4,12 @@ using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.DataAccess;
 using KSE.GameStore.DataAccess.Repositories;
 using KSE.GameStore.Web.Mapping;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using KSE.GameStore.Web.Requests.Games;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using KSE.GameStore.Web.Validators.Games.Games;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
@@ -100,6 +104,12 @@ builder.Services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; },
 
 // MVC controllers
 builder.Services.AddControllers();
+
+// FluentValidation
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateGameRequestValidator>();
 
 // ---------------------------------------------
 // Build pipeline
