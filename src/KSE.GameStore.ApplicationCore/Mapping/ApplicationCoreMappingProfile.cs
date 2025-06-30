@@ -45,6 +45,8 @@ public class ApplicationCoreMappingProfile : Profile
             ))
             .ForMember(dest => dest.Roles, opt => opt.Ignore());
 
+        CreateMap<Role, RoleDTO>();
+        
         // sub-DTOs
         CreateMap<Publisher, PublisherDTO>()
             .ConstructUsing(src => new PublisherDTO(
@@ -118,7 +120,8 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Genres, opt => opt.Ignore()) // Will be handled in service layer
             .ForMember(dest => dest.Platforms, opt => opt.Ignore()) // Will be handled in service layer
             .ForMember(dest => dest.Prices, opt => opt.Ignore()) // Will be handled in service layer
-            .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore()); // Will be handled in service layer
+            .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore())
+            .ForMember(dest => dest.Customers, opt => opt.Ignore()); // Will be handled in service layer
 
         // CreateGamePriceDTO → GamePrice
         CreateMap<CreateGamePriceDTO, GamePrice>()
@@ -153,7 +156,8 @@ public class ApplicationCoreMappingProfile : Profile
             .ForMember(dest => dest.Genres, opt => opt.Ignore()) // Will be handled separately
             .ForMember(dest => dest.Platforms, opt => opt.Ignore()) // Will be handled separately
             .ForMember(dest => dest.Prices, opt => opt.Ignore()) // Will be handled separately
-            .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore()); // Will be handled separately
+            .ForMember(dest => dest.RegionPermissions, opt => opt.Ignore())
+            .ForMember(dest => dest.Customers, opt => opt.Ignore()); // Will be handled separately
 
         // UpdateGamePriceDTO → GamePrice
         CreateMap<UpdateGamePriceDTO, GamePrice>()

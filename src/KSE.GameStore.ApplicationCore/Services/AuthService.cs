@@ -11,7 +11,7 @@ using System.Text;
 namespace KSE.GameStore.ApplicationCore.Services;
 
 public class AuthService(
-    IRepository<User, Guid> userRepository,
+    IUserRepository userRepository,
     IRepository<Role, int> roleRepository,
     IRepository<Region, int> regionRepository,
     IRepository<RefreshToken, int> refreshTokenRepository,
@@ -86,8 +86,7 @@ public class AuthService(
     public async Task<UserDTO?> GetUserByEmailAsync(string email)
     {
         var trimmedEmail = email.Trim().ToLower();
-        var users = await userRepository.ListAllAsync(u => u.Email == trimmedEmail);
-        var user = users.FirstOrDefault();
+        var user = await userRepository.GetUserByEmailWithRoles(trimmedEmail, CancellationToken.None);
         return user == null ? null : mapper.Map<UserDTO>(user);
     }
 
@@ -111,26 +110,12 @@ public class AuthService(
 
     public AcessTokenDTO GenerateUserJwtToken(UserDTO user)
     {
-        var userEntity = new User
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Region = new Region { Id = user.Region?.Id ?? 0 },
-            UserRoles = [.. user.Roles.Select(r => new UserRole
-            {
-                Role = new Role { Name = r.Name }
-            })]
-        };
-        var roles = userEntity.UserRoles.Select(ur => ur.Role.Name).ToList();
-
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, userEntity.Id.ToString()),
-            new(ClaimTypes.Email, userEntity.Email),
-            // new (ClaimTypes.Role, "Admin")
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email),
+            new (ClaimTypes.Role, string.Join(",", user.Roles.Select(x => x.Name)))
         };
-
-        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

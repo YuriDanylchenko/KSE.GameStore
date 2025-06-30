@@ -70,12 +70,22 @@ namespace KSE.GameStore.Migrations.Migrations
                 columns: new[] { "id", "name", "email", "HashedPassword", "PasswordSalt", "region_id" },
                 values: new object[]
                 {
-                    Guid.NewGuid(), 
+                    new Guid("485930e2-9bdd-4768-b410-cbea12d230f0"), 
                     "Admin", 
-                    "admin@gamestore.com", 
+                    "admin@ tore.com", 
                     // password1234
                     "tLtrdg3TDLCdpPcm+SSAc6n7XNdub/ocZN7YrGrh2VAEF72AKtD3hiak6K6nX6c6MQ89oeCYRkL3wVEScEst3A==",
                     "0370758ad27447e3871ddccd2c2bacac0370758ad27447e3871ddccd2c2bacac",
+                    1
+                });
+            
+            migrationBuilder.InsertData(
+                table: "user_roles",
+                columns: new[] { "UserId", "RoleId", "Id" },
+                values: new object[]
+                {
+                    new Guid("485930e2-9bdd-4768-b410-cbea12d230f0"), 
+                    1,
                     1
                 });
         }
