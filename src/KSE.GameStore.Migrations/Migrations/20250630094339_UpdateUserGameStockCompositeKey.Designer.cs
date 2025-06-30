@@ -4,6 +4,7 @@ using KSE.GameStore.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KSE.GameStore.Migrations.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    partial class GameStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250630094339_UpdateUserGameStockCompositeKey")]
+    partial class UpdateUserGameStockCompositeKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

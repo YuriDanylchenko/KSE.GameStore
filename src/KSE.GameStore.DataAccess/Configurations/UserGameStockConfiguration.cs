@@ -16,7 +16,7 @@ public class UserGameStockConfiguration : IEntityTypeConfiguration<UserGameStock
         builder.Property(ugs => ugs.Id)
             .HasColumnName("id");
 
-        builder.HasKey(ugs => new { ugs.UserId, ugs.GameId });
+        // builder.HasKey(ugs => new { ugs.UserId, ugs.GameId });
 
         builder.Property(ugs => ugs.License)
             .HasColumnName("license")

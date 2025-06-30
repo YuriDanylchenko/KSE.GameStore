@@ -66,6 +66,10 @@ public class PaymentService : IPaymentService
             throw new NotFoundException($"Order with ID {paymentDto.OrderId} not found.");
         }
         
+        if (orderEntity.Status == OrderStatus.Payed)
+            throw new BadRequestException(
+                $"Order with ID {paymentDto.OrderId} has already been paid.");
+        
         var payment = _mapper.Map<Payment>(paymentDto);
         payment.Confirmed = true;
         payment.PayedAt = DateTime.UtcNow;
