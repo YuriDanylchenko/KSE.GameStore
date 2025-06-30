@@ -62,7 +62,7 @@ namespace KSE.GameStore.ApplicationCore.Services
                     OrderId = order.Id,
                     Quantity = quantity,
                     Order = order,
-                    Game = game,
+                    // Game = game,
                     Price = currentPrice * quantity
                 };
                 order.OrderItems.Add(newItem);

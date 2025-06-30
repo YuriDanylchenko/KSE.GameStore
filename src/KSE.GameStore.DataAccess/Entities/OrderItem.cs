@@ -7,6 +7,6 @@ public class OrderItem : BaseEntity<int>
     public decimal Price { get; set; }
     public int Quantity { get; set; }
 
-    public required Order Order { get; set; }
-    public required Game Game { get; set; }
+    public Order Order { get; set; }
+    public Game Game { get; set; }
 }
