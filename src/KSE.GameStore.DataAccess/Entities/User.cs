@@ -10,6 +10,7 @@ public class User : BaseEntity<Guid>
 
     public required Region Region { get; set; }
     public ICollection<Order>? Orders { get; set; }
+    public ICollection<UserGameStock> GameStock { get; set; } = new List<UserGameStock>();
 
     public ICollection<UserRole> UserRoles { get; set; } = [];
 }

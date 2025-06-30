@@ -11,7 +11,6 @@ public class OrderRepository(GameStoreDbContext context) : Repository<Order, int
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Game)
             .Include(o => o.User)
-            .Include(o => o.Status)
             .SingleOrDefaultAsync(o => o.Id == id);
     }
 
@@ -23,5 +22,28 @@ public class OrderRepository(GameStoreDbContext context) : Repository<Order, int
             .Include(o => o.User)
             .Where(o => o.UserId == id && o.Status == OrderStatus.Initiated)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<Order>> GetOrdersWithDetailsAsync(Guid? userId = null, DateTime? from = null, DateTime? to = null,
+        OrderStatus? status = null)
+    {
+        IQueryable<Order> query = _dbSet
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Game)
+            .Include(o => o.User);
+
+        if (userId.HasValue)
+            query = query.Where(o => o.UserId == userId.Value);
+
+        if (from.HasValue)
+            query = query.Where(o => o.CreatedAt >= from.Value);
+
+        if (to.HasValue)
+            query = query.Where(o => o.CreatedAt <= to.Value);
+
+        if (status.HasValue)
+            query = query.Where(o => o.Status == status.Value);
+
+        return await query.ToListAsync();
     }
 }

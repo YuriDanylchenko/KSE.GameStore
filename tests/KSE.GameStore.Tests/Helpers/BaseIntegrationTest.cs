@@ -97,7 +97,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             // Register AuthService with the JWT key
             services.AddScoped<IAuthService>(provider =>
             {
-                var userRepo = provider.GetRequiredService<IRepository<User, Guid>>();
+                var userRepo = provider.GetRequiredService<IUserRepository>();
                 var roleRepo = provider.GetRequiredService<IRepository<Role, int>>();
                 var regionRepo = provider.GetRequiredService<IRepository<Region, int>>();
                 var refreshTokenRepo = provider.GetRequiredService<IRepository<RefreshToken, int>>();

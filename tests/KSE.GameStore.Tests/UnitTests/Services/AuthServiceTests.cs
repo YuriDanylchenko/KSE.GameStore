@@ -10,7 +10,7 @@ namespace KSE.GameStore.Tests.UnitTests.Services;
 
 public class AuthServiceTests
 {
-    private readonly Mock<IRepository<User, Guid>> _userRepo = new();
+    private readonly Mock<IUserRepository> _userRepo = new();
     private readonly Mock<IRepository<Role, int>> _roleRepo = new();
     private readonly Mock<IRepository<Region, int>> _regionRepo = new();
     private readonly Mock<IRepository<RefreshToken, int>> _refreshTokenRepo = new();
@@ -188,10 +188,10 @@ public class AuthServiceTests
             Email = "test@test.com",
             Region = new Region { Id = 1, Name = "Default", Code = "DR" }
         };
-        _userRepo.Setup(r => r.ListAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
-            .ReturnsAsync([user]);
+        _userRepo.Setup(r => r.GetUserByEmailWithRoles("test@test.com", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
         _mapper.Setup(m => m.Map<UserDTO>(user))
-            .Returns(new UserDTO(userId, "test@test.com", string.Empty, string.Empty, null, new List<RoleDTO>()));
+            .Returns(new UserDTO(userId, "test@test.com", string.Empty, string.Empty, null, []));
 
         var service = CreateService();
         var result = await service.GetUserByEmailAsync("test@test.com");

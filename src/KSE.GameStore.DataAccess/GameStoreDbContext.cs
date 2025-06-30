@@ -23,6 +23,7 @@ public class GameStoreDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
     public DbSet<Permission> Permissions { get; set; } = null!;
+    public DbSet<UserGameStock> Stock { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

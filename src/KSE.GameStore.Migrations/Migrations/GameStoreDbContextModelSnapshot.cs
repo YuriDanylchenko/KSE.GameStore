@@ -491,6 +491,37 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserGameStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int")
+                        .HasColumnName("game_id");
+
+                    b.Property<string>("License")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("license");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("user_game_stock", (string)null);
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -661,6 +692,25 @@ namespace KSE.GameStore.Migrations.Migrations
                     b.Navigation("Region");
                 });
 
+            modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserGameStock", b =>
+                {
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.Game", "Game")
+                        .WithMany("Customers")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KSE.GameStore.DataAccess.Entities.User", "User")
+                        .WithMany("GameStock")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.UserRole", b =>
                 {
                     b.HasOne("KSE.GameStore.DataAccess.Entities.Role", "Role")
@@ -727,6 +777,8 @@ namespace KSE.GameStore.Migrations.Migrations
 
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.Game", b =>
                 {
+                    b.Navigation("Customers");
+
                     b.Navigation("Prices");
                 });
 
@@ -761,6 +813,8 @@ namespace KSE.GameStore.Migrations.Migrations
 
             modelBuilder.Entity("KSE.GameStore.DataAccess.Entities.User", b =>
                 {
+                    b.Navigation("GameStock");
+
                     b.Navigation("Orders");
 
                     b.Navigation("UserRoles");

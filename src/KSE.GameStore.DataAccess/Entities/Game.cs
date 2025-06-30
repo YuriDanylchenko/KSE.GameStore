@@ -16,4 +16,6 @@ public class Game : BaseEntity<int>
     // null means no region restrictions, so available everywhere
     // empty list means not available in any region
     // list with items means available only in those regions
+    public ICollection<UserGameStock> Customers { get; set; } = new List<UserGameStock>();
+
 }

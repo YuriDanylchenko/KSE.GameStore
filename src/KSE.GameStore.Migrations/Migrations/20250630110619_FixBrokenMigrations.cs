@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KSE.GameStore.Migrations.Migrations
 {
     /// <inheritdoc />
-    public partial class LoginOptions : Migration
+    public partial class FixBrokenMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -304,6 +304,33 @@ namespace KSE.GameStore.Migrations.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_game_stock",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    game_id = table.Column<int>(type: "int", nullable: false),
+                    license = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_game_stock", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_game_stock_games_game_id",
+                        column: x => x.game_id,
+                        principalTable: "games",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_user_game_stock_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_roles",
                 columns: table => new
                 {
@@ -466,6 +493,16 @@ namespace KSE.GameStore.Migrations.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_game_stock_game_id",
+                table: "user_game_stock",
+                column: "game_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_game_stock_user_id",
+                table: "user_game_stock",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_user_roles_RoleId",
                 table: "user_roles",
                 column: "RoleId");
@@ -504,6 +541,9 @@ namespace KSE.GameStore.Migrations.Migrations
                 name: "role_permissions");
 
             migrationBuilder.DropTable(
+                name: "user_game_stock");
+
+            migrationBuilder.DropTable(
                 name: "user_roles");
 
             migrationBuilder.DropTable(
@@ -513,22 +553,22 @@ namespace KSE.GameStore.Migrations.Migrations
                 name: "platforms");
 
             migrationBuilder.DropTable(
-                name: "games");
-
-            migrationBuilder.DropTable(
                 name: "orders");
 
             migrationBuilder.DropTable(
                 name: "permissions");
 
             migrationBuilder.DropTable(
+                name: "games");
+
+            migrationBuilder.DropTable(
                 name: "roles");
 
             migrationBuilder.DropTable(
-                name: "publishers");
+                name: "users");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "publishers");
 
             migrationBuilder.DropTable(
                 name: "regions");

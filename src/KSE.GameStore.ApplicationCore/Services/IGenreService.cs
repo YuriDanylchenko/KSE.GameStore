@@ -1,4 +1,4 @@
-﻿using KSE.GameStore.ApplicationCore.Models;
+﻿using KSE.GameStore.ApplicationCore.Models.Output;
 using KSE.GameStore.DataAccess.Entities;
 
 namespace KSE.GameStore.ApplicationCore.Services;
@@ -8,6 +8,8 @@ namespace KSE.GameStore.ApplicationCore.Services;
 /// </summary>
 public interface IGenreService
 {
+    Task<List<GenreDTO>> GetAllGenresAsync(int? pageSize, int? pageNumber);
+
     /// <summary>
     /// Retrieves a genre by its unique identifier.
     /// </summary>

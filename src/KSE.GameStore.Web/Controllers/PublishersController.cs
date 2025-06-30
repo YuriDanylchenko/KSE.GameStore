@@ -2,6 +2,7 @@
 using KSE.GameStore.ApplicationCore.Models.Input;
 using KSE.GameStore.ApplicationCore.Services;
 using KSE.GameStore.Web.Requests.Publishers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KSE.GameStore.Web.Controllers;
@@ -34,6 +35,7 @@ public class PublishersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreatePublisher([FromBody] CreatePublisherRequest createPublisherRequest)
     {
         var publisherDto = _mapper.Map<CreatePublisherRequest, CreatePublisherDTO>(createPublisherRequest);
@@ -50,6 +52,7 @@ public class PublishersController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePublisher(int id)
     {
         await _publisherService.DeletePublisherAsync(id);
