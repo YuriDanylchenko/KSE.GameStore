@@ -122,7 +122,9 @@ public class PaymentsControllerTests : IClassFixture<WebApplicationFactory<Progr
             {
                 Email     = "test_email_user@test.com",
                 Name      = "Test User",
-                Role      = "Admin",
+                PasswordSalt = "cf1a5aa106d449f38bad4b77878b18aa",
+                // password = "12345678"
+                HashedPassword = "dE5I8KTUxIK/b4hsg9sJshUMEdSn4ke8CNItHl9Unf28GfgnUKNVHzyHNpjhTXF7rh8UmAlWZCvLjjQkVaBy9Q==",
                 Region    = region,
                 Orders    = [],
                 GameStock = []
