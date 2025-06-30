@@ -44,24 +44,26 @@ namespace KSE.GameStore.ApplicationCore.Services
             }
 
             var existingItem = order.OrderItems.FirstOrDefault(oi => oi.GameId == gameId);
+            var game = await _gameRepository.GetGameByIdAsync(gameId)
+                       ?? throw new InvalidOperationException("Game not found.");
+            var currentPrice = await FindCurrentGamePrice(game);
+
             if (existingItem != null)
             {
                 existingItem.Quantity += quantity;
                 order.UpdatedAt = DateTime.UtcNow;
+                existingItem.Price = existingItem.Quantity * currentPrice;
             }
             else
             {
-                var game = await _gameRepository.GetByIdAsync(gameId)
-                    ?? throw new InvalidOperationException("Game not found.");
                 var newItem = new OrderItem
                 {
                     GameId = game.Id,
                     OrderId = order.Id,
-                    // TODO: add Price (we do not have separate field for current price, there we need
-                    // TODO: to decide whether we need to apply it, or write a method that will go through all prices and fins the current one
                     Quantity = quantity,
                     Order = order,
-                    Game = game
+                    Game = game,
+                    Price = currentPrice * quantity
                 };
                 order.OrderItems.Add(newItem);
                 order.UpdatedAt = DateTime.UtcNow;
@@ -106,6 +108,21 @@ namespace KSE.GameStore.ApplicationCore.Services
             order.UpdatedAt = DateTime.UtcNow;
             _orderRepository.Update(order);
             await _orderRepository.SaveChangesAsync();
+        }
+
+        private Task<decimal> FindCurrentGamePrice(Game game)
+        {
+            if (game.Prices == null || game.Prices.Count == 0)
+                throw new InvalidOperationException("No prices found for the game.");
+
+            // Find the current price (EndDate == null)
+            var currentPrice = game.Prices
+                .FirstOrDefault(p => p.EndDate == null);
+
+            if (currentPrice == null)
+                throw new InvalidOperationException("Current price not found (missing EndDate == null).");
+
+            return Task.FromResult(currentPrice.Value);
         }
     }
 }

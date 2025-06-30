@@ -224,7 +224,7 @@ public class GameService : IGameService
 
     public async Task DeleteGameAsync(int id)
     {
-        var gameEntity = await _gameRepository.GetByIdAsync(id);
+        var gameEntity = await _gameRepository.GetGameByIdAsync(id);
         if (gameEntity == null)
         {
             _logger.LogNotFound($"games/{id}");
